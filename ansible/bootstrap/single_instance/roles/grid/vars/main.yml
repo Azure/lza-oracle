@@ -1,0 +1,8 @@
+gridurl: https://oraclebinarysa.blob.core.windows.net/oracle/LINUX.X64_193000_grid_home.zip?sp=r&st=2023-09-07T11:37:48Z&se=2025-03-31T19:37:48Z&spr=https&sv=2022-11-02&sr=b&sig=QCeLiPKWqrnJDHRC8LNB6HxQEpNuW9fu%2Fj7jw6wUVtY%3D
+swapsize: 4096
+syspass: oracle123
+systempass: oracle123
+monitorpass: oracle123
+dbname: tempdb
+gridpass: oracle123
+oraclepass: oracle123

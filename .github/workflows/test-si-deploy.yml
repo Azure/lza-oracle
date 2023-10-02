@@ -1,0 +1,111 @@
+
+name: Deploy Single Instance Oracle VM
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+      id-token: write
+      contents: read
+
+env:
+  Location: "norwayeast"
+  client-id: "b5d19df2-caf8-4379-b287-4d09e490fa31"
+  tenant-id: "449fbe1d-9c99-4509-9014-4fd5cf25b014"
+  subscription-id: "5006fcc2-d832-4bc5-a015-9be4d1d6d74b"
+
+  
+jobs:
+  deploy_job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+    # az powershell action to get all secrets from keyvault csuoraclekv001 and save to variables for use later in workflow
+    - name: 'Get secrets from keyvault'
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          $secrets = Get-AzKeyVaultSecret -VaultName csuoraclekv001 -AsPlainText
+          $secrets | Get-Member -MemberType NoteProperty | ForEach-Object {
+            $name = $_.Name
+            $value = $secrets.$name
+            Set-Variable -Name $name -Value $value
+          }
+    # action to run terraform init
+    - name: Terraform Init
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: 0.12.26
+        tf_actions_subcommand: init
+        working-directory: ./terraform/single_instance_oracle_vm
+    # action to run terraform plan
+    - name: Terraform Plan
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: 0.12.26
+        tf_actions_subcommand: plan
+        working-directory: ./terraform/single_instance_oracle_vm
+    # action to run terraform apply
+    - name: Terraform Apply
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: 0.12.26
+        tf_actions_subcommand: apply
+        working-directory: ./terraform/single_instance_oracle_vm
+        tf_actions_comment: true
+        tf_actions_lock: true
+        tf_actions_input: yes
+        tf_actions_auto_approve: true
+    # azure powershell ction to get public ip address of newly created vm and save to variable for use later in workflow
+    - name: 'Get public ip address of vm'
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          $vm = Get-AzVM -ResourceGroupName csuoraclevmrg001 -Name csuoraclevm001
+          $publicip = $vm.NetworkProfile.NetworkInterfaces.IpConfigurations.PublicIpAddress.Id
+          $publicip = $publicip.Split("/")[-1]
+          Set-Variable -Name publicip -Value $publicip
+    # Powershell action to enable JIT on Azure VM so it can be access from this node only
+    - name: 'Enable JIT on VM'
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          $vm = Get-AzVM -ResourceGroupName csuoraclevmrg001 -Name csuoraclevm001
+          $vm | Add-AzVMSecurityJustInTimeAccessExtension -Location norwayeast -TimeOutInMinutes 60 -Port 22
+          Update-AzVM -ResourceGroupName csuoraclevmrg001 -VM $vm
+    # action to run ansible playbook to install oracle database on newly created vm using private key from keyvault
+    - name: Ansible Playbook
+      uses: ansible/ansible-galaxy-actions@v1
+      with:
+        requirements-txt: requirements.yml
+        role-requirements-txt: requirements.yml
+        playbook: playbook.yml
+        ansible-version: 2.9.6
+        ansible-config: ansible.cfg
+        ansible-inventory: inventory.yml
+        ansible-galaxy-requirements-txt: requirements.yml
+        ansible-galaxy-role-requirements-txt: requirements.yml
+        ansible-galaxy-collection-requirements-txt: requirements.yml
+        ansible-galaxy-config-file: ansible.cfg
+        ansible-galaxy-inventory: inventory.yml
+        ansible-galaxy-extra-args: --roles-path ./roles
+        ansible-playbook-extra-args: --private-key ${{ secrets.PRIVATE_KEY }} -e "publicip=$publicip"
+
+    
+
+
+    
+
+     

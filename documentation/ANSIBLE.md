@@ -2,9 +2,9 @@
 
 On the compute source running Ubuntu, follow the steps given below:
 
-1. Switch to the branch subdirectory
+1. Switch to the subdirectory
 ```
- $ cd ~/projects/oracle-deployment-automation/ansible/bootstrap/single_instance
+ $ cd ansible/bootstrap/single_instance
 ```
 
 2. Create a new file called inventory:

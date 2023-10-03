@@ -17,19 +17,7 @@ $ mkdir ~/projects
 
 4. Start cloning the repo.
 ```
-$ git clone https://github.com/Pamir/oracle-deployment-automation.git
+$ git clone https://github.com/Azure/lza-oracle.git
 ```
 
-5. Fetch as shown below.
-```
-$ git fetch --all
-```
-
-6. Switch to the approprate branch.
-```
-$ git switch feature/create-single-vm
-```
-
-
-
-7. Now, you can do back to the main README.md document.
+5. Now, you can do back to the main README.md document.

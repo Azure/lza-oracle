@@ -7,7 +7,8 @@ Follow the steps given below:
 
 2. Install "pip".
 ```
-$ sudo pip install python3-pip
+$ sudo apt update
+$ sudo apt install python3-pip
 ```
 
 3. Create a subdirectory to clone the repo.

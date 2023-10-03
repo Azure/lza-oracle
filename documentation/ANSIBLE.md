@@ -20,6 +20,11 @@ On the compute source running Ubuntu, follow the steps given below:
 <Public IP address of the Azure VM created via terraform>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-single-instance  ansible_user=oracle
 ```
 
+Below is an example:
+
+<img src="inventory.jpg" />
+
+
 4. Start the ansible playbook
 ```
 $ ansible-playbook playbook.yml -i inventory

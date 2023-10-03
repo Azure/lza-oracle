@@ -43,3 +43,11 @@ terraform.rc
 inventory
 #for oracle
 *.zip 
+
+
+
+.env
+
+# Local History for Visual Studio Code
+**/.DS_Store
+.history/.DS_Store

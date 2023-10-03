@@ -34,22 +34,22 @@ To deploy single Oracle instance on the VM, you can use **single_instance** modu
 Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create.
 
 ```bash
-$ ssh-keygen
+$ ssh-keygen -f ~/.ssh/lza-oracle-single-instance
 
 $ ls -lha ~/.ssh/
--rw-------   1 yourname  staff   2.6K  8 17  2023 id_rsa
--rw-r--r--   1 yourname  staff   589B  8 17  2023 id_rsa.pub
+-rw-------   1 yourname  staff   2.6K  8 17  2023 lza-oracle-single-instance
+-rw-r--r--   1 yourname  staff   589B  8 17  2023 lza-oracle-single-instance.pub
 ```
 
-Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file, which contains ssh public key used for deploying a virtual machine on Azure.
+Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file, then copy the contents of the ssh public key used for deploying a virtual machine on Azure (~/.ssh-oracle-single-instance.pub).
 
 This is a sample `fixtures.tfvars` file.
 
 ```tf:fixtures.tfvars
-ssh_key = "ssh-rsa xxxxxxxxxxxxxx.local"
+ssh_key = "ssh-rsa xxxxxxxxxxxxxx="
 ```
 
-Then, you execute below Terraform commands. When you deploy resources to Azure, you have to indicate `fixtures.tfvars` as a variable file, which contains the ssh public key.
+Then, execute below Terraform commands. When you deploy resources to Azure, you have to indicate `fixtures.tfvars` as a variable file, which contains the ssh public key.
 
 ```
 $ pwd

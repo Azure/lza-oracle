@@ -2,7 +2,7 @@
 
 On the compute source running Ubuntu, follow the steps given below:
 
-1. Switch to the subdirectory
+1. Switch to the following subdirectory:
 ```
  $ cd ansible/bootstrap/single_instance
 ```
@@ -17,7 +17,7 @@ On the compute source running Ubuntu, follow the steps given below:
 ```
 [dbservers]
 
-<Public IP address of the Azure VM created via terraform>  ansible_ssh_private_key_file=~/.ssh/tf_ora ansible_user=oracle
+<Public IP address of the Azure VM created via terraform>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-single-instance  ansible_user=oracle
 ```
 
 4. Start the ansible playbook

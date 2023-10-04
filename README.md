@@ -15,7 +15,7 @@ A single Azure VM will be deployed in a VNET in your Azure subscription.
 4. [Ansible installed](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html) on the compute source.
 5. [Az CLI installed](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt) on the compute source.
 
-## Next Steps
+## Step-by-step Instructions
 
 1. [Clone this repo](docs/wiki/CLONE.md) onto the compute resource.
 2. [Provision infrastructure on Azure](docs/wiki/TERRAFORM.md) via terraform.

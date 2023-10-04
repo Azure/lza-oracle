@@ -17,7 +17,7 @@ $ sqlplus / as sysdba
 SQL> show user
 ```
 
-<img src="test.jpg" />
+<img src="../media/test.jpg" />
 
 
 Congatulations. Now, you have a functional Oracle DB running on the Azure VM.

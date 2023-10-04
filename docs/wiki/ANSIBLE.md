@@ -22,7 +22,7 @@ On the compute source running Ubuntu, follow the steps given below:
 
 Below is an example:
 
-<img src="inventory.jpg" />
+<img src="../media/inventory.jpg" />
 
 
 4. Start the ansible playbook
@@ -37,11 +37,11 @@ $ ansible-playbook playbook.yml -i inventory
 
 6. It is acceptable to see warnings highlighted in red.
 
-<img src="warnings.jpg" />
+<img src="../media/warnings.jpg" />
 
 Once the installation and configuration completes, you will see a screen similar to the one below. 
 
-<img src="complete.jpg" />
+<img src="../media/complete.jpg" />
 
 
 

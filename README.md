@@ -48,7 +48,7 @@ Please see the [Frequently Asked Questions](docs/wiki/FAQ.md) in the wiki.
 ## Contributing
 
 
-Please see the [Frequently Asked Questions](docs/wiki/Contributing.md) in the wiki.
+Please see the [Contributing](docs/wiki/Contributing.md) in the wiki.
 
 
 ## Trademarks

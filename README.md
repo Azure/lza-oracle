@@ -11,9 +11,9 @@ A single Azure VM will be deployed in a VNET in your Azure subscription.
 
 1. An Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/?ref=microsoft.com&utm_source=microsoft.com&utm_medium=docs&utm_campaign=visualstudio) before you begin.
 2. A compute source running Ubuntu. This can either be a local computer or [an Azure VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu). 
-3. [Terraform installed](https://developer.hashicorp.com/terraform/downloads) on the compute source.
-4. [Ansible installed](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html) on the compute source.
-5. [Az CLI installed](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt) on the compute source.
+3. Terraform installed on the compute source. Otherwise, follow the installations instructions [here](https://developer.hashicorp.com/terraform/downloads) 
+4. Ansible installed on the compute source. Otherwise, follow the installations instructions [here](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html)
+5. Azure CLI installed on the compute source. Otherwise, follow the installations instructions [here](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt)
 
 ## Step-by-step Instructions
 

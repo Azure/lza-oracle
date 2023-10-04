@@ -1,12 +1,6 @@
-# Introduction to Deploying Single VM for Oracle via Terraform
+# Provisioning of Azure VM via Terraform
 
-## Background
 
-This guide describes how to get started with implementing Oracle Database on Azure VM. In the guide it is assumed that you will be using Terraform and Ansible to deploy Oracle on Azure VMs.
-
-The repo at present contains code and details for the following:
-
-- Deploy single VM for Oracle in the VNET.
 
 ## Prerequisites
 
@@ -17,11 +11,7 @@ The repo at present contains code and details for the following:
 
 To use Terraform commands against your Azure subscription, you must first authenticate Terraform to that subscription. [This doc](https://learn.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash) describes how to authenticate Terraform to your Azure subscription.
 
-## Getting started
 
-- Fork this repo to your own GitHub organization, you should not create a direct clone of the repo. Pull requests based off direct clones of the repo will not be allowed.
-- Clone the repo from your own GitHub organization to your developer workstation.
-- Review your current configuration to determine what scenario applies to you. We have guidance that will help deploy Oracle VMs in your subscription.
 
 ### How to deploy single VM for Oracle in the VNET
 
@@ -31,7 +21,7 @@ In this module, you will deploy single virtual machine in the virtual network.
 
 To deploy single Oracle instance on the VM, you can use **single_instance** module in this repo. The module is located on `terraform/bootstrap/single_instance` directory.
 
-Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create.
+Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create. Do the following on the compure source:
 
 ```bash
 $ ssh-keygen -f ~/.ssh/lza-oracle-single-instance
@@ -69,6 +59,7 @@ $ ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
 ```
 
 Now you can go back to the main [README.md](../../README.md) file.
+
 
 
 ### How to enable diagnostic settings

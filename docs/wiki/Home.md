@@ -8,7 +8,7 @@ This wiki documents how to automate the deployment of a virtual machine on Azure
 
 - [Wiki Home](./Home.md)
 - [What's New](./WhatsNew.md)
-- [Intro to Automating Oracle DB Deployments](./Intro-to-automating-OracleDB.md)
+- [Step by Step Instructions](../../README.md)
 - [Azure Policy Initiatives](./PolicyInitiatives.md)
 - [Frequently Asked Questions](./FAQ.md)
 - [Contributing](./Contributing.md)

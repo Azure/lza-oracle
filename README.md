@@ -24,6 +24,33 @@ A single Azure VM will be deployed in a VNET in your Azure subscription.
 5. [Test the final configuration](docs/wiki/TEST.md).
 
 
+## Disclaimer
+
+Please note that the policies in this GitHub repository are currently in development and may be subject to frequent changes and updates. This means that the functionality and features of the polices may change without notice. As such, you are advised to ensure that the policies are tested thoroughly in a test environment before considering moving to production.
+
+Additionally you are advised to reach out to the authors of this repository to discuss the policies and their suitability for your environment, before deploying them in production. To do so create an issue [here](https://github.com/alz-oracle/issues), and we will get back to you as soon as possible.
+
+By accessing or using the code in this repository, you agree to assume all risks associated with its use and to use it at your own discretion and risk. Microsoft shall not be liable for any damages or losses resulting from the use of this code. For support details, please see the [Support section](./SUPPORT.md).
+
+
+## Wiki
+
+Please see the content in the [wiki](docs/wiki/Home.md) for more detailed information about the repo and various other pieces of documentation.
+
+## Known Issues
+
+Please see the [Known Issues](docs/wiki/KnownIssues.md) in the wiki.
+
+## Frequently Asked Questions
+
+Please see the [Frequently Asked Questions](docs/wiki/FAQ.md) in the wiki.
+
+## Contributing
+
+
+Please see the [Frequently Asked Questions](docs/wiki/Contributing.md) in the wiki.
+
+
 ## Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 

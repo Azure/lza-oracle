@@ -1,5 +1,9 @@
 # Using ansible to configure OracleDB & ASM
 
+Now that the required infrastructure is allocated on Azure, it is time to install & configure the Oracle DB via ansible.
+
+
+
 On the compute source running Ubuntu, follow the steps given below:
 
 1. Switch to the following subdirectory:

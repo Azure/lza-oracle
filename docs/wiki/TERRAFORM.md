@@ -68,6 +68,9 @@ Finally, you can connect to the virtual machine with ssh private key. While depl
 $ ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
 ```
 
+Now you can go back to the main [README.md](../../README.md) file.
+
+
 ### How to enable diagnostic settings
 
 To enable diagnostic settings, you have to set `is_diagnostic_settings_enabled` **true** in **common_infrastructure** module.

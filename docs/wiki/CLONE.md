@@ -21,4 +21,4 @@ $ mkdir ~/projects
 $ git clone https://github.com/Azure/lza-oracle.git
 ```
 
-5. Now, you can do back to the main README.md document.
+5. Now you can go back to the main [README.md](../../README.md) file.

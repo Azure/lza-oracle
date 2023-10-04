@@ -27,7 +27,7 @@ To use Terraform commands against your Azure subscription, you must first authen
 
 In this module, you will deploy single virtual machine in the virtual network.
 
-<img src="../docs/media/single_vm.png" />
+<img src="../media/single_vm.png" />
 
 To deploy single Oracle instance on the VM, you can use **single_instance** module in this repo. The module is located on `terraform/bootstrap/single_instance` directory.
 

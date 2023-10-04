@@ -20,4 +20,4 @@ SQL> show user
 <img src="../media/test.jpg" />
 
 
-Congatulations. Now, you have a functional Oracle DB running on the Azure VM.
+Congatulations!!! Now, you have a functional Oracle DB running on the Azure VM.

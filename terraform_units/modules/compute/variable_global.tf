@@ -20,17 +20,17 @@ variable "public_key" {
   description = "Public key used for authentication in ssh-rsa format"
 }
 
-variable "deployer" {
-  description = "Details of deployer"
-  default = {
-    "disk_type" : "Premium_LRS"
-  }
-}
+# variable "deployer" {
+#   description = "Details of deployer"
+#   default = {
+#     "disk_type" : "Premium_LRS"
+#   }
+# }
 
-variable "options" {
-  description = "Options for the Oracle deployment"
-  default     = {}
-}
+# variable "options" {
+#   description = "Options for the Oracle deployment"
+#   default     = {}
+# }
 
 variable "database" {
   description = "Details of the database node"
@@ -126,4 +126,30 @@ variable "vm_locks" {
 variable "tags" {
   description = "Tags to be added to the resources"
   default     = {}
+}
+
+variable "vm_sku"{
+  description = "The SKU of the virtual machine"
+  default     = "Standard_D4s_v3"
+}
+
+variable "vm_source_image_reference"{
+  description = "The source image reference of the virtual machine"
+  default = {
+    publisher = "Oracle"
+    offer     = "Oracle-Linux"
+    sku       = "79-gen2"
+    version   = "7.9.36"
+  }
+}
+
+variable "vm_os_disk" {
+  description = "Details of the OS disk"
+  default = {
+    name                   = "osdisk"
+    caching                = "ReadWrite"
+    storage_account_type   = "Premium_LRS"
+    disk_encryption_set_id =  null
+    disk_size_gb           = 128
+  }
 }

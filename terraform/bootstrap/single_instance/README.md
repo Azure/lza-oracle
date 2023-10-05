@@ -43,7 +43,7 @@ $ ls -lha ~/.ssh/
 
 Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file, which contains ssh public key used for deploying a virtual machine on Azure.
 
-This is a sample `fixtures.tfvars` file.
+This is a sample `fixtures.tfvars` file. For more reference on all variables you can set, see [variables description](variables.md)
 
 ```tf:fixtures.tfvars
 ssh_key = "ssh-rsa xxxxxxxxxxxxxx.local"

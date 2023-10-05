@@ -18,23 +18,23 @@ resource "azurerm_linux_virtual_machine" "oracle_vm" {
   }
 
   source_image_reference {
-    publisher = "Oracle"
-    offer     = "Oracle-Linux"
-    sku       = "79-gen2"
-    version   = "7.9.36"
+    publisher = var.vm_source_image_reference.publisher
+    offer     = var.vm_source_image_reference.offer
+    sku       = var.vm_source_image_reference.sku
+    version   = var.vm_source_image_reference.version
   }
+  size = var.vm_sku
 
   os_disk {
-    name                   = "osdisk"
-    caching                = "ReadWrite"
-    storage_account_type   = var.deployer.disk_type
-    disk_encryption_set_id = try(var.options.disk_encryption_set_id, null)
-    disk_size_gb           = 128
+    name                   = var.vm_os_disk.name
+    caching                = var.vm_os_disk.caching
+    storage_account_type   = var.vm_os_disk.storage_account_type
+    disk_encryption_set_id = try(var.vm_os_disk.disk_encryption_set_id, null)
+    disk_size_gb           = var.vm_os_disk.disk_size_gb
   }
 
   network_interface_ids = [var.nic_id]
 
-  size = local.oracle_sku
 
   additional_capabilities {
     ultra_ssd_enabled = local.enable_ultradisk

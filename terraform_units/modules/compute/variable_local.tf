@@ -4,7 +4,5 @@ locals {
   enable_auth_key      = local.sid_auth_type == "key"
 
   enable_ultradisk = false
-  oracle_sku       = "Standard_D4s_v3"
-
   tags = {}
 }

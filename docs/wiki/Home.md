@@ -9,7 +9,6 @@ This wiki documents how to automate the deployment of a virtual machine on Azure
 - [Wiki Home](./Home.md)
 - [What's New](./WhatsNew.md)
 - [Step by Step Instructions](../../README.md#step-by-step-instructions)
-- [Azure Policy Initiatives](./PolicyInitiatives.md)
 - [Frequently Asked Questions](./FAQ.md)
 - [Contributing](./Contributing.md)
 - [Known Issues](./KnownIssues.md)

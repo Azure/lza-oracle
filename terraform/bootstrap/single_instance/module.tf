@@ -1,17 +1,13 @@
+
+
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
   infrastructure                 = local.infrastructure
-  is_diagnostic_settings_enabled = true
-  diagnostic_target              = "Log_Analytics_Workspace"
+  is_diagnostic_settings_enabled = var.is_diagnostic_settings_enabled
+  diagnostic_target              = var.diagnostic_target
   tags                           = var.resourcegroup_tags
 
-  role_assignments = {
-    role_assignment_1 = {
-      name                             = "Contributor"
-      skip_service_principal_aad_check = false
-    }
-  }
 }
 
 module "vm" {

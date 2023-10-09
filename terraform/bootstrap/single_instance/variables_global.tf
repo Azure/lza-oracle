@@ -146,17 +146,6 @@ variable "database_db_nic_ips" {
   default     = [""]
 }
 
-variable "subnet_arm_id" {
-  description = "ARM ID of the subnet to be deployed"
-  default     = ""
-}
-
-
-variable "is_diagnostic_settings_enabled" {
-  description = "Whether diagnostic settings are enabled"
-  default     = false
-}
-
 variable "diagnostic_target" {
   description = "The destination type of the diagnostic settings"
   default     = "Log_Analytics_Workspace"

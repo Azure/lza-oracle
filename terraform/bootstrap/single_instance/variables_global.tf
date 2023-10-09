@@ -144,23 +144,4 @@ variable "database_disks_options" {
 variable "database_db_nic_ips" {
   description = "If provided, the database tier virtual machines will be configured using the specified IPs"
   default     = [""]
-
-variable "subnet_arm_id" {
-  description = "ARM ID of the subnet to be deployed"
-  default     = ""
-}
-
-
-variable "is_diagnostic_settings_enabled" {
-  description = "Whether diagnostic settings are enabled"
-  default     = false
-}
-
-variable "diagnostic_target" {
-  description = "The destination type of the diagnostic settings"
-  default     = "Log_Analytics_Workspace"
-  validation {
-    condition     = contains(["Log_Analytics_Workspace", "Storage_Account", "Event_Hubs", "Partner_Solutions"], var.diagnostic_target)
-    error_message = "Allowed values are Log_Analytics_Workspace, Storage_Account, Event_Hubs, Partner_Solutions"
-  }
 }

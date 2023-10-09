@@ -145,12 +145,3 @@ variable "database_db_nic_ips" {
   description = "If provided, the database tier virtual machines will be configured using the specified IPs"
   default     = [""]
 }
-
-variable "diagnostic_target" {
-  description = "The destination type of the diagnostic settings"
-  default     = "Log_Analytics_Workspace"
-  validation {
-    condition     = contains(["Log_Analytics_Workspace", "Storage_Account", "Event_Hubs", "Partner_Solutions"], var.diagnostic_target)
-    error_message = "Allowed values are Log_Analytics_Workspace, Storage_Account, Event_Hubs, Partner_Solutions"
-  }
-}

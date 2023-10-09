@@ -144,6 +144,7 @@ variable "database_disks_options" {
 variable "database_db_nic_ips" {
   description = "If provided, the database tier virtual machines will be configured using the specified IPs"
   default     = [""]
+}
 
 variable "subnet_arm_id" {
   description = "ARM ID of the subnet to be deployed"

@@ -38,7 +38,7 @@
     - { name: "net.core.rmem_max", value: "4194304" }
     - { name: "net.core.wmem_default", value: "262144" }
     - { name: "net.core.wmem_max", value: "1048576" }
-    - { name: "panic_on_oops", value: "1" }
+    - { name: "kernel.panic_on_oops", value: "1" }
 
 - name: save sysctl config
   command: sysctl -p

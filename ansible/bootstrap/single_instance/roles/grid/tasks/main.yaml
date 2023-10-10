@@ -123,7 +123,18 @@
     get_url:
       url: "{{ gridurl }}"
       dest: /opt/LINUX.X64_193000_grid_home.zip
-  
+
+  - name: Download Grid Latest Update
+    get_url:
+      url: "{{ gridLatestUpdateUrl }}"
+      dest: /opt/patch_linux_grid_home.zip
+
+  - name: Change Ownership of Grid Patch File
+    file:
+      path: /opt/patch_linux_grid_home.zip
+      owner: grid
+      group: oinstall
+
   - name: Change Ownership of Grid File
     file:
       path: /opt/LINUX.X64_193000_grid_home.zip
@@ -135,11 +146,27 @@
       path: /opt/grid
       state: directory
       owner: grid
+      group: oinstall
+
+  - name: Create grid patch directory
+    file:
+      path: /opt/grid/patch
+      state: directory
+      owner: grid
+      group: oinstall
 
   - name: Extract Grid to /opt
     ansible.builtin.unarchive:
       src: /opt/LINUX.X64_193000_grid_home.zip
       dest: /opt/grid
+      remote_src: yes
+      owner: grid
+      group: oinstall
+
+  - name: Extract Grid Patch to /opt/grid/patch
+    ansible.builtin.unarchive:
+      src: /opt/patch_linux_grid_home.zip
+      dest: /opt/grid/patch
       remote_src: yes
       owner: grid
       group: oinstall
@@ -209,10 +236,21 @@
       state: absent
       path: /opt/LINUX.X64_193000_grid_home.zip
   
-#TODO: Can only be executed once need to check if exists
-  #- name: Install cvuqdisk Package
-  #  shell: rpm -iv /opt/grid/cv/rpm/cvuqdisk-1.0.10-1.rpm
-  #  become_user: root
+    #Can only be executed once need to check if exists
+    #https://dev.to/koh_sh/how-to-do-if-a-package-is-installed-do-something-with-ansible-3fhi
+  - name: check if cvuqdisk is installed
+    shell: rpm -qa | grep cvuqdisk
+    register: cvuqdisk_installed
+    ignore_errors: True
+    check_mode: False
+    changed_when: False
+
+    #cvuqdisk is installed  when  cvuqdisk_installed == 0
+  - name: Install cvuqdisk Package
+    shell: rpm -iv /opt/grid/cv/rpm/cvuqdisk-1.0.10-1.rpm
+    become_user: root
+    when: cvuqdisk_installed.rc != 0
+
 
   - name: change grid user's password
     shell: echo -e "{{ gridpass }}\n{{ gridpass }}" |(passwd --stdin grid) 
@@ -227,7 +265,7 @@
 #TODO: Everything below can only be executed once need to check if exists or comment out if running again 
 #TODO:  Even though you can create multiple ASM Disks, current configuration will only Create the Pool on the first disk
   - name: Install Grid Infrastructure
-    shell: /opt/grid/gridSetup.sh -silent -responseFile /opt/grid/gridsetup.rsp
+    shell: /opt/grid/gridSetup.sh -silent -responseFile /opt/grid/gridsetup.rsp -applyRU /opt/grid/patch/{{ oracle_patch_number }}
     become_user: grid  
     ignore_errors: yes
 
@@ -236,14 +274,13 @@
     become_user: root
     ignore_errors: yes
 
-  #TODO: execute  orainsit from inventory as root
   - name: Execute orainsit Script as to configure
     shell: /u01/app/oraInventory/orainstRoot.sh
     become_user: root
     ignore_errors: yes
 
   - name: Execute Configuration Grid Script
-    shell: /opt/grid/gridSetup.sh -executeConfigTools -responseFile /opt/grid/gridsetup.rsp -silent
+    shell: /opt/grid/gridSetup.sh -executeConfigTools -responseFile /opt/grid/gridsetup.rsp -silent -applyRU /opt/grid/patch/{{ oracle_patch_number }}
     become_user: grid
 
   - name: Create Data Disk Group

@@ -9,18 +9,18 @@ rg-oracle-demo-eastus-001
 
 2. In the resource group you will find a VM called "vm-0":
 
-<img src="provisioned.jpg" />
+<img src="../media/provisioned.jpg" />
 
 
 3. Check the networking for the Azure VM and ensure that the "ssh" port is allowed:
 
-<img src="sshport.jpg" />
+<img src="../media/sshport.jpg" />
 
 
 
 4. Copy the public IP address of the VM to use in the future steps. An example is given below.
 
-<img src="publicip.jpg" />
+<img src="../media/publicip.jpg" />
 
 
-4. Now, you can go back to README.md
+4. Now you can go back to the main [README.md](../../README.md) file.

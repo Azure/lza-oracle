@@ -1,10 +1,14 @@
 # Using ansible to configure OracleDB & ASM
 
+Now that the required infrastructure is allocated on Azure, it is time to install & configure the Oracle DB via ansible.
+
+
+
 On the compute source running Ubuntu, follow the steps given below:
 
-1. Switch to the branch subdirectory
+1. Switch to the following subdirectory:
 ```
- $ cd ~/projects/oracle-deployment-automation/ansible/bootstrap/single_instance
+ $ cd ansible/bootstrap/single_instance
 ```
 
 2. Create a new file called inventory:
@@ -17,8 +21,13 @@ On the compute source running Ubuntu, follow the steps given below:
 ```
 [dbservers]
 
-<Public IP address of the Azure VM created via terraform>  ansible_ssh_private_key_file=~/.ssh/tf_ora ansible_user=oracle
+<Public IP address of the Azure VM created via terraform>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-single-instance  ansible_user=oracle
 ```
+
+Below is an example:
+
+<img src="../media/inventory.jpg" />
+
 
 4. Start the ansible playbook
 ```
@@ -32,15 +41,15 @@ $ ansible-playbook playbook.yml -i inventory
 
 6. It is acceptable to see warnings highlighted in red.
 
-<img src="warnings.jpg" />
+<img src="../media/warnings.jpg" />
 
 Once the installation and configuration completes, you will see a screen similar to the one below. 
 
-<img src="complete.jpg" />
+<img src="../media/complete.jpg" />
 
 
 
-7. Now you can go back to the main README.md file.
+7. Now you can go back to the main [README.md](../../README.md) file.
 
 
 

@@ -11,32 +11,46 @@ A single Azure VM will be deployed in a VNET in your Azure subscription.
 
 1. An Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/?ref=microsoft.com&utm_source=microsoft.com&utm_medium=docs&utm_campaign=visualstudio) before you begin.
 2. A compute source running Ubuntu. This can either be a local computer or [an Azure VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu). 
-3. [Terraform installed](https://developer.hashicorp.com/terraform/downloads) on the compute source.
-4. [Ansible installed](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html) on the compute source.
-5. [Az CLI installed](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt) on the compute source.
+3. Terraform installed on the compute source. Otherwise, follow the installations instructions [here](https://developer.hashicorp.com/terraform/downloads).
+4. Ansible installed on the compute source. Otherwise, follow the installations instructions [here](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html).
+5. Azure CLI installed on the compute source. Otherwise, follow the installations instructions [here](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt).
 
-## Next Steps
 
-1. [Clone this repo](documentation/CLONE.md) onto the compute resource.
-2. [Provision infrastructure on Azure](terraform/bootstrap/single_instance/README.md) via terraform.
-3. [Review the infrastructure](documentation/REVIEW_INFRA.md) provisioned on Azure.
-4. [Install and configure Oracle DB](documentation/ANSIBLE.md) via ansible.
-5. [Test the final configuration](documentation/TEST.md).
+## Step-by-step Instructions
 
+1. [Clone this repo](docs/wiki/CLONE.md) onto the compute resource.
+2. [Provision infrastructure on Azure](docs/wiki/TERRAFORM.md) via terraform.
+3. [Review the infrastructure](docs/wiki/REVIEW_INFRA.md) provisioned on Azure.
+4. [Install and configure Oracle DB](docs/wiki/ANSIBLE.md) via ansible.
+5. [Test the final configuration](docs/wiki/TEST.md).
+
+
+## Disclaimer
+
+Please note that the policies in this GitHub repository are currently in development and may be subject to frequent changes and updates. This means that the functionality and features of the polices may change without notice. As such, you are advised to ensure that the policies are tested thoroughly in a test environment before considering moving to production.
+
+Additionally you are advised to reach out to the authors of this repository to discuss the policies and their suitability for your environment, before deploying them in production. To do so create an issue [here](https://github.com/alz-oracle/issues), and we will get back to you as soon as possible.
+
+By accessing or using the code in this repository, you agree to assume all risks associated with its use and to use it at your own discretion and risk. Microsoft shall not be liable for any damages or losses resulting from the use of this code. For support details, please see the [Support section](./SUPPORT.md).
+
+
+## Wiki
+
+Please see the content in the [wiki](docs/wiki/Home.md) for more detailed information about the repo and various other pieces of documentation.
+
+## Known Issues
+
+Please see the [Known Issues](docs/wiki/KnownIssues.md) in the wiki.
+
+## Frequently Asked Questions
+
+Please see the [Frequently Asked Questions](docs/wiki/FAQ.md) in the wiki.
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+Please see the [Contributing](docs/wiki/Contributing.md) in the wiki.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Trademarks
 

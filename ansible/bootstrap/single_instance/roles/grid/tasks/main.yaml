@@ -124,32 +124,32 @@
       url: "{{ gridurl }}"
       dest: /opt/LINUX.X64_193000_grid_home.zip
 
-  - name: Download Grid Latest Update
-    get_url:
-      url: "{{ gridLatestUpdateUrl }}"
-      dest: /opt/patch_linux_grid_home.zip
+ # - name: Download Grid Latest Update
+ #   get_url:
+ #     url: "{{ gridLatestUpdateUrl }}"
+ #     dest: /opt/patch_linux_grid_home.zip
 
-  - name: Download OPatch Latest Version
-    get_url:
-      url: "{{ opatchUpdateUrl }}"
-      dest: /opt/opatch.zip
+  #- name: Download OPatch Latest Version
+  #  get_url:
+  #    url: "{{ opatchUpdateUrl }}"
+  #    dest: /opt/opatch.zip
 
-  - name: Change Ownership of Grid Patch File
-    file:
-      path: /opt/patch_linux_grid_home.zip
-      owner: grid
-      group: oinstall
+  #- name: Change Ownership of Grid Patch File
+  #  file:
+  #    path: /opt/patch_linux_grid_home.zip
+  #    owner: grid
+  #    group: oinstall
 
   - name: Change Ownership of Grid File
     file:
       path: /opt/LINUX.X64_193000_grid_home.zip
       owner: grid
       group: oinstall
-  - name: Change Ownership of OPatch  File
-    file:
-      path: /opt/opatch.zip
-      owner: grid
-      group: oinstall
+  #- name: Change Ownership of OPatch  File
+  #  file:
+  #    path: /opt/opatch.zip
+  #    owner: grid
+  #    group: oinstall
 
   - name: Create grid directory
     file:
@@ -158,12 +158,12 @@
       owner: grid
       group: oinstall
 
-  - name: Create grid patch directory
-    file:
-      path: /opt/grid/patch
-      state: directory
-      owner: grid
-      group: oinstall
+  #- name: Create grid patch directory
+  #  file:
+  #    path: /opt/grid/patch
+  #    state: directory
+  #    owner: grid
+  #    group: oinstall
 
   - name: Extract Grid to /opt
     ansible.builtin.unarchive:
@@ -173,34 +173,34 @@
       owner: grid
       group: oinstall
 
-  - name: Delete OPatch
-    ansible.builtin.file:
-      state: absent
-      path: /opt/grid/OPatch
+  #- name: Delete OPatch
+  #  ansible.builtin.file:
+  #    state: absent
+  #    path: /opt/grid/OPatch
 
-  - name: Create grid OPatch directory
-    file:
-      path: /opt/grid/OPatch
-      state: directory
-      owner: grid
-      group: oinstall
+  #- name: Create grid OPatch directory
+  #  file:
+  #    path: /opt/grid/OPatch
+  #    state: directory
+  #    owner: grid
+  #    group: oinstall
 
 
-  - name: Extract Grid OPatch to /opt/grid/OPatch
-    ansible.builtin.unarchive:
-      src: /opt/opatch.zip
-      dest: /opt/grid/
-      remote_src: yes
-      owner: grid
-      group: oinstall
+ # - name: Extract Grid OPatch to /opt/grid/OPatch
+ #   ansible.builtin.unarchive:
+ #     src: /opt/opatch.zip
+ #     dest: /opt/grid/
+ #     remote_src: yes
+ #     owner: grid
+ #     group: oinstall
 
-  - name: Extract Grid Patch to /opt/grid/patch
-    ansible.builtin.unarchive:
-      src: /opt/patch_linux_grid_home.zip
-      dest: /opt/grid/patch
-      remote_src: yes
-      owner: grid
-      group: oinstall
+  #- name: Extract Grid Patch to /opt/grid/patch
+  #  ansible.builtin.unarchive:
+  #    src: /opt/patch_linux_grid_home.zip
+  #    dest: /opt/grid/patch
+  #    remote_src: yes
+  #    owner: grid
+  #    group: oinstall
 
 
   - name: Change Ownership of Grid Folder
@@ -268,10 +268,10 @@
       owner: grid
       mode: 0755
   
-  - name: Delete Grid Zip File
-    file:
-      state: absent
-      path: /opt/LINUX.X64_193000_grid_home.zip
+ # - name: Delete Grid Zip File
+ #   file:
+ #     state: absent
+ #     path: /opt/LINUX.X64_193000_grid_home.zip
   
     #Can only be executed once need to check if exists
     #https://dev.to/koh_sh/how-to-do-if-a-package-is-installed-do-something-with-ansible-3fhi
@@ -308,7 +308,7 @@
  #   ignore_errors: no
 
   - name: Install Grid Infrastructure
-    shell: /opt/grid/gridSetup.sh -silent -responseFile /opt/grid/gridsetup.rsp -applyRU /opt/grid/patch/{{ oracle_patch_number }}
+    shell: /opt/grid/gridSetup.sh -silent -responseFile /opt/grid/gridsetup.rsp #-applyRU /opt/grid/patch/{{ oracle_patch_number }}
     become_user: grid
     ignore_errors: yes
 

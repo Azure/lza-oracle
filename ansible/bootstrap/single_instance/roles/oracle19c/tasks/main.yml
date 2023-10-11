@@ -101,51 +101,52 @@
       url: https://oraclebinarysa.blob.core.windows.net/oracle/LINUX.X64_193000_db_home.zip?sp=r&st=2023-09-13T00:14:00Z&se=2025-07-12T08:14:00Z&spr=https&sv=2022-11-02&sr=b&sig=q6BVLxDZWn%2FkQsGTJ6yXjrejJSCZ00t4gO1tc4tIL3o%3D
       dest: /home/{{ oracle_user }}/LINUX.X64_193000_db_home.zip
 
-  - name: Download Oracle Latest Patch
-    ansible.builtin.get_url:
-      url: https://oraclebinarysa.blob.core.windows.net/oracle/p35319490_190000_Linux-x86-64.zip?sp=r&st=2023-09-13T00:12:57Z&se=2025-02-06T09:12:57Z&spr=https&sv=2022-11-02&sr=b&sig=AlHJXCspMt2ajivjqiXiSzv40D%2B1SIPuSVyrJA8zjGI%3D
-      dest: /home/{{ oracle_user }}/LINUX.X64_ltsp.zip
+ # - name: Download Oracle Latest Patch
+ #   ansible.builtin.get_url:
+ #     url: https://oraclebinarysa.blob.core.windows.net/oracle/p35319490_190000_Linux-x86-64.zip?sp=r&st=2023-09-13T00:12:57Z&se=2025-02-06T09:12:57Z&spr=https&sv=2022-11-02&sr=b&sig=AlHJXCspMt2ajivjqiXiSzv40D%2B1SIPuSVyrJA8zjGI%3D
+ #     dest: /home/{{ oracle_user }}/LINUX.X64_ltsp.zip
 
 
-  - name: Download Oracle Latest OPatch
-    ansible.builtin.get_url:
-      url: https://oraclebinarysa.blob.core.windows.net/oracle/p6880880_190000_LINUX.zip?sp=r&st=2023-10-10T16:47:47Z&se=2024-12-07T01:47:47Z&spr=https&sv=2022-11-02&sr=b&sig=E1Fk8AfQsyjpall%2FsMTWIE4B%2B0bjwVNoYXxbz8D90aw%3D
-      dest: /home/{{ oracle_user }}/opatch.zip
+  #- name: Download Oracle Latest OPatch
+  #  ansible.builtin.get_url:
+  #    url: https://oraclebinarysa.blob.core.windows.net/oracle/p6880880_190000_LINUX.zip?sp=r&st=2023-10-10T16:47:47Z&se=2024-12-07T01:47:47Z&spr=https&sv=2022-11-02&sr=b&sig=E1Fk8AfQsyjpall%2FsMTWIE4B%2B0bjwVNoYXxbz8D90aw%3D
+  #    dest: /home/{{ oracle_user }}/opatch.zip
 
   - name: extract the installation media to $ORACLE_HOME
     unarchive:
       src: /home/oracle/LINUX.X64_193000_db_home.zip
       dest: "{{ oracle_db_home }}"
       remote_src: yes
-  - name: extract the oracle patch media to $ORACLE_HOME/patch
-    unarchive:
-      src: /home/{{ oracle_user }}/LINUX.X64_ltsp.zip
-      dest: "{{ oracle_db_home }}/patch"
-      remote_src: yes
-
-  - name: Delete OPatch
-    ansible.builtin.file:
-      state: absent
-      path: "{{ oracle_db_home }}/OPatch"
-
-  - name: Create grid OPatch directory
-    file:
-      path: "{{ oracle_db_home }}/OPatch"
-      state: directory
-      owner: "{{ oracle_user }}"
-      group: oinstall
+  #- name: extract the oracle patch media to $ORACLE_HOME/patch
+  #  unarchive:
+  #    src: /home/{{ oracle_user }}/LINUX.X64_ltsp.zip
+  #    dest: "{{ oracle_db_home }}/patch"
+  #    remote_src: yes
 
 
-  - name: Extract Grid OPatch to
-    ansible.builtin.unarchive:
-      src: "/home/{{ oracle_user }}/opatch.zip"
-      dest: "{{ oracle_db_home }}"
-      remote_src: yes
-      owner: "{{ oracle_user }}"
-      group: oinstall
+  #- name: Delete OPatch
+  #  ansible.builtin.file:
+  #    state: absent
+  #    path: "{{ oracle_db_home }}/OPatch"
+
+  #- name: Create grid OPatch directory
+  #  file:
+  #    path: "{{ oracle_db_home }}/OPatch"
+  #    state: directory
+  #    owner: "{{ oracle_user }}"
+  #    group: oinstall
+
+
+  #- name: Extract Grid OPatch to
+  #  ansible.builtin.unarchive:
+  #    src: "/home/{{ oracle_user }}/opatch.zip"
+  #    dest: "{{ oracle_db_home }}"
+  #    remote_src: yes
+  #    owner: "{{ oracle_user }}"
+  #    group: oinstall
 
   - name: runInstaller      
-    shell: echo "{{ oracle_pass_raw }}" | ./runInstaller -responseFile /home/{{ oracle_user }}/db_install.rsp -silent -applyRU {{ oracle_db_home }}/patch/{{ oracle_patch_number }}
+    shell: echo "{{ oracle_pass_raw }}" | ./runInstaller -responseFile /home/{{ oracle_user }}/db_install.rsp -silent #-applyRU {{ oracle_db_home }}/patch/{{ oracle_patch_number }}
     ignore_errors: yes
     args:
       chdir: "{{ oracle_db_home }}"

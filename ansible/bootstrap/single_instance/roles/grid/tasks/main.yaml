@@ -302,10 +302,10 @@
 #TODO: Everything below can only be executed once need to check if exists or comment out if running again 
 #TODO:  Even though you can create multiple ASM Disks, current configuration will only Create the Pool on the first disk
 
-  - name: PreCheck Grid Infrastructure
-    shell: /opt/grid/gridSetup.sh -silent -executePrereqs -responseFile /opt/grid/gridsetup.rsp
-    become_user: grid
-    ignore_errors: no
+ # - name: PreCheck Grid Infrastructure
+ #   shell: /opt/grid/gridSetup.sh -silent -executePrereqs -responseFile /opt/grid/gridsetup.rsp
+ #   become_user: grid
+ #   ignore_errors: no
 
   - name: Install Grid Infrastructure
     shell: /opt/grid/gridSetup.sh -silent -responseFile /opt/grid/gridsetup.rsp -applyRU /opt/grid/patch/{{ oracle_patch_number }}

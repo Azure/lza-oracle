@@ -201,13 +201,7 @@
       remote_src: yes
       owner: grid
       group: oinstall
-  - name: Extract Grid Patch to /opt/grid/patch
-    ansible.builtin.unarchive:
-      src: /opt/patch_linux_grid_home.zip
-      dest: /opt/grid/patch
-      remote_src: yes
-      owner: grid
-      group: oinstall
+
 
   - name: Change Ownership of Grid Folder
     file:
@@ -226,13 +220,18 @@
       path: /etc/waagent.conf
       regexp: "ResourceDisk.SwapSizeMB=0"
       replace: "ResourceDisk.SwapSizeMB={{ swapsize }}"
-  
+
   - name: Enable Swap
     replace:
       path: /etc/waagent.conf
       regexp: "ResourceDisk.EnableSwap=n"
       replace: "ResourceDisk.EnableSwap=y"
 
+  - name: Enable Swap Disk
+    replace:
+      path: /etc/waagent.conf
+      regexp: "ResourceDisk.Format=n"
+      replace: "ResourceDisk.Format=y"
   - name: Restart Waagent
     ansible.builtin.service:
       name: waagent
@@ -246,7 +245,7 @@
       group: oinstall
       mode: 0700
 
-
+    #TODO: Password recheck
   - name: Change SysAsmPassword in Grid Response File
     replace:
       path: /opt/grid/gridsetup.rsp
@@ -302,9 +301,15 @@
 
 #TODO: Everything below can only be executed once need to check if exists or comment out if running again 
 #TODO:  Even though you can create multiple ASM Disks, current configuration will only Create the Pool on the first disk
+
+  - name: PreCheck Grid Infrastructure
+    shell: /opt/grid/gridSetup.sh -silent -executePrereqs -responseFile /opt/grid/gridsetup.rsp
+    become_user: grid
+    ignore_errors: no
+
   - name: Install Grid Infrastructure
     shell: /opt/grid/gridSetup.sh -silent -responseFile /opt/grid/gridsetup.rsp -applyRU /opt/grid/patch/{{ oracle_patch_number }}
-    become_user: grid  
+    become_user: grid
     ignore_errors: yes
 
   - name: Execute Root.sh Script as to configure

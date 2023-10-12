@@ -40,9 +40,9 @@ datafileJarLocation:
 datafileDestination:
 recoveryAreaDestination:
 storageType:
-diskGroupName: DATA
+diskGroupName: #DATA
 asmsnmpPassword:
-recoveryGroupName: ASM #RECO degistir
+recoveryGroupName: #ASM #RECO degistir
 characterSet: AL32UTF8
 nationalCharacterSet: UTF8
 registerWithDirService:

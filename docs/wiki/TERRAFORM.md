@@ -38,7 +38,7 @@ $ ls -lha ~/.ssh/
 2. Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file.
 
 ```bash
-$ cd /projects/terraform/bootstrap/single_instance
+$ cd \<path_to_repo\>/terraform/bootstrap/single_instance
 $ touch fixtures.tfvars
 ```
 
@@ -54,7 +54,7 @@ ssh_key = "ssh-rsa xxxxxxxxxxxxxx="
 
 ```
 $ pwd
-/path/to/this/repo/oracle-deployment-automation/terraform/bootstrap/single_instance
+\<path_to_this_repo\>/terraform/bootstrap/single_instance
 
 $ terraform init
 

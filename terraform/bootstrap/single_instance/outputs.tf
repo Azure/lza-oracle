@@ -39,3 +39,20 @@ output "network_location" {
 output "db_subnet" {
   value = module.network.db_subnet
 }
+
+###############################################################################
+#                                                                             #
+#                            Storage                                          #
+#                                                                             #
+###############################################################################
+output "database_data_disks" {
+  value = module.storage.data_disks
+}
+
+output "database_asm_disks" {
+  value = module.storage.asm_disks
+}
+
+output "database_redo_disks" {
+  value = module.storage.redo_disks
+}

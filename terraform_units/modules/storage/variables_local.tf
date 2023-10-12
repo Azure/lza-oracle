@@ -1,7 +1,7 @@
 locals {
   data_disks = flatten(
     [
-      for disk in var.database.data_disks : [
+      for disk in var.database_disks_options.data_disks : [
         for i in range(0, disk.count) : {
           name                      = "${var.vm.name}-datadisk${i}"
           caching                   = disk.caching
@@ -17,7 +17,7 @@ locals {
   )
   asm_disks = flatten(
     [
-      for disk in var.database.asm_disks : [
+      for disk in var.database_disks_options.asm_disks : [
         for i in range(0, disk.count) : {
           name                      = "${var.vm.name}-asmdisk${i}"
           caching                   = disk.caching
@@ -33,7 +33,7 @@ locals {
   )
   redo_disks = flatten(
     [
-      for disk in var.database.redo_disks : [
+      for disk in var.database_disks_options.redo_disks : [
         for i in range(0, disk.count) : {
           name                      = "${var.vm.name}-redodisk${i}"
           caching                   = disk.caching

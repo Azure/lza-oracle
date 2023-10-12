@@ -20,7 +20,7 @@ variable "disk_type" {
   }
 }
 
-variable "database" {
+variable "database_disks_options" {
   description = "Details of the database node"
   default = {
     data_disks = [

@@ -8,7 +8,7 @@ On the compute source running Ubuntu, follow the steps given below:
 
 1. Switch to the following subdirectory:
 ```
- $ cd <path_to_repo>ansible/bootstrap/single_instance
+ $ cd <path_to_repo>/ansible/bootstrap/single_instance
 ```
 
 2. Create a new file called inventory:

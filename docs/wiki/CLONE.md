@@ -11,7 +11,7 @@ Follow the steps given below:
 
 1. Login to the local compute resource running Ubuntu.
 
-2. Install "pip".
+2. Install "pip". If you are using Azure Cloud Shell, then ignore this step.
 ```
 $ sudo apt update
 $ sudo apt install python3-pip

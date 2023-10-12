@@ -49,7 +49,7 @@ Once the installation and configuration completes, you will see a screen similar
 
 
 
-7. Now you can go back to the main [README.md](../../README.md) file.
+7. Now you can go back to the main [README.md](../../README.md#step-by-step-instructions) file.
 
 
 

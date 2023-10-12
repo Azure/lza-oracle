@@ -23,4 +23,4 @@ rg-oracle-demo-eastus-001
 <img src="../media/publicip.jpg" />
 
 
-4. Now you can go back to the main [README.md](../../README.md) file.
+4. Now you can go back to the main [README.md](../../README.md#step-by-step-instructions) file.

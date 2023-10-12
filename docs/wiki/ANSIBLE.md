@@ -34,7 +34,7 @@ Below is an example:
 $ ansible-playbook playbook.yml -i inventory
 ```
 
-(If using Azure Powel Shell, remember to refresh your browser every 15 minutes or so since the shell times out after 20 minutes of inaction.)
+(If using Azure Cloud Shell, remember to refresh your browser every 15 minutes or so since the shell times out after 20 minutes of inaction.)
 
 
 5. If you get an error stating "ERROR! Invalid callback for stdout specified: community.general.yaml" then run the following step and then re-run the previous step.

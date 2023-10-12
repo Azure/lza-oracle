@@ -44,6 +44,29 @@
   command: sysctl -p
   ignore_errors: yes
 
+
+- name: Change Linux Swap Size
+  replace:
+    path: /etc/waagent.conf
+    regexp: "ResourceDisk.SwapSizeMB=0"
+    replace: "ResourceDisk.SwapSizeMB={{ swapsize }}"
+
+- name: Enable Swap
+  replace:
+    path: /etc/waagent.conf
+    regexp: "ResourceDisk.EnableSwap=n"
+    replace: "ResourceDisk.EnableSwap=y"
+
+- name: Enable Swap Disk
+  replace:
+    path: /etc/waagent.conf
+    regexp: "ResourceDisk.Format=n"
+    replace: "ResourceDisk.Format=y"
+- name: Restart Waagent
+  ansible.builtin.service:
+    name: waagent
+    state: restarted
+
 - name: oracle-recommended PAM config
   lineinfile:
     dest: /etc/pam.d/login

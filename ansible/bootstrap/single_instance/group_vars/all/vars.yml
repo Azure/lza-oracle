@@ -13,3 +13,5 @@ oracle_groups: wheel,dba,backupdba,oper,dgdba,kmdba,racdba
 
 oracle_user: oracle
 oracle_pass: $1$salt$6hY7SFGTovD5BRJ.4zYAd1
+
+swapsize: 16384

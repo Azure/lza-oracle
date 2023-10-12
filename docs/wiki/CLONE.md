@@ -9,7 +9,7 @@
 
 Follow the steps given below:
 
-1. Login to the local compute resource running Ubuntu.
+1. Login to the local compute resource running Ubuntu. If using Azure Cloud Shell, login to  [Azure Cloud Shell](https://shell.azure.com).
 
 2. Install "pip". If you are using Azure Cloud Shell, then ignore this step.
 ```

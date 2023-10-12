@@ -62,7 +62,7 @@ ssh_key = "ssh-rsa xxxxxxxxxxxxxx="
 
 ```
 $ pwd
-<path_to_repo>/terraform/bootstrap/single_instance
+~/projects/lza-oracle/terraform/bootstrap/single_instance
 
 $ terraform init
 

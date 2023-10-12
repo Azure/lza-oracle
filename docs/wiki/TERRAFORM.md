@@ -55,6 +55,9 @@ Here is a sample `fixtures.tfvars` file.
 ssh_key = "ssh-rsa xxxxxxxxxxxxxx="
 ```
 
+<img src="../media/fixtures.jpg" />
+
+
 4. Next, execute below Terraform commands. When you deploy resources to Azure, you have to indicate `fixtures.tfvars` as a variable file, which contains the ssh public key.
 
 ```

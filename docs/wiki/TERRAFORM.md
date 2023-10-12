@@ -33,9 +33,16 @@ $ ls -lha ~/.ssh/
 -rw-r--r--   1 yourname  staff   589B  8 17  2023 lza-oracle-single-instance.pub
 ```
 
-Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file, then copy the contents of the ssh public key used for deploying a virtual machine on Azure (~/.ssh-oracle-single-instance.pub).
+Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file.
 
-This is a sample `fixtures.tfvars` file.
+```bash
+$ cd /projects/terraform/bootstrap/single_instance
+$ touch fixtures.tfvars
+```
+
+Then copy the contents of the ssh public key used for deploying a virtual machine on Azure (~/.ssh-oracle-single-instance.pub). Modify the file format so that it matches the following. Make sure to include the double quotes. 
+
+Here is a sample `fixtures.tfvars` file.
 
 ```tf:fixtures.tfvars
 ssh_key = "ssh-rsa xxxxxxxxxxxxxx="

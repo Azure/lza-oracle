@@ -23,7 +23,7 @@ To deploy single Oracle instance on the VM, you can use **single_instance** modu
 
 Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create. 
 
-Do the following on the compure source:
+1. Do the following on the compure source:
 
 ```bash
 $ ssh-keygen -f ~/.ssh/lza-oracle-single-instance
@@ -33,14 +33,14 @@ $ ls -lha ~/.ssh/
 -rw-r--r--   1 yourname  staff   589B  8 17  2023 lza-oracle-single-instance.pub
 ```
 
-Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file.
+2. Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file.
 
 ```bash
 $ cd /projects/terraform/bootstrap/single_instance
 $ touch fixtures.tfvars
 ```
 
-Then copy the contents of the ssh public key used for deploying a virtual machine on Azure (~/.ssh-oracle-single-instance.pub). Modify the file format so that it matches the following. Make sure to include the double quotes. 
+3. Then copy the contents of the ssh public key used for deploying a virtual machine on Azure (~/.ssh-oracle-single-instance.pub). Modify the file format so that it matches the following. Make sure to include the double quotes. 
 
 Here is a sample `fixtures.tfvars` file.
 
@@ -48,7 +48,7 @@ Here is a sample `fixtures.tfvars` file.
 ssh_key = "ssh-rsa xxxxxxxxxxxxxx="
 ```
 
-Then, execute below Terraform commands. When you deploy resources to Azure, you have to indicate `fixtures.tfvars` as a variable file, which contains the ssh public key.
+4. Next, execute below Terraform commands. When you deploy resources to Azure, you have to indicate `fixtures.tfvars` as a variable file, which contains the ssh public key.
 
 ```
 $ pwd
@@ -61,13 +61,13 @@ $ terraform plan -var-file=fixtures.tfvars
 $ terraform apply -var-file=fixtures.tfvars
 ```
 
-Finally, you can connect to the virtual machine with ssh private key. While deploying resources, a public ip address is generated and attached to the virtual machine, so that you can connect to the virtual machine with this IP address. The username is `oracle`, which is fixed in `terraform/bootstrap/single_instance/module.tf`.
+5. Finally, you can connect to the virtual machine with ssh private key. While deploying resources, a public ip address is generated and attached to the virtual machine, so that you can connect to the virtual machine with this IP address. The username is `oracle`, which is fixed in `terraform/bootstrap/single_instance/module.tf`.
 
 ```
 $ ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
 ```
 
-Now you can go back to the main [README.md](../../README.md) file.
+6. Now you can go back to the main [README.md](../../README.md) file.
 
 
 

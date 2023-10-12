@@ -7,6 +7,8 @@ This repository describes how to create and install Oracle DB on an Azure VM in 
 
 A single Azure VM will be deployed in a VNET in your Azure subscription.
 
+<img src="docs/media/single-instance-overview.png" />
+
 ## Pre-requisities
 
 1. An Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/?ref=microsoft.com&utm_source=microsoft.com&utm_medium=docs&utm_campaign=visualstudio) before you begin.

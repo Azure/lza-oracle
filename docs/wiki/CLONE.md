@@ -28,4 +28,4 @@ $ cd projects
 $ git clone https://github.com/Azure/lza-oracle.git
 ```
 
-5. Now you can go back to the main [README.md](../../README.md) file.
+5. Now you can go back to the main [README.md](../../README.md#step-by-step-instructions) file.

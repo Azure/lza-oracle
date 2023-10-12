@@ -23,7 +23,7 @@ To deploy single Oracle instance on the VM, you can use **single_instance** modu
 
 Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create. 
 
-1. Do the following on the compure source:
+1. Do the following on the compute source:
 
 ```bash
 $ ssh-keygen -f ~/.ssh/lza-oracle-single-instance

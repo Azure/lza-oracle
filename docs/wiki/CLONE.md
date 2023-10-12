@@ -20,6 +20,7 @@ $ sudo apt install python3-pip
 3. Create a subdirectory to clone the repo.
 ```
 $ mkdir ~/projects
+$ cd projects
 ```
 
 4. Start cloning the repo.

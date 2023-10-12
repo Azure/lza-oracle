@@ -77,7 +77,7 @@ $ terraform apply -var-file=fixtures.tfvars
 $ ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
 ```
 
-6. Now you can go back to the main [README.md](../../README.md) file.
+6. Now you can go back to the main [README.md](../../README.md#step-by-step-instructions) file.
 
 
 

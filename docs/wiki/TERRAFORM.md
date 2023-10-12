@@ -39,11 +39,15 @@ $ ls -lha ~/.ssh/
 
 
 ```bash
-$ cd <path_to_repo>/terraform/bootstrap/single_instance
+$ cd ~/projects/lza-oracle/terraform/bootstrap/single_instance
 $ cat ~/.ssh/lza-oracle-single-instance.pub >> fixtures.tfvars
 ```
 
 3. Edit the file and modify it so that the format matches the following. Make sure to include the double quotes. 
+
+```bash
+$ nano  ~/projects/lza-oracle/terraform/bootstrap/single_instance/fixtures.tfvars
+```
 
 Here is a sample `fixtures.tfvars` file.
 

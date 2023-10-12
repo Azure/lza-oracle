@@ -4,11 +4,11 @@ Now that the required infrastructure is allocated on Azure, it is time to instal
 
 
 
-On the compute source running Ubuntu, follow the steps given below:
+On the compute source running Ubuntu or on Azure Cloud Shell, follow the steps given below:
 
 1. Switch to the following subdirectory:
 ```
- $ cd <path_to_repo>/ansible/bootstrap/single_instance
+ $ cd ~/projects/lza-oracle/ansible/bootstrap/single_instance
 ```
 
 2. Create a new file called inventory:

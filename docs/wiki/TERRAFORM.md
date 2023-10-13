@@ -40,7 +40,7 @@ $ ls -lha ~/.ssh/
 
 ```bash
 $ cd ~/projects/lza-oracle/terraform/bootstrap/single_instance
-$ cat ~/.ssh/lza-oracle-single-instance.pub >> fixtures.tfvars
+$ cat ~/.ssh/lza-oracle-single-instance.pub > fixtures.tfvars
 ```
 
 3. Edit the file and modify it so that the format matches the following. Make sure to include the double quotes. 

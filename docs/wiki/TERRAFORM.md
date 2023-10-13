@@ -1,12 +1,6 @@
-# Introduction to Deploying Single VM for Oracle
+# Provisioning of Azure VM via Terraform
 
-## Background
 
-This guide describes how to get started with implementing Oracle Database on Azure VM. In the guide it is assumed that you will be using Terraform and Ansible to deploy Oracle on Azure VMs.
-
-The repo at present contains code and details for the following:
-
-- Deploy single VM for Oracle in the VNET.
 
 ## Prerequisites
 
@@ -17,21 +11,21 @@ The repo at present contains code and details for the following:
 
 To use Terraform commands against your Azure subscription, you must first authenticate Terraform to that subscription. [This doc](https://learn.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash) describes how to authenticate Terraform to your Azure subscription.
 
-## Getting started
 
-- Fork this repo to your own GitHub organization, you should not create a direct clone of the repo. Pull requests based off direct clones of the repo will not be allowed.
-- Clone the repo from your own GitHub organization to your developer workstation.
-- Review your current configuration to determine what scenario applies to you. We have guidance that will help deploy Oracle VMs in your subscription.
 
 ### How to deploy single VM for Oracle in the VNET
 
 In this module, you will deploy single virtual machine in the virtual network.
 
-<img src="images/single_vm.png" />
+<img src="../media/single_vm.png" />
 
 To deploy single Oracle instance on the VM, you can use **single_instance** module in this repo. The module is located on `terraform/bootstrap/single_instance` directory.
 
-Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create.
+Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create. To do so, please follow the steps given below.
+
+
+
+1. Do the following on the compute source:
 
 ```bash
 $ ssh-keygen -f ~/.ssh/lza-oracle-single-instance
@@ -41,19 +35,34 @@ $ ls -lha ~/.ssh/
 -rw-r--r--   1 yourname  staff   589B  8 17  2023 lza-oracle-single-instance.pub
 ```
 
-Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file, then copy the contents of the ssh public key used for deploying a virtual machine on Azure (~/.ssh-oracle-single-instance.pub).
+2. Next, you go to `terraform/bootstrap/single_instance` directory and create `fixtures.tfvars` file as follows. The contents of the ssh public key that you created in the previous step are copied to the new file.
 
-This is a sample `fixtures.tfvars` file. For more reference on all variables you can set, see [variables description](variables.md)
+
+```bash
+$ cd ~/projects/lza-oracle/terraform/bootstrap/single_instance
+$ cat ~/.ssh/lza-oracle-single-instance.pub >> fixtures.tfvars
+```
+
+3. Edit the file and modify it so that the format matches the following. Make sure to include the double quotes. 
+
+```bash
+$ nano  ~/projects/lza-oracle/terraform/bootstrap/single_instance/fixtures.tfvars
+```
+
+Here is a sample `fixtures.tfvars` file.
 
 ```tf:fixtures.tfvars
 ssh_key = "ssh-rsa xxxxxxxxxxxxxx="
 ```
 
-Then, execute below Terraform commands. When you deploy resources to Azure, you have to indicate `fixtures.tfvars` as a variable file, which contains the ssh public key.
+<img src="../media/fixtures.jpg" />
+
+
+4. Next, execute below Terraform commands. When you deploy resources to Azure, you have to indicate `fixtures.tfvars` as a variable file, which contains the ssh public key.
 
 ```
 $ pwd
-/path/to/this/repo/oracle-deployment-automation/terraform/bootstrap/single_instance
+~/projects/lza-oracle/terraform/bootstrap/single_instance
 
 $ terraform init
 
@@ -62,11 +71,21 @@ $ terraform plan -var-file=fixtures.tfvars
 $ terraform apply -var-file=fixtures.tfvars
 ```
 
-Finally, you can connect to the virtual machine with ssh private key. While deploying resources, a public ip address is generated and attached to the virtual machine, so that you can connect to the virtual machine with this IP address. The username is `oracle`, which is fixed in `terraform/bootstrap/single_instance/module.tf`.
+(When prompted for "Enter a value:" , type in "yes" and press Enter)
+
+
+(If using Azure Cloud Shell, remember to refresh your browser by scrolling up or down, every 15 minutes or so since the shell times out after 20 minutes of inaction.)
+
+
+5. (OPTIONAL) Finally, you can connect to the virtual machine with ssh private key. While deploying resources, a public ip address is generated and attached to the virtual machine, so that you can connect to the virtual machine with this IP address. The username is `oracle`, which is fixed in `terraform/bootstrap/single_instance/module.tf`.
 
 ```
 $ ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
 ```
+
+6. Now you can go back to the main [README.md](../../README.md#step-by-step-instructions) file.
+
+
 
 ### How to enable diagnostic settings
 

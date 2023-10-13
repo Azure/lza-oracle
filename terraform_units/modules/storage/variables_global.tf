@@ -75,6 +75,16 @@ variable "data_disk_locks" {
     error_message = "Lock type must be one of: CanNotDelete, ReadOnly."
   }
 }
+
+variable "availability_zone" {
+  description = "The availability zone of the disk"
+  default     = null
+  validation {
+    condition     = contains(["1", "2", "3"], var.availability_zone)
+    error_message = "Allowed values are \"1\", \"2\", \"3\""
+  }
+}
+
 variable "tags" {
   description = "Tags to be added to the resources"
   default     = {}

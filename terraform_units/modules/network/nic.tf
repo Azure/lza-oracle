@@ -52,7 +52,8 @@ resource "azurerm_public_ip" "vm_pip" {
   name                = "vmpip"
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
+  sku                 = "Standard"
 
   tags = merge(local.tags, var.tags)
 }

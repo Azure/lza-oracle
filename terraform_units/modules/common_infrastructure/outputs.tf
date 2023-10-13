@@ -66,6 +66,11 @@ output "diagnostic_target" {
   value       = var.diagnostic_target
 }
 
+output "availability_zone" {
+  description = "Availability zones"
+  value       = var.availability_zone
+}
+
 output "tags" {
   description = "Tags applied to the resources"
   value       = var.tags

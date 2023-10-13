@@ -33,6 +33,7 @@ Below is an example:
 ```
 $ ansible-playbook playbook.yml -i inventory
 ```
+(If you are prompted for "are you sure you want to continue connecting?", enter "yes")
 
 (If using Azure Cloud Shell, remember to refresh your browser by scrolling up or down, every 15 minutes or so since the shell times out after 20 minutes of inaction.)
 

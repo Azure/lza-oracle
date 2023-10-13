@@ -65,10 +65,6 @@ variable "resource_group_locks" {
 variable "availability_zone" {
   description = "The availability zones of the resource"
   default     = null
-  validation {
-    condition     = contains(["1", "2", "3"], var.availability_zone)
-    error_message = "Allowed values are \"1\", \"2\", \"3\""
-  }
 }
 
 variable "tags" {

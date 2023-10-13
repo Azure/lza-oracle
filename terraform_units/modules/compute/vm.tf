@@ -45,7 +45,8 @@ resource "azurerm_linux_virtual_machine" "oracle_vm" {
     identity_ids = [azurerm_user_assigned_identity.deployer.id]
   }
 
-  zone = var.availability_zone
+  zone                = var.availability_zone
+  availability_set_id = var.availability_zone == null ? data.azurerm_availability_set.oracle_vm[0].id : null
 
   tags = merge(local.tags, var.tags)
 

@@ -6,7 +6,7 @@ module "common_infrastructure" {
   infrastructure                 = local.infrastructure
   is_diagnostic_settings_enabled = var.is_diagnostic_settings_enabled
   diagnostic_target              = var.diagnostic_target
-  availability_zone              = "1"
+  availability_zone              = 1
   tags                           = var.resourcegroup_tags
 }
 

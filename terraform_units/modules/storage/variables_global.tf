@@ -81,6 +81,11 @@ variable "availability_zone" {
   default     = null
 }
 
+variable "is_data_guard" {
+  description = "Whether Data Guard is enabled"
+  default     = false
+}
+
 variable "tags" {
   description = "Tags to be added to the resources"
   default     = {}

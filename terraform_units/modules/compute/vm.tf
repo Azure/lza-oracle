@@ -4,7 +4,7 @@
 #                                                                                       #
 #########################################################################################
 resource "azurerm_linux_virtual_machine" "oracle_vm" {
-  count               = var.database_server_count
+  count               = 1
   name                = "${var.vm_name}-${count.index}"
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
@@ -42,7 +42,7 @@ resource "azurerm_linux_virtual_machine" "oracle_vm" {
 
   identity {
     type         = var.aad_system_assigned_identity ? "SystemAssigned, UserAssigned" : "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.deployer.id]
+    identity_ids = [azurerm_user_assigned_identity.deployer[0].id]
   }
 
   zone                = var.availability_zone
@@ -60,7 +60,7 @@ resource "azurerm_linux_virtual_machine" "oracle_vm" {
 }
 
 data "azurerm_virtual_machine" "oracle_vm" {
-  count               = var.database_server_count
+  count               = 1
   name                = "${var.vm_name}-${count.index}"
   resource_group_name = var.resource_group.name
 

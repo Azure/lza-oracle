@@ -36,9 +36,9 @@ resource "azurerm_monitor_diagnostic_setting" "nsg" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "pip" {
-  count                          = var.is_diagnostic_settings_enabled ? 1 : 0
+  count                          = var.is_diagnostic_settings_enabled ? var.is_data_guard ? 3 : 1 : 0
   name                           = "pip"
-  target_resource_id             = azurerm_public_ip.vm_pip.id
+  target_resource_id             = azurerm_public_ip.vm_pip[count.index].id
   storage_account_id             = var.diagnostic_target == "Storage_Account" ? var.storage_account_id : null
   log_analytics_workspace_id     = var.diagnostic_target == "Log_Analytics_Workspace" ? var.log_analytics_workspace_id : null
   eventhub_authorization_rule_id = var.diagnostic_target == "Event_Hubs" ? var.eventhub_authorization_rule_id : null
@@ -110,8 +110,8 @@ data "azurerm_monitor_diagnostic_categories" "vnet" {
 }
 
 data "azurerm_network_interface" "nic" {
-  count               = 1
-  name                = "oraclevmnic1"
+  count               = var.is_data_guard ? 3 : 1
+  name                = "oraclevmnic-${count.index}"
   resource_group_name = var.resource_group.name
 
   depends_on = [azurerm_network_interface.oracle_db]
@@ -126,8 +126,8 @@ data "azurerm_network_security_group" "nsg" {
 }
 
 data "azurerm_public_ip" "pip" {
-  count               = 1
-  name                = "vmpip"
+  count               = var.is_data_guard ? 3 : 1
+  name                = "vmpip-${count.index}"
   resource_group_name = var.resource_group.name
 
   depends_on = [azurerm_public_ip.vm_pip]

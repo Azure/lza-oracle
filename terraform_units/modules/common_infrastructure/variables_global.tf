@@ -1,5 +1,10 @@
 variable "infrastructure" {}
 
+variable "is_data_guard" {
+  description = "Whether Data Guard is enabled"
+  default     = false
+}
+
 variable "is_diagnostic_settings_enabled" {
   description = "Whether diagnostic settings are enabled"
   default     = false

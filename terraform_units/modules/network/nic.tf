@@ -4,8 +4,8 @@
 #                                                                                       #
 #########################################################################################
 resource "azurerm_network_interface" "oracle_db" {
-  count = 1
-  name  = "oraclevmnic1"
+  count = var.is_data_guard ? 3 : 1
+  name  = "oraclevmnic-${count.index}"
 
   location                      = var.resource_group.location
   resource_group_name           = var.resource_group.name
@@ -31,7 +31,7 @@ resource "azurerm_network_interface" "oracle_db" {
         pub.value.private_ip_address_allocation
       )
 
-      public_ip_address_id = azurerm_public_ip.vm_pip.id
+      public_ip_address_id = azurerm_public_ip.vm_pip[count.index].id
 
       primary = pub.value.primary
     }
@@ -41,15 +41,16 @@ resource "azurerm_network_interface" "oracle_db" {
 }
 
 data "azurerm_network_interface" "oracle_db" {
-  count               = 1
-  name                = "oraclevmnic1"
+  count               = var.is_data_guard ? 3 : 1
+  name                = "oraclevmnic-${count.index}"
   resource_group_name = var.resource_group.name
 
   depends_on = [azurerm_network_interface.oracle_db]
 }
 
 resource "azurerm_public_ip" "vm_pip" {
-  name                = "vmpip"
+  count               = var.is_data_guard ? 3 : 1
+  name                = "vmpip-${count.index}"
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
   allocation_method   = "Static"
@@ -59,7 +60,8 @@ resource "azurerm_public_ip" "vm_pip" {
 }
 
 data "azurerm_public_ip" "vm_pip" {
-  name                = "vmpip"
+  count               = var.is_data_guard ? 3 : 1
+  name                = "vmpip-${count.index}"
   resource_group_name = var.resource_group.name
 
   depends_on = [azurerm_public_ip.vm_pip]

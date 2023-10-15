@@ -16,7 +16,7 @@ module "vm_primary" {
   vm_name                   = "vm-primary"
   public_key                = var.ssh_key
   sid_username              = "oracle"
-  nic_id                    = "/subscriptions/${module.common_infrastructure.current_subscription.subscription_id}/resourceGroups/${module.common_infrastructure.resource_group.name}/providers/Microsoft.Network/networkInterfaces/oraclevmnic-0"
+  nic_id                    = module.network.nics_oracledb_primary.id
   vm_sku                    = var.vm_sku
   vm_source_image_reference = var.vm_source_image_reference
 
@@ -58,7 +58,7 @@ module "vm_secondary" {
   vm_name                   = "vm-secondary"
   public_key                = var.ssh_key
   sid_username              = "oracle"
-  nic_id                    = "/subscriptions/${module.common_infrastructure.current_subscription.subscription_id}/resourceGroups/${module.common_infrastructure.resource_group.name}/providers/Microsoft.Network/networkInterfaces/oraclevmnic-1"
+  nic_id                    = module.network.nics_oracledb_secondary.id
   vm_sku                    = var.vm_sku
   vm_source_image_reference = var.vm_source_image_reference
 
@@ -100,7 +100,7 @@ module "vm_observer" {
   vm_name                   = "vm-observer"
   public_key                = var.ssh_key
   sid_username              = "oracle"
-  nic_id                    = "/subscriptions/${module.common_infrastructure.current_subscription.subscription_id}/resourceGroups/${module.common_infrastructure.resource_group.name}/providers/Microsoft.Network/networkInterfaces/oraclevmnic-2"
+  nic_id                    = module.network.nics_oracledb_observer.id
   vm_sku                    = var.vm_sku
   vm_source_image_reference = var.vm_source_image_reference
 
@@ -259,7 +259,7 @@ module "storage_observer" {
 #########################################################################################
 resource "azapi_resource" "jit_ssh_policy_primary" {
   count                     = module.vm_primary.database_server_count
-  name                      = "JIT-SSH-Policy"
+  name                      = "JIT-SSH-Policy-primary"
   parent_id                 = "${module.common_infrastructure.resource_group.id}/providers/Microsoft.Security/locations/${module.common_infrastructure.resource_group.location}"
   type                      = "Microsoft.Security/locations/jitNetworkAccessPolicies@2020-01-01"
   schema_validation_enabled = false
@@ -285,7 +285,7 @@ resource "azapi_resource" "jit_ssh_policy_primary" {
 
 resource "azapi_resource" "jit_ssh_policy_secondary" {
   count                     = module.vm_secondary.database_server_count
-  name                      = "JIT-SSH-Policy"
+  name                      = "JIT-SSH-Policy-secondary"
   parent_id                 = "${module.common_infrastructure.resource_group.id}/providers/Microsoft.Security/locations/${module.common_infrastructure.resource_group.location}"
   type                      = "Microsoft.Security/locations/jitNetworkAccessPolicies@2020-01-01"
   schema_validation_enabled = false
@@ -311,7 +311,7 @@ resource "azapi_resource" "jit_ssh_policy_secondary" {
 
 resource "azapi_resource" "jit_ssh_policy_observer" {
   count                     = module.vm_observer.database_server_count
-  name                      = "JIT-SSH-Policy"
+  name                      = "JIT-SSH-Policy-observer"
   parent_id                 = "${module.common_infrastructure.resource_group.id}/providers/Microsoft.Security/locations/${module.common_infrastructure.resource_group.location}"
   type                      = "Microsoft.Security/locations/jitNetworkAccessPolicies@2020-01-01"
   schema_validation_enabled = false

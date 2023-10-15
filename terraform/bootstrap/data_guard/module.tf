@@ -196,7 +196,7 @@ module "storage_primary" {
     asm_disks  = var.database_disks_options.asm_disks
     redo_disks = var.database_disks_options.redo_disks
   }
-  availability_zone = 1
+  availability_zone = module.vm_primary.availability_zone
 
   role_assignments = {
     role_assignment_1 = {
@@ -219,7 +219,7 @@ module "storage_secondary" {
     asm_disks  = var.database_disks_options.asm_disks
     redo_disks = var.database_disks_options.redo_disks
   }
-  availability_zone = 2
+  availability_zone = module.vm_secondary.availability_zone
 
   role_assignments = {
     role_assignment_1 = {
@@ -242,7 +242,7 @@ module "storage_observer" {
     asm_disks  = var.database_disks_options.asm_disks
     redo_disks = var.database_disks_options.redo_disks
   }
-  availability_zone = 3
+  availability_zone = module.vm_observer.availability_zone
 
   role_assignments = {
     role_assignment_1 = {

@@ -29,7 +29,7 @@ In this module, you will deploy single virtual machine in the virtual network.
 
 <img src="images/vm_for_data_guard.png" />
 
-To deploy Oracle Data Guard on the VMs, you can use **data_guarde** module in this repo. The module is located on `terraform/bootstrap/data_guarde` directory.
+To deploy Oracle Data Guard on the VMs, you can use **data_guard** module in this repo. The module is located on `terraform/bootstrap/data_guard` directory.
 
 Before using this module, you have to create your own ssh key to deploy and connect virtual machines you will create.
 

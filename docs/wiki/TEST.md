@@ -3,7 +3,7 @@
 
 1. From the compute source, ssh into the Azure VM:
 ```
-$ ssh -i ~/.ssh/lza-oracle-single-instance  <public IP address of the Azure VM>
+$ ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
 ```
 
 2. Check the Oracle related environment variables:

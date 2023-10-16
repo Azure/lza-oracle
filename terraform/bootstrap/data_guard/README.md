@@ -34,9 +34,9 @@ To deploy Oracle Data Guard on the VMs, you can use **data_guard** module in thi
 Before using this module, you have to create your own ssh key to deploy and connect virtual machines you will create.
 
 ```bash
-$ ssh-keygen -f ~/.ssh/lza-oracle-data-guard-instance
+ssh-keygen -f ~/.ssh/lza-oracle-data-guard-instance
 
-$ ls -lha ~/.ssh/
+ls -lha ~/.ssh/
 -rw-------   1 yourname  staff   2.6K  8 17  2023 lza-oracle-data-guard-instance
 -rw-r--r--   1 yourname  staff   589B  8 17  2023 lza-oracle-data-guard-instance.pub
 ```

@@ -1,12 +1,23 @@
 name: Deploy Single Instance Oracle DB on Azure
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, features/* ]
+  pull_request:
+    branches: [ main ]
+    
 #push, pull_request,
 env:
   TF_LOG: INFO
-  ResourceGroupLocation: ${{ vars.AZ_LOCATION }}
-  STORAGE_ACCOUNT_NAME: ${{ vars.STORAGE_ACCOUNT_NAME }}
-  CONTAINER_NAME: ${{ vars.STORAGE_ACCOUNT_CONTAINER_NAME }}
+  AZ_LOCATION: "eastus" # can be parameterized
+  AZ_RG_BASENAME: "Oracle-test" # can be parameterized
 
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+  pull-requests: write
+  
 jobs:
   terraform:
     name: '🔧 Terraform'
@@ -27,7 +38,19 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.6.0
-        terraform_wrapper: false
+        terraform_wrapper: false # keep it false to be able to read the outputs values of terraform
+
+    #Check if the SSH key is empty
+    - name: 🔎 Validate SSH Key is not empty
+      run: |
+        if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]
+        then
+          echo "SSH_PRIVATE_KEY is empty, you should add a SSH key to the repository secrets. Name of the secret should be SSH_PRIVATE_KEY"
+          exit 1
+        else
+          echo "SSH_PRIVATE_KEY is not empty"
+        fi
+    
 
     - name: 🗒️ Create the SSH public key for VM
       run: |
@@ -45,26 +68,17 @@ jobs:
         echo "currentDate=$(date)" >> $GITHUB_ENV
         echo "currentDate=${{env.currentDate}}"
 
-    - name: 🔎 Validate SSH Key is not empty
-      run: |
-        if [ -z "${{env.SSH_KEY}}" ]
-        then
-          echo "SSH_KEY is empty"
-          exit 1
-        else
-          echo "SSH_KEY is not empty"
-        fi
-    
+
       # Generate random string for suffix
     - name: 🔎 Generate Random String for Resource Group Name
       id: resourcegroup-generator
-      run: echo ResourceGroupName=${{vars.AZ_RG_BASENAME}}-$(date +%s) >> $GITHUB_ENV 
+      run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-$(date +%s) >> $GITHUB_ENV 
     - run: echo ${{env.ResourceGroupName}}
 
     - name: 🗒️ Create a tfvars file for terraform
       run: |
         cat > terraform.tfvars <<EOF
-        location = "${{vars.AZ_LOCATION}}"
+        location = "${{env.AZ_LOCATION}}"
         resourcegroup_name = "${{env.ResourceGroupName}}"
         resourcegroup_tags = {
           "environment" = "dev"
@@ -87,8 +101,9 @@ jobs:
     - name: 🔑 Login via Azure CLI
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-   
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
@@ -98,18 +113,49 @@ jobs:
         RESOURCE_GROUP: ${{ env.ResourceGroupName }}
       run: terraform init
 
+
       # Run a terraform validate
     - name: 🔎 Terraform Validate
       id: validate
       if: github.ref != 'refs/heads/main' && (success() || failure())
       run: terraform validate -no-color
 
-    # Run a terraform plan for pull requests only
+      # Run a terraform plan for pull requests only and add a comment 
     - name: 💻 Terraform Plan
       id: plan
-    # if: github.event_name == 'pull_request'
-      run: terraform plan
-    
+      continue-on-error: true
+      run: terraform plan -no-color
+
+
+    - name: "Add a comment to pull requests with plan resutls"
+      id: comment
+      uses: actions/github-script@v6
+      if: (github.event_name == 'pull_request' || github.event_name == 'push')
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+            const output = `
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            await github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+            })
+            
+
+
+    - name: "◻️ Terraform Plan Status ⁉️"
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
+
           # On push to main, build or change infrastructure according to Terraform configuration files
       # On push to main, build or change infrastructure according to Terraform configuration files
     - name: 💻 Terraform Apply
@@ -119,9 +165,6 @@ jobs:
     - name: 🔃 Terraform Refresh State
       run: terraform  apply -refresh-only -auto-approve
 
-    - run: echo ${{ steps.plan.outputs.stdout }}
-    - run: echo ${{ steps.plan.outputs.stderr }}
-    - run: echo ${{ steps.plan.outputs.exitcode }}
     - run: echo "vm_public_ip_address=$(terraform output vm_public_ip_address)" >> $GITHUB_ENV
     - run: echo ${{env.vm_public_ip_address}}
 
@@ -168,7 +211,9 @@ jobs:
       - name: 🔑 Login via Azure CLI
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       # Get Subscription ID
       - name: 🔎 Get Subscription ID
@@ -185,7 +230,9 @@ jobs:
       - name: 🔑 Login via Az Module
         uses: azure/login@v1
         with:
-          creds: ${{secrets.AZURE_CREDENTIALS}}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true 
 
       - name: ✅ Enable JIT on VM
@@ -196,7 +243,7 @@ jobs:
 
             $JitPolicyArr=@($JitPolicyVm1)
 
-            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.ResourceGroupLocation}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
+            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
           azPSVersion: "latest"
   
 

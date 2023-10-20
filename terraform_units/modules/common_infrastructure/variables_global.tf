@@ -1,5 +1,10 @@
 variable "infrastructure" {}
 
+variable "is_data_guard" {
+  description = "Whether Data Guard is enabled"
+  default     = false
+}
+
 variable "is_diagnostic_settings_enabled" {
   description = "Whether diagnostic settings are enabled"
   default     = false
@@ -61,6 +66,12 @@ variable "resource_group_locks" {
     error_message = "Lock type must be one of: CanNotDelete, ReadOnly."
   }
 }
+
+variable "availability_zone" {
+  description = "The availability zones of the resource"
+  default     = null
+}
+
 variable "tags" {
   description = "Tags to be added to the resources"
   default     = {}

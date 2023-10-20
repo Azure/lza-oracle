@@ -128,12 +128,12 @@ variable "tags" {
   default     = {}
 }
 
-variable "vm_sku"{
+variable "vm_sku" {
   description = "The SKU of the virtual machine"
   default     = "Standard_D4s_v3"
 }
 
-variable "vm_source_image_reference"{
+variable "vm_source_image_reference" {
   description = "The source image reference of the virtual machine"
   default = {
     publisher = "Oracle"
@@ -149,7 +149,12 @@ variable "vm_os_disk" {
     name                   = "osdisk"
     caching                = "ReadWrite"
     storage_account_type   = "Premium_LRS"
-    disk_encryption_set_id =  null
+    disk_encryption_set_id = null
     disk_size_gb           = 128
   }
+}
+
+variable "availability_zone" {
+  description = "The availability zones of the resource"
+  default     = null
 }

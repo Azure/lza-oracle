@@ -41,7 +41,7 @@ resource "azurerm_role_assignment" "pip" {
   for_each                         = var.role_assignments_pip
   role_definition_name             = data.azurerm_role_definition.pip[each.key].name
   principal_id                     = data.azurerm_client_config.current.object_id
-  scope                            = try(each.value.scope, data.azurerm_public_ip.vm_pip.id)
+  scope                            = try(each.value.scope, data.azurerm_public_ip.vm_pip[0].id)
   skip_service_principal_aad_check = try(each.value.skip_service_principal_aad_check, false)
   description                      = try(each.value.description, null)
   condition                        = try(each.value.condition, null)

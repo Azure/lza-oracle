@@ -142,6 +142,12 @@ variable "subnet_locks" {
     error_message = "Lock type must be one of: CanNotDelete, ReadOnly."
   }
 }
+
+variable "is_data_guard" {
+  description = "Whether Data Guard is enabled"
+  default     = false
+}
+
 variable "tags" {
   description = "Tags to be added to the resources"
   default     = {}

@@ -1,11 +1,10 @@
-
-
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
   infrastructure                 = local.infrastructure
   is_diagnostic_settings_enabled = var.is_diagnostic_settings_enabled
   diagnostic_target              = var.diagnostic_target
+  availability_zone              = 1
   tags                           = var.resourcegroup_tags
 }
 
@@ -35,6 +34,8 @@ module "vm" {
   partner_solution_id            = module.common_infrastructure.partner_solution_id
   tags                           = module.common_infrastructure.tags
 
+  availability_zone = module.common_infrastructure.availability_zone
+
   role_assignments = {
     role_assignment_1 = {
       name                             = "Virtual Machine Contributor"
@@ -47,6 +48,7 @@ module "network" {
   source = "../../../terraform_units/modules/network"
 
   resource_group                 = module.common_infrastructure.resource_group
+  is_data_guard                  = module.common_infrastructure.is_data_guard
   is_diagnostic_settings_enabled = module.common_infrastructure.is_diagnostic_settings_enabled
   diagnostic_target              = module.common_infrastructure.diagnostic_target
   storage_account_id             = module.common_infrastructure.target_storage_account_id
@@ -103,7 +105,7 @@ module "storage" {
     asm_disks  = var.database_disks_options.asm_disks
     redo_disks = var.database_disks_options.redo_disks
   }
-
+  availability_zone = module.common_infrastructure.availability_zone
 
   role_assignments = {
     role_assignment_1 = {

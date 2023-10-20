@@ -117,7 +117,8 @@ jobs:
       # Run a terraform validate
     - name: 🔎 Terraform Validate
       id: validate
-      if: github.ref != 'refs/heads/main' && (success() || failure())
+      if: github.ref != 'refs/heads/main'
+      continue-on-error: true
       run: terraform validate -no-color
 
       # Run a terraform plan for pull requests only and add a comment 

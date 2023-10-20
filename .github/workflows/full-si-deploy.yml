@@ -1,6 +1,6 @@
 name: Deploy Single Instance Oracle DB on Azure
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   push:
     branches: [ main, features/* ]
   pull_request:

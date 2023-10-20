@@ -8,7 +8,7 @@ on:
     
 #push, pull_request,
 env:
-  TF_LOG: INFO
+  TF_LOG: DEBUG
   AZ_LOCATION: "eastus" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
 
@@ -22,6 +22,8 @@ jobs:
   terraform:
     name: '🔧 Terraform'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
   
     defaults:
       run:
@@ -120,6 +122,7 @@ jobs:
       if: github.ref != 'refs/heads/main'
       continue-on-error: true
       run: terraform validate -no-color
+      
 
       # Run a terraform plan for pull requests only and add a comment 
     - name: 💻 Terraform Plan
@@ -250,7 +253,7 @@ jobs:
 
 
       - name: 🧮 Get Known Hosts parameter using ssh-keyscan
-        run: ssh-keyscan -T 120 -H ${{env.VM_Public_IP_Address}} >> /home/runner/.ssh/known_hosts
+        run: ssh-keyscan -T 300 -H ${{env.VM_Public_IP_Address}} >> /home/runner/.ssh/known_hosts
 
       - run: ls /home/runner/.ssh
       - run: cat /home/runner/.ssh/known_hosts

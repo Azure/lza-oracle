@@ -51,3 +51,6 @@ inventory
 # Local History for Visual Studio Code
 **/.DS_Store
 .history/.DS_Store
+
+.DS_Store
+.idea

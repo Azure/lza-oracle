@@ -39,7 +39,7 @@ gdbName={{ gdbName }}
 # Default value : <db_name> specified in GDBNAME
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-sid= {{ sid }}
+sid={{ sid }}
 
 #-----------------------------------------------------------------------------
 # Name          : databaseConfigType
@@ -60,7 +60,7 @@ databaseConfigType={{ databaseConfigType }}
 # Default value : None
 # Mandatory     : No [required in case DATABASECONFTYPE is set to RACONENODE ]
 #-----------------------------------------------------------------------------
-RACOneNodeServiceName= {{ RACOneNodeServiceName }}
+RACOneNodeServiceName={{ RACOneNodeServiceName }}
 
 #-----------------------------------------------------------------------------
 # Name          : policyManaged
@@ -85,7 +85,7 @@ policyManaged={{ policyManaged }}
 # Default value : FALSE
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-createServerPool= {{ createServerPool }}
+createServerPool={{ createServerPool }}
 
 #-----------------------------------------------------------------------------
 # Name          : serverPoolName
@@ -99,7 +99,7 @@ createServerPool= {{ createServerPool }}
 # Default value : None
 # Mandatory     : No [required in case of RAC service centric database]
 #-----------------------------------------------------------------------------
-serverPoolName= {{ serverPoolName }}
+serverPoolName={{ serverPoolName }}
 
 #-----------------------------------------------------------------------------
 # Name          : cardinality
@@ -110,7 +110,7 @@ serverPoolName= {{ serverPoolName }}
 # Default value : Number of qualified nodes on cluster
 # Mandatory     : No [Required when a new serverpool need to be created]
 #-----------------------------------------------------------------------------
-cardinality= {{ cardinality }}
+cardinality={{ cardinality }}
 
 #-----------------------------------------------------------------------------
 # Name          : force
@@ -124,7 +124,7 @@ cardinality= {{ cardinality }}
 # Default value : FALSE
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-force= {{ force }}
+force={{ force }}
 
 #-----------------------------------------------------------------------------
 # Name          : pqPoolName
@@ -220,7 +220,7 @@ nodelist={{ nodelist }}
 # Default value : None
 # Mandatory     : Yes
 #-----------------------------------------------------------------------------
-templateName={{templateName}}
+templateName={{ templateName }}
 
 #-----------------------------------------------------------------------------
 # Name          : sysPassword

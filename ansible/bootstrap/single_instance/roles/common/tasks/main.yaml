@@ -18,7 +18,7 @@
   lineinfile:
     dest: /etc/hosts
     state: present
-    line: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} {{ inventory_hostname }}"
+    line: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}   {{ inventory_hostname }}"
 
 - name: oracle-recommended sysctl
   sysctl:
@@ -38,11 +38,34 @@
     - { name: "net.core.rmem_max", value: "4194304" }
     - { name: "net.core.wmem_default", value: "262144" }
     - { name: "net.core.wmem_max", value: "1048576" }
-    - { name: "panic_on_oops", value: "1" }
+    - { name: "kernel.panic_on_oops", value: "1" }
 
 - name: save sysctl config
   command: sysctl -p
   ignore_errors: yes
+
+
+- name: Change Linux Swap Size
+  replace:
+    path: /etc/waagent.conf
+    regexp: "ResourceDisk.SwapSizeMB=0"
+    replace: "ResourceDisk.SwapSizeMB={{ swapsize }}"
+
+- name: Enable Swap
+  replace:
+    path: /etc/waagent.conf
+    regexp: "ResourceDisk.EnableSwap=n"
+    replace: "ResourceDisk.EnableSwap=y"
+
+- name: Enable Swap Disk
+  replace:
+    path: /etc/waagent.conf
+    regexp: "ResourceDisk.Format=n"
+    replace: "ResourceDisk.Format=y"
+- name: Restart Waagent
+  ansible.builtin.service:
+    name: waagent
+    state: restarted
 
 - name: oracle-recommended PAM config
   lineinfile:
@@ -85,3 +108,30 @@
     shell: /bin/bash
     password: "{{ oracle_pass }}"
     append: yes
+
+
+- name: Create partition on data disk
+  parted:
+    device: "{{data_device}}"
+    number: 1
+    state: present
+  when: storage_type == "FS"
+
+- name: Create a ext4 fs on data disk
+  filesystem:
+    fstype: ext4
+    dev: "{{data_device}}-part1"
+  when: storage_type == "FS"
+
+- name: Get UUID for partition
+  command: blkid -s UUID -o value "{{ data_device }}-part1"
+  register: disk_blkid
+  when: storage_type == "FS"  
+
+- name: Mount data disk
+  mount:
+    path: "{{data_disk_mount}}"
+    src: "UUID={{disk_blkid.stdout}}"
+    fstype: ext4
+    state: mounted
+  when: storage_type == "FS"

@@ -123,18 +123,47 @@
     get_url:
       url: "{{ gridurl }}"
       dest: /opt/LINUX.X64_193000_grid_home.zip
-  
+
+ # - name: Download Grid Latest Update
+ #   get_url:
+ #     url: "{{ gridLatestUpdateUrl }}"
+ #     dest: /opt/patch_linux_grid_home.zip
+
+  #- name: Download OPatch Latest Version
+  #  get_url:
+  #    url: "{{ opatchUpdateUrl }}"
+  #    dest: /opt/opatch.zip
+
+  #- name: Change Ownership of Grid Patch File
+  #  file:
+  #    path: /opt/patch_linux_grid_home.zip
+  #    owner: grid
+  #    group: oinstall
+
   - name: Change Ownership of Grid File
     file:
       path: /opt/LINUX.X64_193000_grid_home.zip
       owner: grid
       group: oinstall
+  #- name: Change Ownership of OPatch  File
+  #  file:
+  #    path: /opt/opatch.zip
+  #    owner: grid
+  #    group: oinstall
 
   - name: Create grid directory
     file:
       path: /opt/grid
       state: directory
       owner: grid
+      group: oinstall
+
+  #- name: Create grid patch directory
+  #  file:
+  #    path: /opt/grid/patch
+  #    state: directory
+  #    owner: grid
+  #    group: oinstall
 
   - name: Extract Grid to /opt
     ansible.builtin.unarchive:
@@ -143,7 +172,37 @@
       remote_src: yes
       owner: grid
       group: oinstall
-    
+
+  #- name: Delete OPatch
+  #  ansible.builtin.file:
+  #    state: absent
+  #    path: /opt/grid/OPatch
+
+  #- name: Create grid OPatch directory
+  #  file:
+  #    path: /opt/grid/OPatch
+  #    state: directory
+  #    owner: grid
+  #    group: oinstall
+
+
+ # - name: Extract Grid OPatch to /opt/grid/OPatch
+ #   ansible.builtin.unarchive:
+ #     src: /opt/opatch.zip
+ #     dest: /opt/grid/
+ #     remote_src: yes
+ #     owner: grid
+ #     group: oinstall
+
+  #- name: Extract Grid Patch to /opt/grid/patch
+  #  ansible.builtin.unarchive:
+  #    src: /opt/patch_linux_grid_home.zip
+  #    dest: /opt/grid/patch
+  #    remote_src: yes
+  #    owner: grid
+  #    group: oinstall
+
+
   - name: Change Ownership of Grid Folder
     file:
       path: /opt/grid
@@ -156,22 +215,6 @@
       owner: grid
       group: oinstall
 
-  - name: Change Linux Swap Size
-    replace:
-      path: /etc/waagent.conf
-      regexp: "ResourceDisk.SwapSizeMB=0"
-      replace: "ResourceDisk.SwapSizeMB={{ swapsize }}"
-  
-  - name: Enable Swap
-    replace:
-      path: /etc/waagent.conf
-      regexp: "ResourceDisk.EnableSwap=n"
-      replace: "ResourceDisk.EnableSwap=y"
-
-  - name: Restart Waagent
-    ansible.builtin.service:
-      name: waagent
-      state: restarted
  
   - name: Copy Grid Response File
     ansible.builtin.template:
@@ -181,7 +224,7 @@
       group: oinstall
       mode: 0700
 
-
+    #TODO: Password recheck
   - name: Change SysAsmPassword in Grid Response File
     replace:
       path: /opt/grid/gridsetup.rsp
@@ -204,15 +247,26 @@
       owner: grid
       mode: 0755
   
-  - name: Delete Grid Zip File
-    file:
-      state: absent
-      path: /opt/LINUX.X64_193000_grid_home.zip
+ # - name: Delete Grid Zip File
+ #   file:
+ #     state: absent
+ #     path: /opt/LINUX.X64_193000_grid_home.zip
   
-#TODO: Can only be executed once need to check if exists
-  #- name: Install cvuqdisk Package
-  #  shell: rpm -iv /opt/grid/cv/rpm/cvuqdisk-1.0.10-1.rpm
-  #  become_user: root
+    #Can only be executed once need to check if exists
+    #https://dev.to/koh_sh/how-to-do-if-a-package-is-installed-do-something-with-ansible-3fhi
+  - name: check if cvuqdisk is installed
+    shell: rpm -qa | grep cvuqdisk
+    register: cvuqdisk_installed
+    ignore_errors: True
+    check_mode: False
+    changed_when: False
+
+    #cvuqdisk is installed  when  cvuqdisk_installed == 0
+  - name: Install cvuqdisk Package
+    shell: rpm -iv /opt/grid/cv/rpm/cvuqdisk-1.0.10-1.rpm
+    become_user: root
+    when: cvuqdisk_installed.rc != 0
+
 
   - name: change grid user's password
     shell: echo -e "{{ gridpass }}\n{{ gridpass }}" |(passwd --stdin grid) 
@@ -226,9 +280,15 @@
 
 #TODO: Everything below can only be executed once need to check if exists or comment out if running again 
 #TODO:  Even though you can create multiple ASM Disks, current configuration will only Create the Pool on the first disk
+
+ # - name: PreCheck Grid Infrastructure
+ #   shell: /opt/grid/gridSetup.sh -silent -executePrereqs -responseFile /opt/grid/gridsetup.rsp
+ #   become_user: grid
+ #   ignore_errors: no
+
   - name: Install Grid Infrastructure
-    shell: /opt/grid/gridSetup.sh -silent -responseFile /opt/grid/gridsetup.rsp
-    become_user: grid  
+    shell: /opt/grid/gridSetup.sh -silent -responseFile /opt/grid/gridsetup.rsp #-applyRU /opt/grid/patch/{{ oracle_patch_number }}
+    become_user: grid
     ignore_errors: yes
 
   - name: Execute Root.sh Script as to configure
@@ -236,7 +296,6 @@
     become_user: root
     ignore_errors: yes
 
-  #TODO: execute  orainsit from inventory as root
   - name: Execute orainsit Script as to configure
     shell: /u01/app/oraInventory/orainstRoot.sh
     become_user: root

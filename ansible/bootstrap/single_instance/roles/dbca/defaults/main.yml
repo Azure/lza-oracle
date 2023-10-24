@@ -1,9 +1,9 @@
 ---
 oracle_db_home: /u01/app/oracle/product/19.3.0/dbhome_1
 oracle_user: oracle
-createAsContainerDatabase: "TRUE"
+createAsContainerDatabase: "FALSE"
 gdbName: orcl
-sid:
+sid: orcl
 databaseConfigType:
 RACOneNodeServiceName:
 policyManaged:
@@ -19,13 +19,13 @@ useLocalUndoForPDBs:
 pdbAdminPassword:
 nodelist:
 templateName: General_Purpose.dbc
-sysPassword: #####
-systemPassword: #####
+sysPassword: Oracle123.?
+systemPassword: Oracle123.?
 oracleHomeUserPassword:
 emConfiguration: DBEXPRESS
 emExpressPort: 5500
 runCVUChecks:
-dbsnmpPassword: #####
+dbsnmpPassword: Oracle123.?
 omsHost:
 omsPort:
 emUser:
@@ -39,10 +39,10 @@ olsConfiguration:
 datafileJarLocation:
 datafileDestination:
 recoveryAreaDestination:
-storageType:
-diskGroupName: DATA
+storageType: FS
+diskGroupName: #DATA
 asmsnmpPassword:
-recoveryGroupName: ASM #RECO degistir
+recoveryGroupName: #ASM #RECO degistir
 characterSet: AL32UTF8
 nationalCharacterSet: UTF8
 registerWithDirService:
@@ -54,6 +54,6 @@ variablesFile:
 initParams:
 sampleSchema: "TRUE"
 memoryPercentage:
-databaseType:
-automaticMemoryManagement:
-totalMemory: 3072
+databaseType: MULTIPURPOSE
+automaticMemoryManagement: "FALSE"
+totalMemory:

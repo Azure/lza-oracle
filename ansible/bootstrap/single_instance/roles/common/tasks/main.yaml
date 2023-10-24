@@ -18,7 +18,7 @@
   lineinfile:
     dest: /etc/hosts
     state: present
-    line: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} {{ inventory_hostname }}"
+    line: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}   {{ inventory_hostname }}"
 
 - name: oracle-recommended sysctl
   sysctl:
@@ -108,3 +108,30 @@
     shell: /bin/bash
     password: "{{ oracle_pass }}"
     append: yes
+
+
+- name: Create partition on data disk
+  parted:
+    device: "{{data_device}}"
+    number: 1
+    state: present
+  when: storage_type == "FS"
+
+- name: Create a ext4 fs on data disk
+  filesystem:
+    fstype: ext4
+    dev: "{{data_device}}-part1"
+  when: storage_type == "FS"
+
+- name: Get UUID for partition
+  command: blkid -s UUID -o value "{{ data_device }}-part1"
+  register: disk_blkid
+  when: storage_type == "FS"  
+
+- name: Mount data disk
+  mount:
+    path: "{{data_disk_mount}}"
+    src: "UUID={{disk_blkid.stdout}}"
+    fstype: ext4
+    state: mounted
+  when: storage_type == "FS"

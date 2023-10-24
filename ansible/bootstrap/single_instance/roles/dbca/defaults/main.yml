@@ -1,9 +1,9 @@
 ---
 oracle_db_home: /u01/app/oracle/product/19.3.0/dbhome_1
 oracle_user: oracle
-createAsContainerDatabase: "TRUE"
+createAsContainerDatabase: "FALSE"
 gdbName: orcl
-sid:
+sid: orcl
 databaseConfigType:
 RACOneNodeServiceName:
 policyManaged:
@@ -39,7 +39,7 @@ olsConfiguration:
 datafileJarLocation:
 datafileDestination:
 recoveryAreaDestination:
-storageType:
+storageType: FS
 diskGroupName: #DATA
 asmsnmpPassword:
 recoveryGroupName: #ASM #RECO degistir
@@ -54,6 +54,6 @@ variablesFile:
 initParams:
 sampleSchema: "TRUE"
 memoryPercentage:
-databaseType:
-automaticMemoryManagement:
-totalMemory: 3072
+databaseType: MULTIPURPOSE
+automaticMemoryManagement: "FALSE"
+totalMemory:

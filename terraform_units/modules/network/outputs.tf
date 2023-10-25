@@ -32,5 +32,5 @@ output "db_server_ips" {
 }
 
 output "db_server_puplic_ip" {
-  value = azurerm_public_ip.vm_pip.ip_address
+
 }

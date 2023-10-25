@@ -8,7 +8,7 @@ on:
     
 #push, pull_request,
 env:
-  TF_LOG: DEBUG
+  TF_LOG: "INFO"
   AZ_LOCATION: "eastus" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
 

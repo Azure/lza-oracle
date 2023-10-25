@@ -6,6 +6,7 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type = var.disk_type
   create_option        = local.data_disks[count.index].create_option
   disk_size_gb         = local.data_disks[count.index].disk_size_gb
+  zone                 = var.availability_zone
 
   tags = merge(local.tags, var.tags)
 }
@@ -18,6 +19,7 @@ resource "azurerm_managed_disk" "asm_disk" {
   storage_account_type = var.disk_type
   create_option        = local.asm_disks[count.index].create_option
   disk_size_gb         = local.asm_disks[count.index].disk_size_gb
+  zone                 = var.availability_zone
 
   tags = merge(local.tags, var.tags)
 }
@@ -30,6 +32,7 @@ resource "azurerm_managed_disk" "redo_disk" {
   storage_account_type = var.disk_type
   create_option        = local.redo_disks[count.index].create_option
   disk_size_gb         = local.redo_disks[count.index].disk_size_gb
+  zone                 = var.availability_zone
 
   tags = merge(local.tags, var.tags)
 }

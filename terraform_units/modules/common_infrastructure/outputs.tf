@@ -31,6 +31,11 @@ output "created_resource_group_subscription_id" {
   value       = data.azurerm_resource_group.rg.id
 }
 
+output "is_data_guard" {
+  description = "Whether the deployment is for Data Guard"
+  value       = var.is_data_guard
+}
+
 output "is_diagnostic_settings_enabled" {
   description = "Whether diagnostic settings are enabled"
   value       = var.is_diagnostic_settings_enabled
@@ -64,6 +69,11 @@ output "partner_solution_id" {
 output "diagnostic_target" {
   description = "The destination type of the diagnostic settings"
   value       = var.diagnostic_target
+}
+
+output "availability_zone" {
+  description = "Availability zones"
+  value       = var.availability_zone
 }
 
 output "tags" {

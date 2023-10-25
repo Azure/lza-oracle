@@ -21,7 +21,7 @@ On the compute source running Ubuntu or on Azure Cloud Shell, follow the steps g
 ```
 [dbservers]
 
-<Public IP address of the Azure VM created via terraform>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-single-instance  ansible_user=oracle
+vm-0 ansible_host=<Public IP address of the Azure VM created via terraform>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-single-instance  ansible_user=oracle
 ```
 
 Below is an example:

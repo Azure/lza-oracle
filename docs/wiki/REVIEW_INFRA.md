@@ -17,10 +17,13 @@ rg-oracle-demo-eastus-001
 <img src="../media/sshport.jpg" />
 
 
+If you are using Azure Cloud Shell, you can create an inbound rule as the following:
+
+<img src="../media/ssh-for-cloud-shell.jpg" />
 
 4. Copy the public IP address of the VM to use in the future steps. An example is given below.
 
 <img src="../media/publicip.jpg" />
 
 
-4. Now you can go back to the main [README.md](../../README.md) file.
+4. Now you can go back to the main [README.md](../../README.md#step-by-step-instructions) file.

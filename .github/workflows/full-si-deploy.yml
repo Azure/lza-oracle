@@ -63,7 +63,6 @@ jobs:
         chmod 400 temp_ssh_key
         ssh-keygen -f temp_ssh_key -y > temp_ssh_key.pub
 
-
         echo "SSH_KEY=$(cat temp_ssh_key.pub)" >> $GITHUB_ENV
         echo "SSH_KEY=${{env.SSH_KEY}}"
 
@@ -193,7 +192,6 @@ jobs:
       - name: 🛒 Checkout
         uses: actions/checkout@v4
 
-
       - name: 🔎 Check IP
         run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
@@ -210,7 +208,6 @@ jobs:
       - run: ls /home/runner/.ssh
       - run: cat /home/runner/.ssh/known_hosts
       
-
       # Login to Azure CLI
       - name: 🔑 Login via Azure CLI
         uses: azure/login@v1
@@ -249,8 +246,6 @@ jobs:
 
             Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
           azPSVersion: "latest"
-  
-
 
       - name: 🧮 Get Known Hosts parameter using ssh-keyscan
         run: ssh-keyscan -T 300 -H ${{env.VM_Public_IP_Address}} >> /home/runner/.ssh/known_hosts

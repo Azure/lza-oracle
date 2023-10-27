@@ -50,7 +50,7 @@ cat ~/.ssh/lza-oracle-single-instance.pub > fixtures.tfvars
 nano  ~/projects/lza-oracle/terraform/bootstrap/single_instance/fixtures.tfvars
 ```
 
-Here is a sample `fixtures.tfvars` file.
+This is a sample `fixtures.tfvars` file. For more reference on all variables you can set, see [variables description](/terraform/bootstrap/single_instance/variables.md)
 
 ```tf:fixtures.tfvars
 ssh_key = "ssh-rsa xxxxxxxxxxxxxx="

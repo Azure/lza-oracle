@@ -1,48 +1,23 @@
-targetScope= 'subscription'
+targetScope = 'subscription'
 @description('Name of the Resource Group')
-param resourceGroupName string = 'oraGroup'
+param resourceGroupName string = 'oraGroup1'
 
 @description('Location')
-param location string  
+param location string = 'germanywestcentral'
 
-@description('Virtual Network Name')
-param virtualNetworkName string = 'vnet1'
-
-@description('VNET Address prefix')
-param vnetAddressPrefix string = '10.0.0.0/16'
-
-@description('Subnet Address prefix')
-param subnetAddressPrefix string = '10.0.0.0/24'
-
-@description('Name of the Network Security Group')
-param networkSecurityGroupName string = 'SecGroupNet'
-
-@description('Name of the Network interface')
-param networkInterfaceName string = 'NicName'
-
-@description('Database disk size')
-param databaseDiskSize int = 128
-
-@description('The name of you Virtual Machine.')
-param vmName string = 'oravm'
-
-@description('Username for the Virtual Machine.')
-param adminUsername string = 'bala'
-
-@description('SSH Public key')
-param sshPublicKey string 
-
-@description('The size of the VM')
-param vmSize string = 'Standard_D2ds_v5'
-
-@description('Availability zone')
-param avZone string = '1'
+param virtualNetworks array = []
+param vnetSubnets array = []
+param networkInterfaces array = []
+param publicIPAddresses array = []
+param networkSecurityGroups array = []
+param virtualMachines array = []
+param dataDisks array = []
 
 @description('Tags to be added to the resources')
-param tags object ={}
+param tags object = {}
 
-@description('Enable Data guard setup (with 3 machines)')
-param enableDataGuardSetup bool = false
+// @description('Enable Data guard setup (with 3 machines)')
+// param enableDataGuardSetup bool = false
 
 // Create the Resource Group
 module rg '../../bicep_units/modules/common_infrastructure/infrastructure.bicep' = {
@@ -55,97 +30,107 @@ module rg '../../bicep_units/modules/common_infrastructure/infrastructure.bicep'
 }
 
 // Create the Virtual Network
-module network '../../bicep_units/modules/network/vnet.bicep' = {
-  name: 'vnet' 
-  dependsOn:[rg]
+module networks '../../bicep_units/modules/network/vnet.bicep' = [for (vnet, i) in virtualNetworks: {
+  name: '${vnet.virtualNetworkName}${i}'
+  dependsOn: [ rg ]
   scope: resourceGroup(resourceGroupName)
   params: {
-    virtualNetworkName: virtualNetworkName
-    location: location  
-    vnetAddressPrefix: vnetAddressPrefix
+    virtualNetworkName: vnet.virtualNetworkName
+    location: location
+    vnetAddressPrefix: vnet.addressPrefixes
     tags: tags
   }
 }
+]
 
 // Create the Subnet
-module subnet '../../bicep_units/modules/network/subnet.bicep' = {
-  name: 'subnet' 
-  dependsOn:[network]
+module subnets '../../bicep_units/modules/network/subnet.bicep' = [for (subnet, i) in vnetSubnets: {
+  name: '${subnet.subnetName}${i}'
+  dependsOn: [ networks ]
   scope: resourceGroup(resourceGroupName)
   params: {
-    virtualNetworkName: virtualNetworkName
-    subnetAddressPrefix: subnetAddressPrefix
+    subnetName: subnet.subnetName
+    virtualNetworkName: subnet.virtualNetworkName
+    subnetAddressPrefix: subnet.addressPrefix
   }
 }
+]
+
+module pips 'br/public:avm-res-network-publicipaddress:0.1.0' = [for (pip, i) in publicIPAddresses: {
+  name: '${pip.publicIPAddressName}${i}'
+  dependsOn: [ rg ]
+  scope: resourceGroup(resourceGroupName)
+  params: {
+    location: location
+    name: pip.publicIPAddressName
+    enableTelemetry: false
+  }
+}
+]
 
 // Create a Blank NSG
-module nsg '../../bicep_units/modules/network/nsg.bicep' = {
-  name: 'nsg' 
-  dependsOn:[network]
+module nsgs '../../bicep_units/modules/network/nsg.bicep' = [for (nsg, i) in networkSecurityGroups: {
+  name: '${nsg.networkSecurityGroupName}${i}'
+  dependsOn: [ networks ]
   scope: resourceGroup(resourceGroupName)
   params: {
-    networkSecurityGroupName: networkSecurityGroupName
+    networkSecurityGroupName: nsg.networkSecurityGroupName
     location: location
   }
-}
+}]
 
-// Create a Public IP address
-module pip '../../bicep_units/modules/network/pip.bicep' = {
-  name: 'pip'
-  dependsOn:[network]
-  scope: resourceGroup(resourceGroupName)
-  params: {
-    pipName: 'publicIp1'
-    location: location
-    avZone: avZone
-  }
-}
+// Create Public IP addresses
 
-// Create a NIC with the NSG and Public IP
-module nic '../../bicep_units/modules/network/nic.bicep' = {
-  name:'nic'
-  dependsOn:[network,pip,subnet]
+module nics 'br/public:avm-res-network-networkinterface:0.1.0' = [for (nic, i) in networkInterfaces: {
+  name: '${nic.networkInterfaceName}${i}'
+  dependsOn: [ pips, subnets, nsgs ]
   scope: resourceGroup(resourceGroupName)
   params: {
-    networkInterfaceName: networkInterfaceName
     location: location
-    nsgId: nsg.outputs.nsgId
-    pipId: pip.outputs.pipId
-    subnetId: subnet.outputs.subnetId
+    name: nic.networkInterfaceName
+    ipConfigurations: [
+      {
+        name: 'ipconfig1'
+        subnetResourceId: subnets[i].outputs.subnetId
+        nsgResourceId: nsgs[i].outputs.nsgId
+        publicIpAddressResourceId: pips[i].outputs.resourceId
+      }
+    ]
+    enableTelemetry: false
   }
 }
+]
 
 // Create a VM based on the Oracle Image
-module vm '../../bicep_units/modules/compute/vm.bicep' = {
-  name: 'vm'
-  dependsOn: [nic]
+module vms '../../bicep_units/modules/compute/vm.bicep' = [for (vm, i) in virtualMachines: {
+  name: '${vm.virtualMachineName}${i}'
+  dependsOn: [ nics ]
   scope: resourceGroup(resourceGroupName)
   params: {
-    vmName: vmName
-    adminUsername: adminUsername
-    sshPublicKey: sshPublicKey
-    avZone: avZone
-    nicId: nic.outputs.nicId
-    vmSize: vmSize
+    vmName: vm.virtualMachineName
+    adminUsername: vm.adminUsername
+    sshPublicKey: vm.sshPublicKey
+    avZone: vm.avZone
+    nicId: nics[i].outputs.resourceId
+    vmSize: vm.vmSize
     location: location
     tags: tags
   }
-}
+}]
 
 // Create a Data disk and attach to the VM
-module storage '../../bicep_units/modules/storage/datadisk.bicep' = {
-  name: 'storage'
-  dependsOn: [vm]
+module storage '../../bicep_units/modules/storage/datadisk.bicep' =  [for (disk, i) in dataDisks: {
+  name: '${disk.diskName}${i}'
+  dependsOn: [vms]
   scope: resourceGroup(resourceGroupName)
   params: {
-    diskName: 'dataDisk1'
-    diskSize: databaseDiskSize
-    diskType: 'Premium_LRS'
+    diskName: disk.diskName
+    diskSize: disk.size
+    diskType: disk.type
     location: location
-    lun: 10
-    vmName: vmName
-    avZone: avZone
+    lun: disk.lun
+    vmName: disk.virtualMachineName
+    avZone: disk.avZone
     tags: tags
   }
-}
-
+}]

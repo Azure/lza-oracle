@@ -5,8 +5,7 @@ param virtualNetworkName string = 'vNet'
 param location string = resourceGroup().location
 
 @description('VNET Address prefix')
-param vnetAddressPrefix string = '10.0.0.0/16'
-
+param vnetAddressPrefix array
 @description('Tags to be added to the resources')
 param tags object ={}
 
@@ -15,9 +14,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   location: location
   properties: {
     addressSpace: {
-      addressPrefixes: [
-        vnetAddressPrefix
-      ]
+      addressPrefixes: vnetAddressPrefix
     }
   }
   tags: tags

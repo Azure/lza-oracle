@@ -6,11 +6,22 @@
     group: "{{ oracle_group }}"
     owner: "{{ oracle_user }}"
 
-- name: set oracle user environment
+- name: set oracle user environment for primary
+  when: inventory_hostname in groups['ora-x1']
   lineinfile: dest=/home/{{ oracle_user }}/.bashrc state=present line="{{ item }}"
   with_items:
     - "export ORACLE_BASE={{ ora_user_env.ORACLE_BASE }}"
     - "export ORACLE_SID={{ ora_user_env.ORACLE_SID }}"
+    - "export ORACLE_HOME={{ ora_user_env.ORACLE_HOME }}"
+    - "export PATH=$PATH:$ORACLE_HOME/bin"
+    - "export NLS_LANG={{ ora_user_env.NLS_LANG }}"
+
+- name: set oracle user environment for primary
+  when: inventory_hostname in groups['ora-x2']
+  lineinfile: dest=/home/{{ oracle_user }}/.bashrc state=present line="{{ item }}"
+  with_items:
+    - "export ORACLE_BASE={{ ora_user_env.ORACLE_BASE }}"
+    - "export ORACLE_SID={{ ora_user_env.ORACLE_SID }}DG1"
     - "export ORACLE_HOME={{ ora_user_env.ORACLE_HOME }}"
     - "export PATH=$PATH:$ORACLE_HOME/bin"
     - "export NLS_LANG={{ ora_user_env.NLS_LANG }}"
@@ -147,9 +158,14 @@
 
   - name: runInstaller      
     shell: echo "{{ oracle_pass_raw }}" | ./runInstaller -responseFile /home/{{ oracle_user }}/db_install.rsp -silent #-applyRU {{ oracle_db_home }}/patch/{{ oracle_patch_number }}
-    ignore_errors: yes
+    ignore_errors: true
     args:
       chdir: "{{ oracle_db_home }}"
+  
+  - name: start listener
+    when: inventory_hostname in groups['ora-x1']
+    command: lsnrctl start
+    ignore_errors: true
 
   become: yes
   become_user: "{{ oracle_user }}"

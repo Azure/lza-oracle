@@ -4,7 +4,7 @@
 variable "location" {
   description = "Defines the Azure location where the resources will be deployed"
   type        = string
-  default     = "eastus"
+  default     = "uksouth"
 }
 
 variable "resourcegroup_name" {

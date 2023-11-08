@@ -4,11 +4,13 @@
 #
 - block:
   - name: copy response file for silent install
+    when: inventory_hostname in groups['ora-x1']
     template: src=dbca.rsp.j2 dest=/home/{{ oracle_user }}/dbca.rsp
 
   - name: dbca
+    when: inventory_hostname in groups['ora-x1']
     command: bin/dbca -silent -createDatabase -responseFile /home/{{ oracle_user }}/dbca.rsp -ignorePreReqs
-    ignore_errors: yes
+    ignore_errors: true
     args:
       chdir: "{{ oracle_db_home }}"
 
@@ -37,13 +39,10 @@
     - /etc/rc.d/rc0.d/K01dbora
     - /etc/rc.d/rc3.d/S99dbora
     - /etc/rc.d/rc5.d/S99dbora
-    ignore_errors: yes
+    ignore_errors: true
     become: true
     become_user: root
 
-  - name: start listener
-    command: lsnrctl start
-    ignore_errors: yes
 
   - name: reboot
     shell: "sleep 5 && reboot"
@@ -52,7 +51,7 @@
     become: true
     become_user: root
 
-  become: yes
+  become: true
   become_user: "{{ oracle_user }}"
 
   

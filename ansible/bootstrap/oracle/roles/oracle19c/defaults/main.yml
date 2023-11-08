@@ -11,8 +11,6 @@ oracle_path: /u01/app
 # ORACLE_SID
 oracle_db_name: orcl
 
-# ORACLE_HOME basename, {{ oracle_path }}/oracle/product/19.3.0/{{ oracle_db_home }}
-oracle_db_home: /u01/app/oracle/product/19.3.0/dbhome_1
 
 #
 # oracle system user

@@ -42,7 +42,7 @@
 
 - name: save sysctl config
   command: sysctl -p
-  ignore_errors: yes
+  ignore_errors: true
 
 
 - name: Change Linux Swap Size

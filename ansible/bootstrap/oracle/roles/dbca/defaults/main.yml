@@ -37,8 +37,8 @@ dvAccountManagerName:
 dvAccountManagerPassword:
 olsConfiguration:
 datafileJarLocation:
-datafileDestination:
-recoveryAreaDestination:
+datafileDestination:     #TODO: set et sunu default degerleri al
+recoveryAreaDestination: #TODO: set et sunu
 storageType: FS
 diskGroupName: #DATA
 asmsnmpPassword:

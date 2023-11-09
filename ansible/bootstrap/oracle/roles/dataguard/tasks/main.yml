@@ -4,12 +4,15 @@
   - name: copy archive log mode sql 
     template: src=archieve.sql.j2 dest=/tmp/archieve.sql
     when: inventory_hostname in groups['ora-x1']
+    become_user: "{{ oracle_user }}"
 
   - name: Create_standbyDB | execute postsql from the standby database
     become_user: "{{ oracle_user }}"
     shell: echo "@{{ stage_dir }}/archieve.sql;" | sqlplus / as sysdba
     when: inventory_hostname in groups['ora-x1']
+    register: out
 
+  - debug: var=out.stdout_lines
   - name: copy TNS LISTENER FILE to servers
     become_user: "{{ oracle_user }}"
     template: src=tnsnames.ora.j2 dest=/u01/app/oracle/product/19.3.0/dbhome_1/network/admin/tnsnames.ora
@@ -47,34 +50,51 @@
 
   - name: Copy init.ora file
     become_user: "{{ oracle_user }}"
-    shell: src=init.ora dest=/u01/app/oracle/product/19.3.0/dbhome_1/dbs/init.ora
+    template: src=init.ora.j2 dest=/u01/app/oracle/product/19.3.0/dbhome_1/dbs/init.ora
     when: inventory_hostname in groups['ora-x2']
 
 
   - name: copy standby startup sql 
-    template: "src=standby_start.sql.j2 dest={{ stage_dir }}/standby_start.sql"
+    template: src=standby_start.sql.j2 dest=/tmp/standby_start.sql
     when: inventory_hostname in groups['ora-x2']
  
+    #TODO: https://vjdba.wordpress.com/tag/rman-05537/
+  
   - name: Start Oracle Instance on Standby
     when: inventory_hostname in groups['ora-x2']
-    shell: echo "@{{ stage_dir }}/standby_start.sql;" | sqlplus / as sysdba
+    shell: echo @"/tmp/standby_start.sql;" | sqlplus / as sysdba
+    register: out
 
-  - name: Stop  TNS Listener
+  - debug: var=out.stdout_lines
+
+  - name: Stop Listener
     when: inventory_hostname in groups['ora-x2']
-    shell: lsnrctl stop
+    command: lsnrctl stop
+    ignore_errors: true
+    register: out
+    become_user: "{{ oracle_user }}"
+  - debug: var=out.stdout_lines
+  
 
-  - name: Start  TNS Listener
+  - name: Start  Listener
     when: inventory_hostname in groups['ora-x2']
-    shell: lsnrctl start
+    command: lsnrctl start
+    register: out
+    become_user: "{{ oracle_user }}"
 
+  - debug: var=out.stdout_lines
+  
   - name: Copy RMAN Script
     when: inventory_hostname in groups['ora-x1']
-    template: src=rman.sql.j2 dest=/tmp/rman.sql
+    template: src=rman.sql.j2 dest=/u01/app/rman.sql 
+    become_user: "{{ oracle_user }}"
 
   - name: Start RMAN Process
     when: inventory_hostname in groups['ora-x1']
-    shell: echo "@{{ stage_dir }}/rman.sql;" | rman TARGET sys/Oracle123.?@orcl AUXILIARY sys/Oracle123.?@orcldg1
+    shell: echo @"/u01/app/rman.sql" | rman TARGET sys/Oracle123.?@orcl AUXILIARY sys/Oracle123.?@orcldg1
+    register: out
 
+  - debug: var=out.stdout_lines
 
   become: true
   become_user: "{{ oracle_user }}"

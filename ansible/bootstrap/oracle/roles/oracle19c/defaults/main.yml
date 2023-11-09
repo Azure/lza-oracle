@@ -9,7 +9,7 @@
 oracle_path: /u01/app
 
 # ORACLE_SID
-oracle_db_name: orcl
+oracle_db_name: ORCL
 
 
 #

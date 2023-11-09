@@ -51,6 +51,13 @@
     become: true
     become_user: root
 
+  - name: wait for rebooting
+    wait_for_connection: 
+      connect_timeout: 5
+      sleep: 5
+      delay: 20
+      timeout: 240
+
   become: true
   become_user: "{{ oracle_user }}"
 

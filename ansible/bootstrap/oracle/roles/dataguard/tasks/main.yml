@@ -91,7 +91,7 @@
 
   - name: Start RMAN Process
     when: inventory_hostname in groups['ora-x1']
-    shell: echo @"/u01/app/rman.sql" | rman TARGET sys/Oracle123.?@orcl AUXILIARY sys/Oracle123.?@orcldg1
+    shell: echo @"/u01/app/rman.sql" | rman TARGET sys/Oracle123.?@ORCL AUXILIARY sys/Oracle123.?@ORCLDG1
     register: out
 
   - debug: var=out.stdout_lines

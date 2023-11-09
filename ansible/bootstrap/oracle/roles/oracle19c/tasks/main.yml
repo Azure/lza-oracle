@@ -167,5 +167,5 @@
     command: lsnrctl start
     ignore_errors: true
 
-  become: yes
+  become: true
   become_user: "{{ oracle_user }}"

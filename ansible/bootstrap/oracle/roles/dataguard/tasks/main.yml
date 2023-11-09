@@ -42,10 +42,10 @@
 
   - name: Copy Oracle Password File from Primary to Standby
     run_once: true
-    fetch: src=/u01/app/oracle/product/19.3.0/dbhome_1/dbs/orapworcl dest=temp/ flat=yes
+    fetch: src=/u01/app/oracle/product/19.3.0/dbhome_1/dbs/orapwORCL dest=temp/ flat=yes
     when: inventory_hostname in groups['ora-x1']
   - name: Copy the file from the ansible to nodes
-    copy: src=temp/orapworcl dest=/u01/app/oracle/product/19.3.0/dbhome_1/dbs/orapwORCLDG1
+    copy: src=temp/orapwORCL dest=/u01/app/oracle/product/19.3.0/dbhome_1/dbs/orapwORCLDG1
     when: inventory_hostname in groups['ora-x2']
 
   - name: Copy init.ora file

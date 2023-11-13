@@ -1,3 +1,7 @@
+metadata name = 'vm'
+metadata description = 'This module provisions a virtual machine for hosting Oracle databases'
+metadata owner = 'Azure/module-maintainers'
+
 @description('The name of Virtual Machine.')
 param vmName string = 'oravm'
 
@@ -19,6 +23,12 @@ param location string = resourceGroup().location
 @description('ID of the network interface')
 param nicId string 
 
+// AVM req - a Prefix is required
+param vmResourcePrefix string = 'vm'
+
+@description('Oracle VM Image reference')
+param oracleImageReference object
+
 @description('Tags to be added to the resources')
 param tags object ={}
 
@@ -34,15 +44,8 @@ var sshConfiguration = {
   }
 }
 
-var oracleImageReference =   {
-  publisher: 'oracle'
-  offer: 'oracle-database-19-3'
-  sku: 'oracle-database-19-0904'
-  version: 'latest'
-}
-
 resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
-  name: vmName
+  name: '${vmResourcePrefix}-${vmName}'
   location: location
   zones: [avZone]
   identity: {
@@ -80,3 +83,4 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
 }
 
 output vmId string = vm.id
+output vmName string = vm.name

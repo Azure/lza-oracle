@@ -20,7 +20,8 @@
                     "addressPrefix": "10.0.0.0/24"
                 }
             ]
-        },        "networkSecurityGroups": {
+        },
+        "networkSecurityGroups": {
             "value": [
                 {
                     "networkSecurityGroupName": "ora01nsg"
@@ -69,6 +70,19 @@
                     "vmSize": "Standard_D4s_v5"
                 }
             ]
+        },
+        "tags": {
+            "value": {
+                "workload": "oracle"
+            }
+        },
+        "oracleImageReference": {
+            "value": {
+                "publisher": "oracle",
+                "offer": "oracle-database-19-3",
+                "sku": "oracle-database-19-0904",
+                "version": "latest"
+            }
         }
     }
 }

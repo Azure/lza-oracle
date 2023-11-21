@@ -66,7 +66,7 @@ Next step is to proceed with Ansible configuration to get the Oracle database op
 
 ## Optional Settings
 
-There are a number of optional settings which the module enables. These are described below.
+There are a number of optional settings which the module enables. These are described below. Overall if you wish to modify one or more variables in the module, you can do so by modifying the `terraform/bootstrap/single_instance/variables_global.tf`  or the `terraform/bootstrap/single_instance/variables_local.tf` file.
 
 ### How to enable diagnostic settings
 

@@ -30,3 +30,7 @@ output "nics_oracledb_observer" {
 output "db_server_ips" {
   value = azurerm_network_interface.oracle_db[*].private_ip_addresses[0]
 }
+
+output "db_server_puplic_ip" {
+  value = azurerm_public_ip.vm_pip[0].ip_address
+}

@@ -2,8 +2,7 @@
 oracle_db_home: /u01/app/oracle/product/19.3.0/dbhome_1
 oracle_user: oracle
 createAsContainerDatabase: "FALSE"
-gdbName: ORCL
-sid: ORCL
+
 databaseConfigType:
 RACOneNodeServiceName:
 policyManaged:
@@ -19,13 +18,12 @@ useLocalUndoForPDBs:
 pdbAdminPassword:
 nodelist:
 templateName: General_Purpose.dbc
-sysPassword: Oracle123.?
-systemPassword: Oracle123.?
+
 oracleHomeUserPassword:
 emConfiguration: DBEXPRESS
 emExpressPort: 5500
 runCVUChecks:
-dbsnmpPassword: Oracle123.?
+
 omsHost:
 omsPort:
 emUser:

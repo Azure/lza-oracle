@@ -1,10 +1,4 @@
-# Welcome to the lza-oracle wiki
-
-This wiki documents how to automate the deployment of virtual machines on Azure that runs Oracle databases. The solution uses Terraform or Bicep and Ansible technologies for automation.
-
-
-
-## Navigation
+# Wiki content
 
 - [Wiki Home](./Home.md)
 - [Introduction to deploying Oracle](./Introduction-to-deploying-oracle.md)

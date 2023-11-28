@@ -16,6 +16,9 @@
   - name: copy TNS LISTENER FILE to servers
     become_user: "{{ oracle_user }}"
     template: src=tnsnames.ora.j2 dest=/u01/app/oracle/product/19.3.0/dbhome_1/network/admin/tnsnames.ora
+    when: inventory_hostname in groups['ora-x1']
+
+  
 
   - name: copy LISTENER FILE to primary
     when: inventory_hostname in groups['ora-x1']
@@ -44,9 +47,19 @@
     run_once: true
     fetch: src=/u01/app/oracle/product/19.3.0/dbhome_1/dbs/orapwORCL dest=temp/ flat=yes
     when: inventory_hostname in groups['ora-x1']
+    become_user: "{{ oracle_user }}"
+ 
+  - name: Remove file (delete file)
+    when: inventory_hostname in groups['ora-x2']
+    become_user: "{{ oracle_user }}"
+    ansible.builtin.file:
+      path: /u01/app/oracle/product/19.3.0/dbhome_1/dbs/orapwORCLDG1
+      state: absent
+
   - name: Copy the file from the ansible to nodes
     copy: src=temp/orapwORCL dest=/u01/app/oracle/product/19.3.0/dbhome_1/dbs/orapwORCLDG1
     when: inventory_hostname in groups['ora-x2']
+    become_user: "{{ oracle_user }}"
 
   - name: Copy init.ora file
     become_user: "{{ oracle_user }}"
@@ -56,12 +69,14 @@
 
   - name: copy standby startup sql 
     template: src=standby_start.sql.j2 dest=/tmp/standby_start.sql
+    become_user: "{{ oracle_user }}"
     when: inventory_hostname in groups['ora-x2']
  
-    #TODO: https://vjdba.wordpress.com/tag/rman-05537/
-  
+#    #TODO: https://vjdba.wordpress.com/tag/rman-05537/
+#  
   - name: Start Oracle Instance on Standby
     when: inventory_hostname in groups['ora-x2']
+    become_user: "{{ oracle_user }}"
     shell: echo @"/tmp/standby_start.sql;" | sqlplus / as sysdba
     register: out
 
@@ -93,25 +108,24 @@
     when: inventory_hostname in groups['ora-x1']
     shell: echo @"/u01/app/rman.sql" | rman TARGET sys/Oracle123.?@ORCL AUXILIARY sys/Oracle123.?@ORCLDG1
     register: out
+    become_user: "{{ oracle_user }}"
 
   - debug: var=out.stdout_lines
 
 
-  - name: copy standbydatabasedisconnect.sql
-    template: src=standbydatabasedisconnect.sql.j2 dest=/tmp/standbydatabasedisconnect.sql
-    when: inventory_hostname in groups['ora-x2']
-    become_user: "{{ oracle_user }}"
-
-  - name: Execute standbydatabasedisconnect.sql
-    become_user: "{{ oracle_user }}"
-    shell: echo "@{{ stage_dir }}/standbydatabasedisconnect.sql;" | sqlplus / as sysdba
-    when: inventory_hostname in groups['ora-x2']
-    register: out
-
-  - debug: var=out.stdout_lines
-  
-  become: true
-  become_user: "{{ oracle_user }}"
-
-
-  
+#  - name: copy standbydatabasedisconnect.sql
+#    template: src=standbydatabasedisconnect.sql.j2 dest=/tmp/standbydatabasedisconnect.sql
+#    when: inventory_hostname in groups['ora-x2']
+#    become_user: "{{ oracle_user }}"
+#
+#  - name: Execute standbydatabasedisconnect.sql
+#    become_user: "{{ oracle_user }}"
+#    shell: echo "@{{ stage_dir }}/standbydatabasedisconnect.sql;" | sqlplus / as sysdba
+#    when: inventory_hostname in groups['ora-x2']
+#    register: out
+#
+#  - debug: var=out.stdout_lines
+#  
+#  become: true
+#  become_user: "{{ oracle_user }}"
+#

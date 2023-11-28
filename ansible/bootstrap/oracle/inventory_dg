@@ -1,9 +1,9 @@
 [dbservers]
-vm-primary-0 ansible_host=51.105.36.168 ansible_ssh_private_key_file=~/.ssh/tf_ora  ansible_user=oracle
-vm-secondary-0 ansible_host=51.104.194.6 ansible_ssh_private_key_file=~/.ssh/tf_ora  ansible_user=oracle
+vm-primary-0 ansible_host=20.26.221.70 ansible_ssh_private_key_file=~/.ssh/tf_ora  ansible_user=oracle
+vm-secondary-0 ansible_host=20.26.221.71 ansible_ssh_private_key_file=~/.ssh/tf_ora  ansible_user=oracle
 
 [ora-x1]
-vm-primary-0 ansible_host=51.105.36.168 ansible_ssh_private_key_file=~/.ssh/tf_ora  ansible_user=oracle
+vm-primary-0 ansible_host=20.26.221.70 ansible_ssh_private_key_file=~/.ssh/tf_ora  ansible_user=oracle
 
 [ora-x2]
-vm-secondary-0 ansible_host=51.104.194.6 ansible_ssh_private_key_file=~/.ssh/tf_ora  ansible_user=oracle
+vm-secondary-0 ansible_host=20.26.221.71 ansible_ssh_private_key_file=~/.ssh/tf_ora  ansible_user=oracle

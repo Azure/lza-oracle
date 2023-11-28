@@ -33,3 +33,4 @@ systemPassword: Oracle123.?
 dbsnmpPassword: Oracle123.?
 gdbName: ORCL
 sid: ORCL
+redo_log_filepath: /u01/app/oracle/oradata

@@ -8,8 +8,8 @@ LISTENER =
 SID_LIST_LISTENER =
   (SID_LIST =
     (SID_DESC =
-      (GLOBAL_DBNAME = ORCL)
-      (ORACLE_HOME = /u01/app/oracle/product/19.3.0/dbhome_1)
-      (SID_NAME = ORCL)
+      (GLOBAL_DBNAME = {{ sid }})
+      (ORACLE_HOME = {{ oracle_db_home }})
+      (SID_NAME = {{ sid }})
     )
   )

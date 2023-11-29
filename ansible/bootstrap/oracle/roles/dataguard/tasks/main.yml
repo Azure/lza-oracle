@@ -113,19 +113,18 @@
   - debug: var=out.stdout_lines
 
 
-#  - name: copy standbydatabasedisconnect.sql
-#    template: src=standbydatabasedisconnect.sql.j2 dest=/tmp/standbydatabasedisconnect.sql
-#    when: inventory_hostname in groups['ora-x2']
-#    become_user: "{{ oracle_user }}"
-#
-#  - name: Execute standbydatabasedisconnect.sql
-#    become_user: "{{ oracle_user }}"
-#    shell: echo "@{{ stage_dir }}/standbydatabasedisconnect.sql;" | sqlplus / as sysdba
-#    when: inventory_hostname in groups['ora-x2']
-#    register: out
-#
-#  - debug: var=out.stdout_lines
-#  
-#  become: true
-#  become_user: "{{ oracle_user }}"
-#
+  - name: copy standbydatabasedisconnect.sql
+    template: src=standbydatabasedisconnect.sql.j2 dest=/tmp/standbydatabasedisconnect.sql
+    when: inventory_hostname in groups['ora-x2']
+    become_user: "{{ oracle_user }}"
+  
+  - name: Execute standbydatabasedisconnect.sql
+    become_user: "{{ oracle_user }}"
+    shell: echo "@{{ stage_dir }}/standbydatabasedisconnect.sql;" | sqlplus / as sysdba
+    when: inventory_hostname in groups['ora-x2']
+    register: out
+
+  - debug: var=out.stdout_lines
+  
+  become: true
+  become_user: "{{ oracle_user }}"

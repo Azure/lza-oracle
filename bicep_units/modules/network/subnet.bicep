@@ -2,6 +2,8 @@ metadata name = 'subnet'
 metadata description = 'This module provisions subnets for a vnet'
 metadata owner = 'Azure/module-maintainers'
 
+import * as avmtypes from '../common_infrastructure/common_types.bicep'
+
 @description('Name of the VNET')
 param virtualNetworkName string = 'vNet'
 
@@ -12,10 +14,10 @@ param subnetName string = 'Subnet'
 param subnetAddressPrefix string = '10.0.0.0/24'
 
 @description('Network security group')
-param networkSecurityGroupId string 
+param networkSecurityGroupName string? 
 
 // AVM req - a Prefix is required
-param vnetResourcePrefix string = 'vnet'
+param vnetResourcePrefix string = avmtypes.vnetResourcePrefix
 
 // AVM req - a Prefix is required
 param subnetResourcePrefix string = 'snet'
@@ -26,13 +28,16 @@ resource existingVirtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' e
   name: '${vnetResourcePrefix}-${virtualNetworkName}'
 }
 
-// TODO: idempotency check
+var networkSecurityGroupId = !empty(networkSecurityGroupName) ? resourceId(subscription().subscriptionId,resourceGroup().name,'Microsoft.Network/networkSecurityGroups', 'nsg-${networkSecurityGroupName}') : ''
+ 
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
   parent: existingVirtualNetwork
   name: '${subnetResourcePrefix}-${subnetName}'
   properties: {
     addressPrefix: subnetAddressPrefix
-    networkSecurityGroup: {id: networkSecurityGroupId}
+    networkSecurityGroup: networkSecurityGroupId != null  ? {
+      id: networkSecurityGroupId
+    } : null
   }
 }
 

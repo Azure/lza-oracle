@@ -2,14 +2,8 @@ metadata name = 'datadisk'
 metadata description = 'This module provisions a data disk and attaches it to a given VM'
 metadata owner = 'Azure/module-maintainers'
 
-type storageDiskDescription = {
-  name: string
-  caching: string
-  disk_size_gb: int
-  lun: string
-  managed_disk_type: string
-  storage_account_type: string 
-}
+import * as avmtypes from '../common_infrastructure/common_types.bicep'
+
 @description('Disk name')
 param diskName string
 
@@ -26,21 +20,31 @@ param location string = resourceGroup().location
 param vmName string = 'oravm'
 
 @description('The type of storage account')
-@allowed(['Premium_LRS','Standard_LRS','StandardSSD_LRS','StandardSSD_ZRS','PremiumV2_LRS','Premium_ZRS','UltraSSD_LRS'])
 param diskType string = 'Premium_ZRS' // AVM req: Resources should be at highest possible resiliency
 
 @description('Availability zone')
 param avZone string = '1'
 
 // AVM req - a Prefix is required
-param diskResourcePrefix string = 'disk'
+param diskResourcePrefix string = avmtypes.dataDiskResourcePrefix
+
+@description('Optional. The lock settings of the service.')
+param lock avmtypes.lockType
+
+@description('Optional. Array of role assignment objects that contain the \'roleDefinitionIdOrName\' and \'principalId\' to define RBAC role assignments on this resource. In the roleDefinitionIdOrName attribute, you can provide either the display name of the role definition, or its fully qualified ID in the following format: \'/providers/Microsoft.Authorization/roleDefinitions/c2f4ef07-c644-48eb-af81-4b1b4947fb11\'.')
+param roleAssignments avmtypes.roleAssignmentType
+
+@description('Optional. Enable telemetry via a Globally Unique Identifier (GUID).')
+param enableTelemetry bool = true
 
 @description('Tags to be added to the resources')
 param tags object ={}
 
+var dataDiskName = '${diskResourcePrefix}-${diskName}'
+
 // create the disk 
 resource data_disk 'Microsoft.Compute/disks@2023-04-02' =  {
-  name: '${diskResourcePrefix}-${diskName}'
+  name: dataDiskName
   location: location
   sku: {name: diskType}
   zones:[avZone]
@@ -69,6 +73,41 @@ resource vmDisk 'Microsoft.Compute/virtualMachines@2023-03-01' = {
           lun: lun
         }
       ]
+    }
+  }
+}
+
+resource dataDiskLock 'Microsoft.Authorization/locks@2016-09-01' = if (!empty(lock ?? {}) && lock.?kind != 'None') { 
+  name: lock.?name ?? 'lock-${dataDiskName}'
+  properties: {
+    level: lock.?kind ?? ''
+    notes: lock.?kind == 'CanNotDelete' ? 'Cannot delete resource or child resources.' : 'Cannot delete or modify the resource or child resources.'
+  }
+  scope: data_disk
+}
+
+resource dataDiskRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = [for (roleAssignment, index) in (roleAssignments ?? []): {
+  name: guid(data_disk.id, roleAssignment.principalId, roleAssignment.roleDefinitionIdOrName)
+  properties: {
+    roleDefinitionId: contains(avmtypes.builtInRoleNames, roleAssignment.roleDefinitionIdOrName) ? avmtypes.builtInRoleNames[roleAssignment.roleDefinitionIdOrName] : roleAssignment.roleDefinitionIdOrName
+    principalId: roleAssignment.principalId
+    description: roleAssignment.?description
+    principalType: roleAssignment.?principalType
+    condition: roleAssignment.?condition
+    conditionVersion: !empty(roleAssignment.?condition) ? (roleAssignment.?conditionVersion ?? '2.0') : null // Must only be set if condtion is set
+    delegatedManagedIdentityResourceId: roleAssignment.?delegatedManagedIdentityResourceId
+  }
+  scope: data_disk
+}]
+
+resource defaultTelemetry 'Microsoft.Resources/deployments@2023-07-01' = if (enableTelemetry) {
+  name: 'pid-47ed15a6-730a-4827-bcb4-0fd963ffbd82-${uniqueString(deployment().name, location)}'
+  properties: {
+    mode: 'Incremental'
+    template: {
+      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
+      contentVersion: '1.0.0.0'
+      resources: []
     }
   }
 }

@@ -1,9 +1,6 @@
-//
-// This file creates the virtual machine for hosting Oracle databases, and configures it with the required settings.
-// It also adds the necessary AVM requirements - such as locks, role assignments, and diagnostic settings. etc
-//
+
 metadata name = 'vm'
-metadata description = 'This module provisions a virtual machine for hosting Oracle databases'
+metadata description = 'This module provisions a virtual machine along with supporting AVN resources'
 metadata owner = 'Azure/module-maintainers'
 
 import * as avmtypes from '../common_infrastructure/common_types.bicep'

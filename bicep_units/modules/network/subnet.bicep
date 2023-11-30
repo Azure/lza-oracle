@@ -1,5 +1,5 @@
 metadata name = 'subnet'
-metadata description = 'This module provisions subnets for a vnet'
+metadata description = 'This module provisions subnets for a vnet and optionally associates a network security group.'
 metadata owner = 'Azure/module-maintainers'
 
 import * as avmtypes from '../common_infrastructure/common_types.bicep'
@@ -30,12 +30,15 @@ resource existingVirtualNetwork 'Microsoft.Network/virtualNetworks@2023-04-01' e
 
 var networkSecurityGroupId = !empty(networkSecurityGroupName) ? resourceId(subscription().subscriptionId,resourceGroup().name,'Microsoft.Network/networkSecurityGroups', 'nsg-${networkSecurityGroupName}') : ''
  
+// The subnet resource should also be defined in the Vnet resource definition
+// Since Subnets are extension resources, other AVN resources such as locks, rbac are inherited 
+// and not defined separately
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
   parent: existingVirtualNetwork
   name: '${subnetResourcePrefix}-${subnetName}'
   properties: {
     addressPrefix: subnetAddressPrefix
-    networkSecurityGroup: networkSecurityGroupId != null  ? {
+    networkSecurityGroup: !empty(networkSecurityGroupId)  ? {
       id: networkSecurityGroupId
     } : null
   }

@@ -1,7 +1,8 @@
 //
 // This is the main driver file for deploying each resource defined in the parameters.
 // It is responsible for creating the Resource Group, Virtual Network, Subnet, NSG, Public IP, NIC, VM, and Data Disk.
-// It also creates the necessary dependencies between the resources.
+// This script deployment is at subscription scope, hence individual resources need to have their scope defined
+// to ensure they are created in the correct resource group.
 //
 
 targetScope = 'subscription'
@@ -92,7 +93,7 @@ module nsgs '../../bicep_units/modules/network/nsg.bicep' = [for (nsg, i) in net
   }
 }]
 
-// Create subnets and associate the first NSG created earlier
+// Create subnets and associate NSGs if provided
 module subnets '../../bicep_units/modules/network/subnet.bicep' = [for (subnet, i) in vnetSubnets:{
   name: '${subnet.subnetName}${i}'
   dependsOn: [ networks, nsgs ]
@@ -101,7 +102,7 @@ module subnets '../../bicep_units/modules/network/subnet.bicep' = [for (subnet, 
     subnetName: subnet.subnetName
     virtualNetworkName: subnet.virtualNetworkName
     subnetAddressPrefix: subnet.addressPrefix
-    networkSecurityGroupName: !empty(subnet.networkSecurityGroupName)? subnet.networkSecurityGroupName : null
+    networkSecurityGroupName: !empty(subnet.?networkSecurityGroupName)? subnet.networkSecurityGroupName : null
   }
 }
 ]

@@ -1,3 +1,6 @@
+//
+// This module creates the resource Group for all the subsequent resources.
+//
 metadata name = 'Common infrastructure'
 metadata description = 'This module provisions a Resource Group'
 metadata owner = 'Azure/module-maintainers'

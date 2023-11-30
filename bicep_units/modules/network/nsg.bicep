@@ -1,5 +1,5 @@
 metadata name = 'nsg'
-metadata description = 'This module provisions a Blank network security group'
+metadata description = 'This module provisions a network security group with required security rules.'
 metadata owner = 'Azure/module-maintainers'
 
 import * as avmtypes from '../common_infrastructure/common_types.bicep'
@@ -13,10 +13,7 @@ param securityRules avmtypes.securityRuleType[] = []
 @description('Location')
 param location string = resourceGroup().location
 
-// AVM req - a Prefix is required
 param nsgGroupPrefix string = avmtypes.nsgResourcePrefix
-
-// AVM optional settings
 
 @description('Optional. The lock settings of the service.')
 param lock avmtypes.lockType

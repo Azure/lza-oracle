@@ -25,7 +25,6 @@ param diskType string = 'Premium_ZRS' // AVM req: Resources should be at highest
 @description('Availability zone')
 param avZone string = '1'
 
-// AVM req - a Prefix is required
 param diskResourcePrefix string = avmtypes.dataDiskResourcePrefix
 
 @description('Optional. The lock settings of the service.')
@@ -42,7 +41,8 @@ param tags object ={}
 
 var dataDiskName = '${diskResourcePrefix}-${diskName}'
 
-// create the disk 
+// Data disks are pinned to an Availability zone.
+// Parameters should be defined correctly so that the data disk is pinned to the same zone as the VM.
 resource data_disk 'Microsoft.Compute/disks@2023-04-02' =  {
   name: dataDiskName
   location: location

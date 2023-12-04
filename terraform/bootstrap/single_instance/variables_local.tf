@@ -13,7 +13,7 @@ locals {
 locals {
   telem_core_arm_deployment_name = substr(
     format(
-      "pid-%s_%s_%s",
+      "pid-%s_%s",
       local.telem_core_puid,
       local.telem_random_hex,
     ),

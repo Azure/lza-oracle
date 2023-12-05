@@ -1,12 +1,21 @@
-name: Deploy Single Instance Oracle DB on Azure
+name: Deploy Single Instance Oracle DB on Azure with Terraform and Ansible
 on:
   workflow_dispatch: {}
   push:
-    branches: [ main, features/* ]
+    branches: [ main ]
+    paths:
+      - ".github/workflows/full-si-tf-deploy.yml"
+      - "terraform/bootstrap/single_instance/**"
+      - "terraform_units/**"
+      - "ansible/bootstrap/single_instance/**"
   pull_request:
     branches: [ main ]
+    paths:
+      - ".github/workflows/full-si-tf-deploy.yml"
+      - "terraform/bootstrap/single_instance/**"
+      - "terraform_units/**"
+      - "ansible/bootstrap/single_instance/**"
     
-#push, pull_request,
 env:
   TF_LOG: "INFO"
   AZ_LOCATION: "eastus" # can be parameterized

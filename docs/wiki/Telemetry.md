@@ -1,27 +1,29 @@
 <!-- markdownlint-disable -->
-## Telemetry Tracking Using Customer Usage Attribution (PID)
+# Telemetry Tracking Using Customer Usage Attribution (PID)
 <!-- markdownlint-restore -->
 
 Microsoft can identify the deployments of the Azure Resource Manager and Bicep templates with the deployed Azure resources. Microsoft can correlate these resources used to support the deployments. Microsoft collects this information to provide the best experiences with their products and to operate their business. The telemetry is collected through [customer usage attribution](https://docs.microsoft.com/azure/marketplace/azure-partner-customer-usage-attribution). The data is collected and governed by Microsoft's privacy policies, located at the [trust center](https://www.microsoft.com/trustcenter).
 
-To disable this tracking, we have included a parameter called `parTelemetryOptOut` to the following Terraform files in this repo with a simple boolean flag. The default value `false` which **does not** disable the telemetry. If you would like to disable this tracking, then simply set this value to `true` and this module will not be included in deployments and **therefore disables** the telemetry tracking.
+## Terraform Module Telemetry Tracking
 
-- ./terraform/bootstrap/data_guard/module.tf
-- ./terraform/bootstrap/single_instance/module.tf
+To disable this tracking, we have included a variable called `disable_telemetry` to the following Terraform files in this repo with a simple boolean flag. The default value `false` which **does not** disable the telemetry. If you would like to disable this tracking, then simply set this value to `true` and this module will not be included in deployments and **therefore disables** the telemetry tracking.
+
+- ./terraform/bootstrap/data_guard/variables_global.tf
+- ./terraform/bootstrap/single_instance/variables_global.tf
 
 If you are happy with leaving telemetry tracking enabled, no changes are required.
 
-In the module.tf file, you will see the following:
+In the variables_global.tf file, you will see the following:
 
 ```terraform
-fixme input from tf devs
+variable "disable_telemetry" {
+  type        = bool
+  description = "If set to true, will disable telemetry for the module. See https://aka.ms/alz-terraform-module-telemetry."
+  default     = false
+}
 ```
 
-The default value is `false`, but by changing the parameter value `true` and saving this file, when you deploy this module regardless of the deployment method the module deployment below will be ignored and therefore telemetry will not be tracked.
-
-```terraform
-fixme input from tf devs
-```
+The default value is `false`, but by changing the parameter value to `true` and saving this file, when you deploy this module regardless of the deployment method telemetry will not be tracked.
 
 ## Module PID Value Mapping
 
@@ -29,5 +31,5 @@ The following are the unique ID's (also known as PIDs) used in each of the files
 
 | File Name                     | PID                                  |
 | ------------------------------- | ------------------------------------ |
-| ./terraform/bootstrap/data_guard/module.tf            | 5c1ac525-f51f-411b-a7ca-b82d06798166 |
-| ./terraform/bootstrap/single_instance/module.tf | 725d2e48-c3bc-4564-8cf9-ba7b59c55bb4 |
+| ./terraform/bootstrap/data_guard/variables_global.tf            | 440d81eb-6657-4a7d-ad93-c7e9cc09e5da |
+| ./terraform/bootstrap/single_instance/variables_global.tf | e43d2d9e-0482-48ed-a38e-aa3e63c52954 |

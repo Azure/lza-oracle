@@ -35,8 +35,10 @@ dvAccountManagerName:
 dvAccountManagerPassword:
 olsConfiguration:
 datafileJarLocation:
+
 datafileDestination:     #TODO: set et sunu default degerleri al
-recoveryAreaDestination: #TODO: set et sunu
+recoveryAreaDestination: /u01/app/oracle/fast_recovery_area/{{ sid }}
+
 storageType: FS
 diskGroupName: #DATA
 asmsnmpPassword:

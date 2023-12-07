@@ -2,9 +2,11 @@ SELECT log_mode FROM v$database;
 
 
 SHUTDOWN IMMEDIATE;
+HOST SLEEP 5;
 STARTUP MOUNT;
 HOST SLEEP 5;
 ALTER DATABASE ARCHIVELOG;
+HOST SLEEP 5;
 ALTER DATABASE OPEN;
 
 HOST SLEEP 5;
@@ -26,6 +28,6 @@ alter system set LOG_ARCHIVE_CONFIG='DG_CONFIG=({{ sid }},{{ sid }}DG1)';
 alter system set LOG_ARCHIVE_DEST_2='SERVICE={{ sid }}DG1 LGWR ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME={{ sid }}DG1';
 alter system set LOG_ARCHIVE_DEST_STATE_2=ENABLE;
 alter system set FAL_SERVER={{ sid }}DG1;
-alter system set DB_FILE_NAME_CONVERT='{{ redo_log_filepath }}/{{ sid }}/','{{ redo_log_filepath }}/{{ sid }}DG1/' scope=spfile; 
-alter system set LOG_FILE_NAME_CONVERT='{{ redo_log_filepath }}/{{ sid }}/','{{ redo_log_filepath }}/{{ sid }}DG1/' scope=spfile;
+alter system set DB_FILE_NAME_CONVERT='{{ redo_log_filepath }}/{{ sid }}DG1/','{{ redo_log_filepath }}/{{ sid }}/' scope=spfile; 
+alter system set LOG_FILE_NAME_CONVERT='{{ redo_log_filepath }}/{{ sid }}DG1/','{{ redo_log_filepath }}/{{ sid }}/' scope=spfile;
 ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT=AUTO;

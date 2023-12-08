@@ -2,7 +2,7 @@
 
 The code is intended as an example for deployment of a single instance virtual machine with Oracle Database Enterprise Edition 19c. The code is intended to be used as a starting point for your own deployment. The module for this deployment is located in the `terraform/bootstrap/single_instance` directory.
 
-<img src="../media/single_vm.png" />
+ ![Single VM](../media/single_vm.png)
 
 ## Deployment steps
 

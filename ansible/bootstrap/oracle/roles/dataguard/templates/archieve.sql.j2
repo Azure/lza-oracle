@@ -30,4 +30,5 @@ alter system set LOG_ARCHIVE_DEST_STATE_2=ENABLE;
 alter system set FAL_SERVER={{ sid }}DG1;
 alter system set DB_FILE_NAME_CONVERT='{{ redo_log_filepath }}/{{ sid }}DG1/','{{ redo_log_filepath }}/{{ sid }}/' scope=spfile; 
 alter system set LOG_FILE_NAME_CONVERT='{{ redo_log_filepath }}/{{ sid }}DG1/','{{ redo_log_filepath }}/{{ sid }}/' scope=spfile;
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_1='LOCATION=USE_DB_RECOVERY_FILE_DEST VALID_FOR=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME={{ sid }}' scope=both;
 ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT=AUTO;

@@ -33,7 +33,7 @@ Run the following commands to included the file in the fixtures.tfvars file wher
 
 ```bash
 pubkey=$(cat .ssh/lza-oracle-single-instance.pub)
-fixtures="ssh_key: \"$pubkey\""
+fixtures="ssh_key = \"$pubkey\""
 echo $fixtures > terraform/bootstrap/single_instance/fixtures.tfvars
 ```
 

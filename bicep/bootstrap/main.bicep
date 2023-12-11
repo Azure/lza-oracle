@@ -39,6 +39,9 @@ param virtualMachines avmtypes.vmType[] = []
 @description('List of data disks')
 param dataDisks avmtypes.dataDiskType[] = []
 
+@description('Workspace Resource ID DCR for VMs')
+param dcrWorkspaceResourceId string?
+
 @description('Tags to be added to the resources')
 param tags object = {}
 
@@ -151,10 +154,22 @@ module nics 'br/public:avm-res-network-networkinterface:0.1.0' = [for (nic, i) i
 }
 ]
 
+// Create a Data collection rule, if a workspace ID has been defined for collecting 
+// metrics and logs.
+module dcr '../../bicep_units/modules/common_infrastructure/data_collection_rules.bicep' = if(!empty(dcrWorkspaceResourceId)) {
+  scope: resourceGroup(rgName)
+  dependsOn: [rg]
+  name : 'dcr'
+  params: {
+    workspaceResourceId: dcrWorkspaceResourceId
+    location: location
+  }
+}
+
 // Create a set of VMs based on the supplied Oracle Image
 module vms '../../bicep_units/modules/compute/vm.bicep' = [for (vm, i) in virtualMachines: {
   name: '${avmtypes.vmResourcePrefix}-${vm.virtualMachineName}${i}'
-  dependsOn: [ nics ]
+  dependsOn: [ nics, dcr ]
   scope: resourceGroup(rgName)
   params: {
     vmName: vm.virtualMachineName
@@ -170,6 +185,7 @@ module vms '../../bicep_units/modules/compute/vm.bicep' = [for (vm, i) in virtua
     enableTelemetry: false    
     tags: tags
     oracleImageReference: oracleImageReference
+    dataCollectionRuleId: !empty(dcrWorkspaceResourceId)?dcr.outputs.dataCollectionRuleId: null
   }
 }]
 
@@ -192,3 +208,5 @@ module storage '../../bicep_units/modules/storage/datadisk.bicep' =  [for (disk,
     tags: tags
   }
 }]
+
+

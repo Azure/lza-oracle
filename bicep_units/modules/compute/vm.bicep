@@ -44,6 +44,9 @@ param diagnosticSettings avmtypes.diagnosticSettingType
 @description('Optional. Enable telemetry via a Globally Unique Identifier (GUID).')
 param enableTelemetry bool = true
 
+@description('Optional. Data Collection Rule (DCR) ID.')
+param dataCollectionRuleId string?
+
 @description('Tags to be added to the resources')
 param tags object ={}
 
@@ -163,6 +166,19 @@ resource defaultTelemetry 'Microsoft.Resources/deployments@2023-07-01' = if (ena
     }
   }
 }
+
+
+// In principle we are expecting only 1 diagnostic setting per VM.
+// However, we are using a loop to create the extension and the DCR module.
+// Therefore, we are picking up the first DCR module output.
+resource dcrassociation 'Microsoft.Insights/dataCollectionRuleAssociations@2022-06-01' = if (!empty(dataCollectionRuleId)){
+  name: 'dcrassociation-${vmName}'
+  scope: vm
+  properties: {
+    dataCollectionRuleId: dataCollectionRuleId
+  }
+}
+
 
 output vmId string = vm.id
 output vmName string = vm.name

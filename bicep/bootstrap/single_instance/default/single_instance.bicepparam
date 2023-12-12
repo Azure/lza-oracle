@@ -60,7 +60,7 @@ param virtualMachines = [
     virtualMachineName : 'ora01'
     vmSize : 'Standard_D4s_v5'
     avZone : '1'
-    adminUsername : ''
+    adminUsername : 'oracle'
     sshPublicKey : ''
     }
 ]

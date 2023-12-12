@@ -5,7 +5,7 @@ param resourceGroupName = 'oraGroup1'
 
 param location  = 'centralindia'
 
-param dcrWorkspaceResourceId = '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+param dcrWorkspaceResourceId = '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
 
 param virtualNetworks  = [
   {
@@ -14,7 +14,7 @@ param virtualNetworks  = [
       '10.0.0.0/16']
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'vnetdiag'
         metricCategories: [
           {
@@ -50,7 +50,7 @@ param networkSecurityGroups = [
     ]
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'nsgdiag'
         logCategoriesAndGroups: [
           {
@@ -69,7 +69,7 @@ param publicIPAddresses = [
     publicIPAddressName : '01'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'pipdiag'
         metricCategories: [
           {
@@ -91,7 +91,7 @@ param publicIPAddresses = [
     publicIPAddressName : '02'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'pipdiag'
         metricCategories: [
           {
@@ -113,7 +113,7 @@ param publicIPAddresses = [
     publicIPAddressName : '03'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'pipdiag'
         metricCategories: [
           {
@@ -141,7 +141,7 @@ param networkInterfaces = [
     publicIPAddressName: '01'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'nicdiag'
         metricCategories: [
           {
@@ -160,7 +160,7 @@ param networkInterfaces = [
     publicIPAddressName: '02'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'nicdiag'
         metricCategories: [
           {
@@ -179,7 +179,7 @@ param networkInterfaces = [
     publicIPAddressName: '03'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'nicdiag'
         metricCategories: [
           {
@@ -224,12 +224,12 @@ param virtualMachines = [
   {
     virtualMachineName : 'primary'
     vmSize : 'Standard_D4s_v5'
-    adminUsername : ''
+    adminUsername : 'oracle'
     sshPublicKey : ''
     avZone : '1'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'vmdiag'
         metricCategories: [
           {
@@ -251,12 +251,12 @@ param virtualMachines = [
   {
     virtualMachineName : 'secondary'
     vmSize : 'Standard_D4s_v5'
-    adminUsername : ''
+    adminUsername : 'oracle'
     sshPublicKey : ''
     avZone : '2'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'vmdiag'
         metricCategories: [
           {
@@ -278,12 +278,12 @@ param virtualMachines = [
   {
     virtualMachineName : 'observer'
     vmSize : 'Standard_D4s_v5'
-    adminUsername : ''
+    adminUsername : 'oracle'
     sshPublicKey : ''
     avZone : '2'
     diagnosticSettings: [
       {
-        workspaceResourceId: '/subscriptions/c5518e67-7743-4dff-adcf-0f3ddd3fe296/resourceGroups/laworkspacerg/providers/Microsoft.OperationalInsights/workspaces/laworkspace1'
+        workspaceResourceId: '/subscriptions/<subscriptionId>/resourceGroups/<LAworkspaceResourceGroupName>/providers/Microsoft.OperationalInsights/workspaces/<workSpaceName>'
         name: 'vmdiag'
         metricCategories: [
           {

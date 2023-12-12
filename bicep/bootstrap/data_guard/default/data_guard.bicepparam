@@ -95,20 +95,20 @@ param virtualMachines = [
     virtualMachineName: 'primary'
     vmSize: 'Standard_D4s_v5'
     avZone: '1'
-    adminUsername : ''
+    adminUsername : 'oracle'
     sshPublicKey : ''
   }
   {
     virtualMachineName: 'secondary'
     vmSize: 'Standard_D4s_v5'
     avZone: '2'
-    adminUsername : ''
+    adminUsername : 'oracle'
     sshPublicKey : ''  }
   {
     virtualMachineName: 'observer'
     vmSize: 'Standard_D4s_v5'
     avZone: '2'
-    adminUsername : ''
+    adminUsername : 'oracle'
     sshPublicKey : ''
   }
 ]

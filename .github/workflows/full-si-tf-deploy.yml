@@ -196,10 +196,13 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ansible/bootstrap/single_instance
+        working-directory: ansible/bootstrap/oracle
     steps:
       - name: 🛒 Checkout
         uses: actions/checkout@v4
+
+      - name: get structure of the repository
+        run: ls -R  
 
       - name: 🔎 Check IP
         run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV

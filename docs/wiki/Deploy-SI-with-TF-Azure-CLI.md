@@ -2,7 +2,7 @@
 
 The code is intended as an example for deployment of a single instance virtual machine with Oracle Database Enterprise Edition 19c. The code is intended to be used as a starting point for your own deployment. The module for this deployment is located in the `terraform/bootstrap/single_instance` directory.
 
- ![Single VM](media/single_vm.png)
+![Single VM](media/single_vm.png)
 
 ## Deployment steps
 
@@ -44,7 +44,10 @@ Perform the following steps to deploy the virtual machine:
 - Verify that you are in the `terraform/bootstrap/single_instance` directory.
 - Run the following commands to initialize Terraform state and deploy the virtual machine:
 
+* To avoid registering unnecessary providers, you have to export the environment variable `ARM_SKIP_PROVIDER_REGISTRATION` as `true`.
+
 ```bash
+export ARM_SKIP_PROVIDER_REGISTRATION=true
 terraform init
 terraform plan -var-file=fixtures.tfvars
 terraform apply -var-file=fixtures.tfvars
@@ -54,7 +57,7 @@ terraform apply -var-file=fixtures.tfvars
 
 Finally, you can connect to the virtual machine with ssh private key. While deploying resources, a public ip address is generated and attached to the virtual machine, so that you can connect to the virtual machine with this IP address. The username is `oracle`, which is hardcoded in `terraform/bootstrap/single_instance/module.tf`.
 
-As the deployment enables Just-in-Time VM access, you will need to request access to the VM before you can connect to it as described [here](https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-usage#enable-jit-on-your-vms-from-microsoft-defender-for-cloud). 
+As the deployment enables Just-in-Time VM access, you will need to request access to the VM before you can connect to it as described [here](https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-usage#enable-jit-on-your-vms-from-microsoft-defender-for-cloud).
 
 Once the VM is accessible, you can connect to it with the following command:
 
@@ -66,7 +69,7 @@ Next step is to proceed with Ansible configuration to get the Oracle database op
 
 ## Optional Settings
 
-There are a number of optional settings which the module enables. These are described below. Overall if you wish to modify one or more variables in the module, you can do so by modifying the `terraform/bootstrap/single_instance/variables_global.tf`  or the `terraform/bootstrap/single_instance/variables_local.tf` file.
+There are a number of optional settings which the module enables. These are described below. Overall if you wish to modify one or more variables in the module, you can do so by modifying the `terraform/bootstrap/single_instance/variables_global.tf` or the `terraform/bootstrap/single_instance/variables_local.tf` file.
 
 ### How to enable diagnostic settings
 
@@ -184,6 +187,3 @@ We set these as default values in ansible part.
     become_user: root
     register: redo_disks
 ```
-
-
-

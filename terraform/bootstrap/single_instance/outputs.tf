@@ -56,3 +56,13 @@ output "database_asm_disks" {
 output "database_redo_disks" {
   value = module.storage.redo_disks
 }
+
+###############################################################################
+#                                                                             #
+#                    Virtual Machine                                          #
+#                                                                             #
+###############################################################################
+output "vm_public_ip_address" {
+  value = module.network.db_server_puplic_ip
+}
+

@@ -17,7 +17,7 @@ rg-oracle-demo-eastus-001
 <img src="../media/sshport.jpg" />
 
 
-If you are using Azure Cloud Shell, you must create an inbound rule as the following:
+If you are using Azure Cloud Shell, you can create an inbound rule as the following:
 
 <img src="../media/ssh-for-cloud-shell.jpg" />
 

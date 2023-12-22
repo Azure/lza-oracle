@@ -1,0 +1,17 @@
+{
+    "experimentalFeaturesEnabled": {
+        "userDefinedTypes": true,
+        "extensibility": true,
+        "compileTimeImports": true,
+        "resourceTypedParamsAndOutputs": true
+      },
+    "analyzers": {
+      "core": {
+        "rules": {
+          "no-deployments-resources": {
+            "level": "off"
+          }
+      }
+    }
+  }
+}

@@ -36,6 +36,11 @@ variable "infrastructure" {
   default     = {}
 }
 
+variable "disable_telemetry" {
+  type        = bool
+  description = "If set to true, will disable telemetry for the module. See https://aka.ms/alz-terraform-module-telemetry."
+  default     = false
+}
 #########################################################################################
 #  Virtual Machine parameters                                                           #
 #########################################################################################

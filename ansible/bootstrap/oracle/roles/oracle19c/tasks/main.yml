@@ -6,8 +6,18 @@
     group: "{{ oracle_group }}"
     owner: "{{ oracle_user }}"
 
+- name: set oracle user environment for standalone
+  when: data_guard == "no"
+  lineinfile: dest=/home/{{ oracle_user }}/.bashrc state=present line="{{ item }}"
+  with_items:
+    - "export ORACLE_BASE={{ ora_user_env.ORACLE_BASE }}"
+    - "export ORACLE_SID={{ ora_user_env.ORACLE_SID }}DG1"
+    - "export ORACLE_HOME={{ ora_user_env.ORACLE_HOME }}"
+    - "export PATH=$PATH:$ORACLE_HOME/bin"
+    - "export NLS_LANG={{ ora_user_env.NLS_LANG }}"
+
 - name: set oracle user environment for primary
-  when: inventory_hostname in groups['ora-x1']
+  when: data_guard == "yes" and inventory_hostname in groups['ora-x1']
   lineinfile: dest=/home/{{ oracle_user }}/.bashrc state=present line="{{ item }}"
   with_items:
     - "export ORACLE_BASE={{ ora_user_env.ORACLE_BASE }}"
@@ -16,8 +26,8 @@
     - "export PATH=$PATH:$ORACLE_HOME/bin"
     - "export NLS_LANG={{ ora_user_env.NLS_LANG }}"
 
-- name: set oracle user environment for primary
-  when: inventory_hostname in groups['ora-x2']
+- name: set oracle user environment for secondary
+  when: data_guard == "yes" and inventory_hostname in groups['ora-x2']
   lineinfile: dest=/home/{{ oracle_user }}/.bashrc state=present line="{{ item }}"
   with_items:
     - "export ORACLE_BASE={{ ora_user_env.ORACLE_BASE }}"

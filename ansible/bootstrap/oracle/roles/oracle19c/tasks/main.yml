@@ -173,7 +173,7 @@
       chdir: "{{ oracle_db_home }}"
   
   - name: start listener
-    when: inventory_hostname in groups['ora-x1']
+    when: data_guard == "no" or inventory_hostname in groups['ora-x1']
     command: lsnrctl start
     ignore_errors: true
 

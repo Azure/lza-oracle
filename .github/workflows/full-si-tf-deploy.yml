@@ -82,9 +82,8 @@ jobs:
       # Generate random string for suffix
     - name: 🔎 Generate Random String for Resource Group Name
       id: resourcegroup-generator
-      run: | 
-        echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-$(date +%s) >> $GITHUB_ENV 
-        echo ${{env.ResourceGroupName}}
+      run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-$(date +%s) >> $GITHUB_ENV 
+    - run: echo ${{env.ResourceGroupName}}
 
     - name: 🗒️ Create a tfvars file for terraform
       run: |

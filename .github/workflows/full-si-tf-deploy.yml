@@ -82,8 +82,9 @@ jobs:
       # Generate random string for suffix
     - name: 🔎 Generate Random String for Resource Group Name
       id: resourcegroup-generator
-      run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-$(date +%s) >> $GITHUB_ENV 
-    - run: echo ${{env.ResourceGroupName}}
+      run: | 
+        echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-$(date +%s) >> $GITHUB_ENV 
+        echo ${{env.ResourceGroupName}}
 
     - name: 🗒️ Create a tfvars file for terraform
       run: |
@@ -201,9 +202,6 @@ jobs:
       - name: 🛒 Checkout
         uses: actions/checkout@v4
 
-      - name: get structure of the repository
-        run: ls -R  
-
       - name: 🔎 Check IP
         run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
@@ -216,9 +214,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           name: 'github_actions_id_rsa'
           known_hosts: "sometin"
-      
-      - run: ls /home/runner/.ssh
-      - run: cat /home/runner/.ssh/known_hosts
       
       # Login to Azure CLI
       - name: 🔑 Login via Azure CLI

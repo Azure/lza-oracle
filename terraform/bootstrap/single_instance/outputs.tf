@@ -29,15 +29,6 @@ output "created_resource_group_tags" {
 
 ###############################################################################
 #                                                                             #
-#                    Virtual Machine                                          #
-#                                                                             #
-###############################################################################
-output "vm_public_ip_address" {
-  value = module.network.db_server_puplic_ip
-}
-
-###############################################################################
-#                                                                             #
 #                            Network                                          #
 #                                                                             #
 ###############################################################################
@@ -54,14 +45,24 @@ output "db_subnet" {
 #                            Storage                                          #
 #                                                                             #
 ###############################################################################
-# output "database_data_disks" {
-#   value = module.storage.data_disks
-# }
+output "database_data_disks" {
+  value = module.storage.data_disks
+}
 
-# output "database_asm_disks" {
-#   value = module.storage.asm_disks
-# }
+output "database_asm_disks" {
+  value = module.storage.asm_disks
+}
 
-# output "database_redo_disks" {
-#   value = module.storage.redo_disks
-# }
+output "database_redo_disks" {
+  value = module.storage.redo_disks
+}
+
+###############################################################################
+#                                                                             #
+#                    Virtual Machine                                          #
+#                                                                             #
+###############################################################################
+output "vm_public_ip_address" {
+  value = module.network.db_server_puplic_ip
+}
+

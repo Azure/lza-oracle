@@ -7,14 +7,14 @@ on:
       - ".github/workflows/full-si-tf-deploy.yml"
       - "terraform/bootstrap/single_instance/**"
       - "terraform_units/**"
-      - "ansible/bootstrap/single_instance/**"
+      - "ansible/bootstrap/oracle/**"
   pull_request:
     branches: [ main ]
     paths:
       - ".github/workflows/full-si-tf-deploy.yml"
       - "terraform/bootstrap/single_instance/**"
       - "terraform_units/**"
-      - "ansible/bootstrap/single_instance/**"
+      - "ansible/bootstrap/oracle/**"
     
 env:
   TF_LOG: "INFO"
@@ -196,7 +196,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./ansible/bootstrap/single_instance
+        working-directory: ansible/bootstrap/oracle
     steps:
       - name: 🛒 Checkout
         uses: actions/checkout@v4
@@ -213,9 +213,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           name: 'github_actions_id_rsa'
           known_hosts: "sometin"
-      
-      - run: ls /home/runner/.ssh
-      - run: cat /home/runner/.ssh/known_hosts
       
       # Login to Azure CLI
       - name: 🔑 Login via Azure CLI
@@ -250,17 +247,12 @@ jobs:
         with:
           inlineScript: |
             $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/vm-0"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
-
             $JitPolicyArr=@($JitPolicyVm1)
-
             Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
           azPSVersion: "latest"
 
       - name: 🧮 Get Known Hosts parameter using ssh-keyscan
         run: ssh-keyscan -T 300 -H ${{env.VM_Public_IP_Address}} >> /home/runner/.ssh/known_hosts
-
-      - run: ls /home/runner/.ssh
-      - run: cat /home/runner/.ssh/known_hosts
 
       - name: 🗒️ Create the inventory file
         run: |
@@ -269,11 +261,11 @@ jobs:
           ${{env.VM_Public_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
           EOF
 
-      - run: ls 
-      - run: cat inventory
+      - name: 🗒️ Show the inventory file
+        run: cat inventory
 
 ##############################################################################################################################################
 #                                    Ansible                                                                                                 #
 ##############################################################################################################################################
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
-        run: ansible-playbook playbook.yml -i inventory
+        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"

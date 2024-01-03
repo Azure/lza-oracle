@@ -41,6 +41,7 @@ terraform.rc
 *.pyc
 *.time
 inventory
+inventory_dg
 #for oracle
 *.zip 
 
@@ -54,3 +55,7 @@ inventory
 
 .DS_Store
 .idea
+
+
+**/temp/*
+

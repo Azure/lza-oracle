@@ -56,3 +56,15 @@ output "database_asm_disks_primary" {
 output "database_redo_disks_primary" {
   value = module.storage_primary.redo_disks
 }
+
+output "database_data_disks_secondary" {
+  value = module.storage_secondary.data_disks
+}
+
+output "database_asm_disks_secondary" {
+  value = module.storage_secondary.asm_disks
+}
+
+output "database_redo_disks_secondary" {
+  value = module.storage_secondary.redo_disks
+}

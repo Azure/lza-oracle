@@ -18,8 +18,10 @@ on:
     
 env:
   TF_LOG: "INFO"
-  AZ_LOCATION: "eastus" # can be parameterized
-  AZ_RG_BASENAME: "Oracle-test" # can be parameterized
+  AZ_LOCATION: "eastus" 
+  AZ_RG_BASENAME: "Oracle-test" 
+  VM_PRIMARY_NAME: "vm-primary-0" 
+  VM_SECONDARY_NAME: "vm-secondary-0" 
 
 permissions:
   id-token: write
@@ -244,8 +246,8 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/vm-primary-0"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
-            $JitPolicyVm2 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/vm-secondary-0"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
+            $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
+            $JitPolicyVm2 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_SECONDARY_NAME}}"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
             $JitPolicyArr1=@($JitPolicyVm1)
             $JitPolicyArr2=@($JitPolicyVm2)
             Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy-primary" -VirtualMachine $JitPolicyArr1
@@ -254,8 +256,8 @@ jobs:
 
       - name: 🔎 Get VM Public IP Addresses
         run: |
-            echo "VM_Primary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name vm-primary-0 --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
-            echo "VM_Secondary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name vm-secondary-0 --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
+            echo "VM_Primary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name ${{env.VM_PRIMARY_NAME}} --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
+            echo "VM_Secondary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name ${{env.VM_SECONDARY_NAME}} --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
       - run: echo ${{env.VM_Primary_IP_Address}}
       - run: echo ${{env.VM_Secondary_IP_Address}}
 
@@ -268,10 +270,10 @@ jobs:
         run: |
           cat > inventory <<EOF
           [ora-x1]
-          vm-primary-0 ansible_host=${{env.VM_Primary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+          ${{env.VM_PRIMARY_NAME}} ansible_host=${{env.VM_Primary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
 
           [ora-x2]
-          vm-secondary-0 ansible_host=${{env.VM_Secondary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+          ${{env.VM_SECONDARY_NAME}} ansible_host=${{env.VM_Secondary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
           EOF
 
       - name: 🗒️ Show the inventory file

@@ -271,7 +271,7 @@ jobs:
           vm-primary-0 ansible_host=${{env.VM_Primary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
 
           [ora-x2]
-          vm-secondary-0 ansible_host=${{env.VM_Secondary_IP_Address}}ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+          vm-secondary-0 ansible_host=${{env.VM_Secondary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
           EOF
 
       - name: 🗒️ Show the inventory file

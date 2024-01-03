@@ -204,8 +204,6 @@ jobs:
       - name: 🔎 Check IP
         run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
-      - run: echo "VM_Public_IP_Address=${{needs.terraform.outputs.VM_Public_IP_Address}}" >> $GITHUB_ENV
-      - run: echo "VM_Public_IP_Address=${{env.VM_Public_IP_Address}}"
       
       - name: 'Install SSH Key'
         uses: shimataro/ssh-key-action@v2
@@ -254,11 +252,21 @@ jobs:
       - name: 🧮 Get Known Hosts parameter using ssh-keyscan
         run: ssh-keyscan -T 300 -H ${{env.VM_Public_IP_Address}} >> /home/runner/.ssh/known_hosts
 
+      - name: 🔎 Get VM Public IP Addresses
+        run: |
+            echo "VM_Primary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name vm-primary-0 --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
+            echo "VM_Secondary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name vm-secondary-0 --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
+      - run: echo ${{env.VM_Primary_IP_Address}}
+      - run: echo ${{env.VM_Secondary_IP_Address}}
+
       - name: 🗒️ Create the inventory file
         run: |
           cat > inventory <<EOF
-          [dbservers]
-          ${{env.VM_Public_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+          [ora-x1]
+          vm-primary-0 ansible_host=${{env.VM_Primary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+
+          [ora-x2]
+          vm-secondary-0 ansible_host=${{env.VM_Secondary_IP_Address}}ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
           EOF
 
       - name: 🗒️ Show the inventory file

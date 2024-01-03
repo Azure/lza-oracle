@@ -177,13 +177,13 @@ jobs:
     - name: 🔃 Terraform Refresh State
       run: terraform  apply -refresh-only -auto-approve
 
-    - run: echo "vm_public_ip_address=$(terraform output vm_public_ip_address)" >> $GITHUB_ENV
-    - run: echo ${{env.vm_public_ip_address}}
+    # - run: echo "vm_public_ip_address=$(terraform output vm_public_ip_address)" >> $GITHUB_ENV
+    # - run: echo ${{env.vm_public_ip_address}}
 
 
     outputs:
       ResourceGroupName: ${{ env.ResourceGroupName }}
-      VM_Public_IP_Address: ${{ env.vm_public_ip_address }}
+      # VM_Public_IP_Address: ${{ env.vm_public_ip_address }}
 
 ##############################################################################################################################################
 #                                     SSH Keys and parameter preparation for Ansible                                                         #
@@ -244,9 +244,12 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/vm-0"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
-            $JitPolicyArr=@($JitPolicyVm1)
-            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
+            $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/vm-primary-0"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
+            $JitPolicyVm2 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/vm-secondary-0"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
+            $JitPolicyArr1=@($JitPolicyVm1)
+            $JitPolicyArr2=@($JitPolicyVm2)
+            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy-primary" -VirtualMachine $JitPolicyArr1
+            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy-secondary" -VirtualMachine $JitPolicyArr2
           azPSVersion: "latest"
 
       - name: 🧮 Get Known Hosts parameter using ssh-keyscan

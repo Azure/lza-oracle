@@ -19,7 +19,7 @@ The components are created as follows:
 
 1. An Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/?ref=microsoft.com&utm_source=microsoft.com&utm_medium=docs&utm_campaign=visualstudio) before you begin.
 2. If deploying manually, you will require a compute source running Ubuntu. This can either be Azure Cloud Shell (recommended), a local computer or [an Azure VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu).
-3. If you are using either a local computer or an Azure VM, you need the following software installed on it. Github Action agents and Azure Cloud Shell have this software installed by default. 
+3. If you are using either a local computer or an Azure VM, you need the following software installed on it. Github Action agents and Azure Cloud Shell have this software installed by default.
     1. [Terraform](https://developer.hashicorp.com/terraform/downloads).
     1. [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html).
     1. [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt).
@@ -33,7 +33,7 @@ The components are created as follows:
 - Clone the forked repo from your own GitHub organization to your developer workstation.
 - Determine how you want to proceed with deployment, depending on what flavor of Oracle database VM you wish to deploy and the method you wish to use. See the section below for more details.
 
-### Deploy through GitHub Actions
+### Deploy through GitHub Actions (recommended method)
 
 - [Single instance automated deployment with Terraform through GitHub Actions](./Deploy-SI-with-TF-GitHub-Actions.md) (recommended method)
 - [Single instance automated deployment with Bicep through GitHub Actions](./Deploy-SI-with-Bicep-GitHub-Actions.md) (recommended method)

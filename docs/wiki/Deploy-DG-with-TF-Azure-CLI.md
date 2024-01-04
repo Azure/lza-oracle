@@ -1,8 +1,8 @@
 # Introduction
 
-The code is intended as an example for deployment of a single instance virtual machine with Oracle Database Enterprise Edition 19c. The code is intended to be used as a starting point for your own deployment. The module for this deployment is located in the `terraform/bootstrap/single_instance` directory.
+The code is intended as an example for deployment of two Azure Virtual Machines with Oracle Database Enterprise Edition 19c in a Data Guard configuration. The code is intended to be used as a starting point for your own deployment. The module for this deployment is located in the `terraform/bootstrap/data_guard` directory.
 
-![Single VM](media/single_vm.png)
+ ![Data Guard configuration](media/dg_vms.png)
 
 ## Deployment steps
 
@@ -13,7 +13,7 @@ The code is intended as an example for deployment of a single instance virtual m
 Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create. To do this follow these steps on your compute source:
 
 ```bash
-ssh-keygen -f ~/.ssh/lza-oracle-single-instance
+ssh-keygen -f ~/.ssh/lza-oracle-data-guard
 ```
 
 Verify that the key has been created:
@@ -25,26 +25,26 @@ ls -lha ~/.ssh/
 The above command should result in output similar to the following:
 
 ```bash
--rw-------   1 yourname  staff   2.6K  8 17  2023 lza-oracle-single-instance
--rw-r--r--   1 yourname  staff   589B  8 17  2023 lza-oracle-single-instance.pub
+-rw-------   1 yourname  staff   2.6K  8 17  2023 lza-oracle-data-guard
+-rw-r--r--   1 yourname  staff   589B  8 17  2023 lza-oracle-data-guard.pub
 ```
 
-Run the following commands to included the file in the fixtures.tfvars file where it will be used when deploying the virtual machine:
+Run the following commands to include the public key in the fixtures.tfvars file where it will be used when deploying the virtual machine:
 
 ```bash
-pubkey=$(cat .ssh/lza-oracle-single-instance.pub)
+pubkey=$(cat .ssh/lza-oracle-data-guard.pub)
 fixtures="ssh_key = \"$pubkey\""
-echo $fixtures > terraform/bootstrap/single_instance/fixtures.tfvars
+echo $fixtures > terraform/bootstrap/data_guard/fixtures.tfvars
 ```
 
 ### Deploy the virtual machine
 
 Perform the following steps to deploy the virtual machine:
 
-- Verify that you are in the `terraform/bootstrap/single_instance` directory.
+- Verify that you are in the `terraform/bootstrap/data_guard` directory.
 - Run the following commands to initialize Terraform state and deploy the virtual machine:
 
-* To avoid registering unnecessary providers, you have to export the environment variable `ARM_SKIP_PROVIDER_REGISTRATION` as `true`.
+> To avoid registering unnecessary providers, you have to export the environment variable `ARM_SKIP_PROVIDER_REGISTRATION` as `true`.
 
 ```bash
 export ARM_SKIP_PROVIDER_REGISTRATION=true
@@ -55,27 +55,27 @@ terraform apply -var-file=fixtures.tfvars
 
 ### Connect to the virtual machine
 
-Finally, you can connect to the virtual machine with ssh private key. While deploying resources, a public ip address is generated and attached to the virtual machine, so that you can connect to the virtual machine with this IP address. The username is `oracle`, which is hardcoded in `terraform/bootstrap/single_instance/module.tf`.
+Finally, you can connect to the virtual machine with the ssh private key. While deploying resources, a public ip address is generated and attached to the virtual machine, so that you can connect to the virtual machine with this IP address. The username is `oracle`, which is hardcoded in `terraform/bootstrap/data_guard/module.tf`.
 
 As the deployment enables Just-in-Time VM access, you will need to request access to the VM before you can connect to it as described [here](https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-usage#enable-jit-on-your-vms-from-microsoft-defender-for-cloud).
 
 Once the VM is accessible, you can connect to it with the following command:
 
 ```bash
-ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
+ssh -i ~/.ssh/lza-oracle-data-guard  oracle@<PUBLIC_IP_ADDRESS>
 ```
 
-Next step is to proceed with Ansible configuration to get the Oracle database operational. See the [Ansible single instance documentation](ANSIBLE-SI.md) for more details.
+Next step is to proceed with Ansible configuration to get the Oracle database operational. See the [Ansible Data Guard documentation](ANSIBLE-DG.md) for more details.
 
 ## Optional Settings
 
-There are a number of optional settings which the module enables. These are described below. Overall if you wish to modify one or more variables in the module, you can do so by modifying the `terraform/bootstrap/single_instance/variables_global.tf` or the `terraform/bootstrap/single_instance/variables_local.tf` file.
+There are a number of optional settings which the module enables. These are described below. Overall if you wish to modify one or more variables in the module, you can do so by modifying the `terraform/bootstrap/data_guard/variables_global.tf` or the `terraform/bootstrap/data_guard/variables_local.tf` file.
 
 ### How to enable diagnostic settings
 
 To enable diagnostic settings, you have to set `is_diagnostic_settings_enabled` **true** in **common_infrastructure** module.
 
-```
+```terraform
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
@@ -90,7 +90,7 @@ To assign roles, you must set `role_assignments` value in each module.
 
 For example, in order to assign `Contributor` role in a subscription scope, you have to set the value like below.
 
-```
+```terraform
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
@@ -107,7 +107,7 @@ module "common_infrastructure" {
 
 Also, you can assign roles in the specific scope. If you want to assign `Virtual Machine Contributor` role in the VM scope, you should set the below value.
 
-```
+```terraform
 module "vm" {
   source = "../../../terraform_units/modules/compute"
   ・・・
@@ -127,9 +127,9 @@ Role names you can assign can be referred in [this document](https://learn.micro
 In order to prevent from deleting resources accidentally, you can lock resources in the specific scope.
 If you want to enable resource locks, you can add resource lock variables in the specific module.
 
-For example, you can enable resource lock at subscription level like this in `terraform/bootstrap/single_instance_module.tf` file.
+For example, you can enable resource lock at subscription level like this in `terraform/bootstrap/data_guard_module.tf` file.
 
-```
+```terraform
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
@@ -142,9 +142,9 @@ module "common_infrastructure" {
 }
 ```
 
-In addition to that, you can lock the specific resource. For example, if you consider enabling lock a virtual network, you can set the variable in `terraform/bootstrap/single_instance_module.tf` file.
+In addition to that, you can lock the specific resource. For example, if you consider enabling lock a virtual network, you can set the variable in `terraform/bootstrap/data_guard_module.tf` file.
 
-```
+```terraform
 module "network" {
   source = "../../../terraform_units/modules/network"
 
@@ -173,7 +173,7 @@ This is the default lun nubmer of managed disks.
 
 We set these as default values in ansible part.
 
-```
+```ansible
   - name: Get ASM Disks
     shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun[1][0-9]$` ; readlink -f ${lunpath}"
     become_user: root

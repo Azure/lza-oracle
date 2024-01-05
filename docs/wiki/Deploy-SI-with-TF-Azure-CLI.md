@@ -29,13 +29,17 @@ The above command should result in output similar to the following:
 -rw-r--r--   1 yourname  staff   589B  8 17  2023 lza-oracle-single-instance.pub
 ```
 
-Run the following commands to included the file in the fixtures.tfvars file where it will be used when deploying the virtual machine:
+Run the following commands to include the public key in the fixtures.tfvars file where it will be used when deploying the virtual machine:
 
 ```bash
 pubkey=$(cat .ssh/lza-oracle-single-instance.pub)
 fixtures="ssh_key = \"$pubkey\""
 echo $fixtures > terraform/bootstrap/single_instance/fixtures.tfvars
 ```
+
+The fixtures.tfvars file should now contain the public key, see below for an example:
+
+![fixtures](media/fixtures.jpg)
 
 ### Deploy the virtual machine
 
@@ -44,7 +48,7 @@ Perform the following steps to deploy the virtual machine:
 - Verify that you are in the `terraform/bootstrap/single_instance` directory.
 - Run the following commands to initialize Terraform state and deploy the virtual machine:
 
-* To avoid registering unnecessary providers, you have to export the environment variable `ARM_SKIP_PROVIDER_REGISTRATION` as `true`.
+> To avoid registering unnecessary providers, you have to export the environment variable `ARM_SKIP_PROVIDER_REGISTRATION` as `true`.
 
 ```bash
 export ARM_SKIP_PROVIDER_REGISTRATION=true
@@ -75,7 +79,7 @@ There are a number of optional settings which the module enables. These are desc
 
 To enable diagnostic settings, you have to set `is_diagnostic_settings_enabled` **true** in **common_infrastructure** module.
 
-```
+```terraform
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
@@ -90,7 +94,7 @@ To assign roles, you must set `role_assignments` value in each module.
 
 For example, in order to assign `Contributor` role in a subscription scope, you have to set the value like below.
 
-```
+```terraform
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
@@ -107,7 +111,7 @@ module "common_infrastructure" {
 
 Also, you can assign roles in the specific scope. If you want to assign `Virtual Machine Contributor` role in the VM scope, you should set the below value.
 
-```
+```terraform
 module "vm" {
   source = "../../../terraform_units/modules/compute"
   ・・・
@@ -129,7 +133,7 @@ If you want to enable resource locks, you can add resource lock variables in the
 
 For example, you can enable resource lock at subscription level like this in `terraform/bootstrap/single_instance_module.tf` file.
 
-```
+```terraform
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
@@ -144,7 +148,7 @@ module "common_infrastructure" {
 
 In addition to that, you can lock the specific resource. For example, if you consider enabling lock a virtual network, you can set the variable in `terraform/bootstrap/single_instance_module.tf` file.
 
-```
+```terraform
 module "network" {
   source = "../../../terraform_units/modules/network"
 
@@ -173,7 +177,7 @@ This is the default lun nubmer of managed disks.
 
 We set these as default values in ansible part.
 
-```
+```ansible
   - name: Get ASM Disks
     shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun[1][0-9]$` ; readlink -f ${lunpath}"
     become_user: root

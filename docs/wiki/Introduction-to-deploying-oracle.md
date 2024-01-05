@@ -20,7 +20,8 @@ The components are created as follows:
 1. An Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/?ref=microsoft.com&utm_source=microsoft.com&utm_medium=docs&utm_campaign=visualstudio) before you begin.
 2. If deploying manually, you will require a compute source running Ubuntu. This can either be Azure Cloud Shell (recommended), a local computer or [an Azure VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu).
 3. If you are using either a local computer or an Azure VM, you need the following software installed on it. Github Action agents and Azure Cloud Shell have this software installed by default.
-    1. [Terraform](https://developer.hashicorp.com/terraform/downloads).
+    1. If leveraging Terraform for Infrastructure-as-Code [Terraform](https://developer.hashicorp.com/terraform/downloads).
+    1. If leveraging Bicep for Infrastructure-as-Code [Bicep](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/install) and [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.4)
     1. [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html).
     1. [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt).
 4. Key vault or similar to manage public/private key pair for Oracle VM is not included in the code. You should create a key vault or similar and store the public/private key pair in that. Public key needs to be specified while deploying the virtual machines, either in a parameter file or from the command line.

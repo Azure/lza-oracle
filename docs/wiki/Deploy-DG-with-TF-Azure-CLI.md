@@ -36,6 +36,9 @@ pubkey=$(cat .ssh/lza-oracle-data-guard.pub)
 fixtures="ssh_key = \"$pubkey\""
 echo $fixtures > terraform/bootstrap/data_guard/fixtures.tfvars
 ```
+The fixtures.tfvars file should now contain the public key, see below for an example:
+
+![fixtures](media/fixtures.jpg)
 
 ### Deploy the virtual machine
 

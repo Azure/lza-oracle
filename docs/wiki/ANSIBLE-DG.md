@@ -13,9 +13,9 @@ cd ~/lza-oracle/ansible/bootstrap/oracle
 ```bash
 cat > inventory <<EOF
 [ora-x1]
-<hostname for the primary node> ansible_host=<Public IP address of the primary node created via terraform>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
+<hostname for the primary node> ansible_host=<Public IP address of the primary node created via terraform or Bicep>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
 [ora-x2]
-<hostname for the secondary node> ansible_host=<Public IP address of the secondary node created via terraform>   ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
+<hostname for the secondary node> ansible_host=<Public IP address of the secondary node created via terraform or Bicep>   ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
 EOF
 ```
 
@@ -26,7 +26,7 @@ Below is an example of what the file should look like after running the above co
 1. Start the ansible playbook
 
 ```bash
-ansible-playbook playbook_dg.yml -i inventory
+ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes"
 ```
 
 (If you are prompted for "are you sure you want to continue connecting?", enter "yes")

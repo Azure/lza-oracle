@@ -24,7 +24,7 @@ Below is an example of what the file should look like after running the above co
 1. Start the ansible playbook
 
 ```bash
-ansible-playbook playbook.yml -i inventory
+ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"
 ```
 
 (If you are prompted for "are you sure you want to continue connecting?", enter "yes")

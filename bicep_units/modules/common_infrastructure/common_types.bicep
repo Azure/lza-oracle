@@ -115,11 +115,14 @@ type dataDiskType = {
   @description('LUN of the Data Disk')
   lun: int
 
+  @description('Host disk caching on the Data Disk')
+  hostDiskCaching: string
+
   @description('Virtual Machine Name to which data disk needs to be attached')
   virtualMachineName: string
 
   @description('Availability Zone where disk needs to be created')
-  avZone: string
+  avZone: int
 
   @description('Diagnostic settings')
   diagnosticSettings: diagnosticSettingType?
@@ -147,7 +150,7 @@ type vmType = {
   sshPublicKey: string
 
   @description('Availability Zone where VM needs to be created')
-  avZone: string
+  avZone: int
 
   @description('Diagnostic settings')
   diagnosticSettings: diagnosticSettingType?

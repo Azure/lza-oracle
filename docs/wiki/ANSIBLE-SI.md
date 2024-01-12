@@ -5,7 +5,7 @@ On the compute source running Ubuntu or on Azure Cloud Shell, follow the steps g
 1. Switch to the oracle subdirectory:
 
 ```bash
-cd ~/lza-oracle/ansible/bootstrap/oracle
+cd <THIS_REPO>/lza-oracle/ansible/bootstrap/oracle
 ```
 
 1. Create a new file called inventory and populate it with the following content. Replace <hostname> and <Public IP address of the Azure VM created via terraform> with the appropriate values before running the command:
@@ -45,4 +45,4 @@ Once the installation and configuration completes, you will see a screen similar
 
 ![Complete single instance](media/complete.jpg)
 
-The installation has now completed and you can connect to the database.
+The installation has now completed and you can connect to the database. See the [Testing Single Instance OracleDB](TEST-SI.md) for more details.

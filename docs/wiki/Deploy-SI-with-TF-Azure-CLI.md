@@ -32,9 +32,10 @@ The above command should result in output similar to the following:
 Run the following commands to include the public key in the fixtures.tfvars file where it will be used when deploying the virtual machine:
 
 ```bash
-pubkey=$(cat .ssh/lza-oracle-single-instance.pub)
-fixtures="ssh_key = \"$pubkey\""
-echo $fixtures > terraform/bootstrap/single_instance/fixtures.tfvars
+pubkey="$HOME/.ssh/lza-oracle-single-instance.pub"
+key_content=$(awk -F= '{print $1 FS}' "$pubkey")
+fixtures="ssh_key = \"$key_content\""
+echo $fixtures > <THIS_REPO>/terraform/bootstrap/single_instance/fixtures.tfvars
 ```
 
 The fixtures.tfvars file should now contain the public key, see below for an example:

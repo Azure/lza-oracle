@@ -24,20 +24,11 @@ param virtualNetworks array
 @description('List of subnets')
 param vnetSubnets array
 
-// @description('List of network interfaces')
-// param networkInterfaces array
-
-// @description('List of public IP addresses')
-// param publicIPAddresses avmtypes.pipType[] = []
-
 @description('List of network security groups')
 param networkSecurityGroups array
 
 @description('List of virtual machines')
 param virtualMachines array
-
-// @description('List of data disks')
-// param dataDisks array
 
 @description('Workspace Resource ID DCR for VMs')
 param dcrWorkspaceResourceId string?
@@ -60,18 +51,41 @@ module rg '../../bicep_units/modules/common_infrastructure/infrastructure.bicep'
 // Create a list of virtual networks, based on parameter values.
 // Subnets will also have to be provided, subnets will be created as part 
 // of vnet resource - to avoid idempotency issues.
-module networks '../../bicep_units/modules/network/vnet.bicep' = [for (vnet, i) in virtualNetworks: {
+// module networks '../../bicep_units/modules/network/vnet.bicep' = [for (vnet, i) in virtualNetworks: {
+//   name: '${vnet.virtualNetworkName}${i}'
+//   dependsOn: [ rg ]
+//   scope: resourceGroup(resourceGroupName)
+//   params: {
+//     virtualNetworkName: vnet.virtualNetworkName
+//     vnetSubnets: vnetSubnets
+//     location: location
+//     vnetAddressPrefix: vnet.addressPrefixes
+//     diagnosticSettings: !empty(vnet.?diagnosticSettings) ? vnet.diagnosticSettings : []
+//     roleAssignments: !empty(vnet.?roleAssignments) ? vnet.roleAssignments : []
+//     lock: !empty(vnet.?lock) ? vnet.lock : null
+//     enableTelemetry: false
+//     tags: tags
+//   }
+// }
+// ]
+
+// Create a list of virtual networks, based on parameter values.
+// Subnets will also have to be provided, subnets will be created as part 
+// of vnet resource - to avoid idempotency issues.
+module networks 'br/public:avm/res/network/virtual-network:0.1.1' = [for (vnet, i) in virtualNetworks: {
   name: '${vnet.virtualNetworkName}${i}'
-  dependsOn: [ rg ]
+  dependsOn: [ rg, nsgs ]
   scope: resourceGroup(resourceGroupName)
   params: {
-    virtualNetworkName: vnet.virtualNetworkName
-    vnetSubnets: vnetSubnets
+    name: vnet.virtualNetworkName
+    subnets: [ {
+        name: vnet.subnetName
+        addressPrefix: vnet.addressPrefixes
+        networkSecurityGroupResourceId: nsgs[0].outputs.resourceId
+      }
+    ]
     location: location
-    vnetAddressPrefix: vnet.addressPrefixes
-    diagnosticSettings: !empty(vnet.?diagnosticSettings) ? vnet.diagnosticSettings : []
-    roleAssignments: !empty(vnet.?roleAssignments) ? vnet.roleAssignments : []
-    lock: !empty(vnet.?lock) ? vnet.lock : null
+    addressPrefixes: vnet.addressPrefixes
     enableTelemetry: false
     tags: tags
   }
@@ -81,7 +95,7 @@ module networks '../../bicep_units/modules/network/vnet.bicep' = [for (vnet, i) 
 // Create NSG resources, based on parameter values.
 module nsgs '../../bicep_units/modules/network/nsg.bicep' = [for (nsg, i) in networkSecurityGroups: {
   name: '${nsg.networkSecurityGroupName}${i}'
-  dependsOn: [ networks ]
+  dependsOn: [ rg ]
   scope: resourceGroup(resourceGroupName)
   params: {
     networkSecurityGroupName: nsg.networkSecurityGroupName
@@ -95,19 +109,19 @@ module nsgs '../../bicep_units/modules/network/nsg.bicep' = [for (nsg, i) in net
   }
 }]
 
-// Create subnets and associate NSGs if provided
-module subnets '../../bicep_units/modules/network/subnet.bicep' = [for (subnet, i) in vnetSubnets: {
-  name: '${subnet.subnetName}${i}'
-  dependsOn: [ networks, nsgs ]
-  scope: resourceGroup(resourceGroupName)
-  params: {
-    subnetName: subnet.subnetName
-    virtualNetworkName: subnet.virtualNetworkName
-    subnetAddressPrefix: subnet.addressPrefix
-    networkSecurityGroupName: !empty(subnet.?networkSecurityGroupName) ? subnet.networkSecurityGroupName : null
-  }
-}
-]
+// // Create subnets and associate NSGs if provided
+// module subnets '../../bicep_units/modules/network/subnet.bicep' = [for (subnet, i) in vnetSubnets: {
+//   name: '${subnet.subnetName}${i}'
+//   dependsOn: [ networks, nsgs ]
+//   scope: resourceGroup(resourceGroupName)
+//   params: {
+//     subnetName: subnet.subnetName
+//     virtualNetworkName: subnet.virtualNetworkName
+//     subnetAddressPrefix: subnet.addressPrefix
+//     networkSecurityGroupName: !empty(subnet.?networkSecurityGroupName) ? subnet.networkSecurityGroupName : null
+//   }
+// }
+// ]
 
 // // Create Public IP addresses 
 // module pips 'br/public:avm-res-network-publicipaddress:0.1.0' = [for (pip, i) in publicIPAddresses: {

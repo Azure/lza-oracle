@@ -37,7 +37,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./bicep/bootstrap/single_instance
+        working-directory: ./bicep/bootstrap
     steps:
 
     # Checkout the repository to the GitHub Actions runner
@@ -111,7 +111,7 @@ jobs:
     - name: Deploy infrastructure
       run: |
         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        az deployment sub create --location ${{env.AZ_LOCATION}} --template-file main.bicep --parameters resourceGroupName=${{env.ResourceGroupName}} sshKey="${{env.SSH_KEY}}" --verbose
+        az deployment sub create --location ${{env.AZ_LOCATION}} --template-file main.bicep --parameters ./single_instance/default/single_instance.bicepparam --verbose
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
 
           # On push to main, build or change infrastructure according to Terraform configuration files

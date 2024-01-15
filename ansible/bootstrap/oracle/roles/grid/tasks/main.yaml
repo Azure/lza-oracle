@@ -68,17 +68,17 @@
     become_user: root 
     loop: "{{ all_disks.stdout_lines|flatten(levels=1) }}"
 
-#TODO: Currently ASM can create 10 luns Data can create 40 Luns and Redo can create 10.  If additional luns are needed these need to be modified.
+#Currently only works with 1 Disk per Disk Group
   - name: Get ASM Disks
-    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun[1][0-9]$` ; readlink -f ${lunpath}"
+    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun0$` ; readlink -f ${lunpath}"
     become_user: root
     register: asm_disks
   - name: Get Data Disks
-    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun[2,3,4,5][0-9]$` ; readlink -f ${lunpath}"
+    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun1$` ; readlink -f ${lunpath}"
     become_user: root
     register: data_disks
   - name: Get Redo Disks
-    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun[6][0-9]$` ; readlink -f ${lunpath}"
+    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun2$` ; readlink -f ${lunpath}"
     become_user: root
     register: redo_disks
 

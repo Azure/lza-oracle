@@ -1,7 +1,7 @@
 using '../../main.bicep'
 //import * as avmtypes from '../../../../bicep_units/modules/common_infrastructure/common_types.bicep'
 
-param resourceGroupName = 'oraGroup5'
+//param resourceGroupName = 'oraGroup5'
 
 param location = 'norwayeast'
 

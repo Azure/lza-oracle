@@ -111,7 +111,7 @@ jobs:
     - name: Deploy infrastructure
       run: |
         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        az deployment sub create --location ${{env.AZ_LOCATION}} --template-file main.bicep --parameters ./single_instance/default/single_instance.bicepparam resourceGroupName=${{env.ResourceGroupName}}--verbose
+        az deployment sub create --location ${{env.AZ_LOCATION}} --name ${{env.ResourceGroupName}} --template-file main.bicep --parameters ./single_instance/default/single_instance.bicepparam resourceGroupName=${{env.ResourceGroupName}}--verbose
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
 
           # On push to main, build or change infrastructure according to Terraform configuration files

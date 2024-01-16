@@ -71,7 +71,6 @@ jobs:
         echo "currentDate=$(date)" >> $GITHUB_ENV
         echo "currentDate=${{env.currentDate}}"
 
-
       # Generate random string for suffix
     - name: 🔎 Generate Random String for Resource Group Name
       id: resourcegroup-generator
@@ -84,28 +83,6 @@ jobs:
         sed -i "s|resourceGroupName = 'oraGroup5'|resourceGroupName = '${{env.ResourceGroupName}}'|" single_instance/default/single_instance.bicepparam
         # In the line "sshPublicKey: '<sshKey>'' replace <sshKey> with the value of the variable SSH_KEY
         sed -i "s|sshPublicKey: '<sshKey>'|sshPublicKey: '${{env.SSH_KEY}}'|g" single_instance/default/single_instance.bicepparam
-
-    # - name: 🗒️ fixme update parameter file with public key
-    #   run: |
-    #     cat > terraform.tfvars <<EOF
-    #     location = "${{env.AZ_LOCATION}}"
-    #     resourcegroup_name = "${{env.ResourceGroupName}}"
-    #     resourcegroup_tags = {
-    #       "environment" = "dev"
-    #       "project"     = "oracle"
-    #       "created"     = "${{env.currentDate}}"
-    #       "GITHUB_ACTOR" = "${{ github.actor }}"
-    #       "GITHUB_ACTION_REPOSITORY" = "${{ github.repository }}"
-    #       "GITHUB_ACTION_REF" = "${{ github.ref }}"
-    #       "GITHUB_RUN_ID" = "${{ github.run_id }}"
-    #       "GITHUB_WORKFLOW" = "${{ github.workflow }}"
-    #     }
-    #     is_resource_lock_enabled = false
-    #     #is_diagnostic_settings_enabled = true
-    #     #diagnostic_target              = "Log_Analytics_Workspace"
-        
-    #     ssh_key = "${{env.SSH_KEY}}"
-    #     EOF
 
     #Login to Azure
     - name: 🔑 Login via Azure CLI
@@ -120,97 +97,88 @@ jobs:
       run: |
         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         az deployment sub create --location ${{env.AZ_LOCATION}} --name ${{env.ResourceGroupName}} --template-file main.bicep --parameters ./single_instance/default/single_instance.bicepparam resourceGroupName=${{env.ResourceGroupName}}--verbose
-      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-
-          # On push to main, build or change infrastructure according to Terraform configuration files
-    #   # On push to main, build or change infrastructure according to Terraform configuration files
-    # - name: 💻 Terraform Apply
-    # #  if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Remove when I am ready
-    #   run: terraform apply -auto-approve 
-    
-
+ 
     outputs:
       ResourceGroupName: ${{ env.ResourceGroupName }}
-      VM_Public_IP_Address: ${{ env.vm_public_ip_address }}
 
 ##############################################################################################################################################
 #                                     SSH Keys and parameter preparation for Ansible                                                         #
 ##############################################################################################################################################
-#   ssh-keys:
-#     needs: bicep
-#     name: '🧮 Prepare and run Ansible Playbook'
-#     runs-on: ubuntu-latest
+  ssh-keys:
+    needs: bicep
+    name: '🧮 Prepare and run Ansible Playbook'
+    runs-on: ubuntu-latest
 
-#     defaults:
-#       run:
-#         shell: bash
-#         working-directory: ansible/bootstrap/oracle
-#     steps:
-#       - name: 🛒 Checkout
-#         uses: actions/checkout@v4
+    defaults:
+      run:
+        shell: bash
+        working-directory: ansible/bootstrap/oracle
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v4
 
-#       - name: 🔎 Check IP
-#         run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
-#       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
-#       - run: echo "VM_Public_IP_Address=${{needs.terraform.outputs.VM_Public_IP_Address}}" >> $GITHUB_ENV
-#       - run: echo "VM_Public_IP_Address=${{env.VM_Public_IP_Address}}"
+      - name: 'Install SSH Key'
+        uses: shimataro/ssh-key-action@v2
+        with: 
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          name: 'github_actions_id_rsa'
+          known_hosts: "sometin"
       
-#       - name: 'Install SSH Key'
-#         uses: shimataro/ssh-key-action@v2
-#         with: 
-#           key: ${{ secrets.SSH_PRIVATE_KEY }}
-#           name: 'github_actions_id_rsa'
-#           known_hosts: "sometin"
-      
-#       # Login to Azure CLI
-#       - name: 🔑 Login via Azure CLI
-#         uses: azure/login@v1
-#         with:
-#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      # Login to Azure CLI
+      - name: 🔑 Login via Azure CLI
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: 🔎 Get dynamic values
+        run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
+      - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
+      - run: echo "VM_PRIMARY_NAME=$(az vm list --resource-group ${{env.ResourceGroupName}} --query [0].name -o tsv" >> $GITHUB_ENV
+      - run: echo "VM_Primary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name ${{env.VM_PRIMARY_NAME}} --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
+      
 #       # Get Subscription ID
 #       - name: 🔎 Get Subscription ID
 #         id: subid
 #         run: echo "SubscriptionID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
 #       - run: echo ${{env.SubscriptionID}} 
       
-#       - name: ⌛ Calculate endTimeUTC for JIT request 
-#         run: echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $GITHUB_ENV
-#       - run: echo "endTimeUtc=${{env.endTimeUtc}}"
-#       - run: echo "ResourceGroupName=${{needs.terraform.outputs.ResourceGroupName}}" >> $GITHUB_ENV
-#       - run: echo "ResourceGroupName=${{env.ResourceGroupName}}"
+      - name: ⌛ Calculate endTimeUTC for JIT request 
+        run: echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $GITHUB_ENV
+      - run: echo "endTimeUtc=${{env.endTimeUtc}}"
+      - run: echo "ResourceGroupName=${{needs.terraform.outputs.ResourceGroupName}}" >> $GITHUB_ENV
+      - run: echo "ResourceGroupName=${{env.ResourceGroupName}}"
       
-#       - name: 🔑 Login via Az Module
-#         uses: azure/login@v1
-#         with:
-#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-#           enable-AzPSSession: true 
+      - name: 🔑 Login via Az PowerShell Module
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true 
 
-#       - name: ✅ Enable JIT on VM
-#         uses: azure/powershell@v1
-#         with:
-#           inlineScript: |
-#             $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/vm-0"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
-#             $JitPolicyArr=@($JitPolicyVm1)
-#             Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
-#           azPSVersion: "latest"
+      - name: ✅ Enable JIT on VM
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $JitPolicyVm1 = (@{id="/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
+            $JitPolicyArr=@($JitPolicyVm1)
+            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
+          azPSVersion: "latest"
 
-#       - name: 🧮 Get Known Hosts parameter using ssh-keyscan
-#         run: ssh-keyscan -T 300 -H ${{env.VM_Public_IP_Address}} >> /home/runner/.ssh/known_hosts
+      - name: 🧮 Get Known Hosts parameter using ssh-keyscan
+        run: ssh-keyscan -T 300 -H ${{env.VM_Primary_IP_Address}} >> /home/runner/.ssh/known_hosts
 
-#       - name: 🗒️ Create the inventory file
-#         run: |
-#           cat > inventory <<EOF
-#           [dbservers]
-#           ${{env.VM_Public_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
-#           EOF
+      - name: 🗒️ Create the inventory file
+        run: |
+          cat > inventory <<EOF
+          [dbservers]
+          ${{env.VM_Primary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+          EOF
 
-#       - name: 🗒️ Show the inventory file
-#         run: cat inventory
+      - name: 🗒️ Show the inventory file
+        run: cat inventory
 
 # ##############################################################################################################################################
 # #                                    Ansible                                                                                                 #

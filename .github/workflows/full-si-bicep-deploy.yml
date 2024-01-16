@@ -81,9 +81,9 @@ jobs:
     - name: 🗒️ Update the parameter file with run time values
       run: |
         # In the line "param resourceGroupName = 'oraGroup5'" replace oraGroup5 with the value of the variable ResourceGroupName
-        sed -i "s!!!resourceGroupName = 'oraGroup5'!!!resourceGroupName = '${{env.ResourceGroupName}}'!!!g" single_instance/default/single_instance.bicepparam
+        sed -i "s|resourceGroupName = 'oraGroup5'|resourceGroupName = '${{env.ResourceGroupName}}'|" single_instance/default/single_instance.bicepparam
         # In the line "sshPublicKey: '<sshKey>'' replace <sshKey> with the value of the variable SSH_KEY
-        sed -i "s!!!sshPublicKey: '<sshKey>'!!!sshPublicKey: '${{env.SSH_KEY}}'!!!g" single_instance/default/single_instance.bicepparam
+        #sed -i "s!!!sshPublicKey: '<sshKey>'!!!sshPublicKey: '${{env.SSH_KEY}}'!!!g" single_instance/default/single_instance.bicepparam
 
     # - name: 🗒️ fixme update parameter file with public key
     #   run: |

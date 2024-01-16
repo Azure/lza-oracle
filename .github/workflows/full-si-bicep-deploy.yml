@@ -147,7 +147,7 @@ jobs:
       - name: ⌛ Calculate endTimeUTC for JIT request 
         run: echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $GITHUB_ENV
       - run: echo "endTimeUtc=${{env.endTimeUtc}}"
-      - run: echo "ResourceGroupName=${{needs.terraform.outputs.ResourceGroupName}}" >> $GITHUB_ENV
+      - run: echo "ResourceGroupName=${{needs.bicep.outputs.ResourceGroupName}}" >> $GITHUB_ENV
       - run: echo "ResourceGroupName=${{env.ResourceGroupName}}"
       
       - name: 🔑 Login via Az PowerShell Module
@@ -183,5 +183,5 @@ jobs:
 # ##############################################################################################################################################
 # #                                    Ansible                                                                                                 #
 # ##############################################################################################################################################
-#       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
-#         run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"
+      - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
+        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"

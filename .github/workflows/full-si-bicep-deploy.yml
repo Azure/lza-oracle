@@ -143,12 +143,10 @@ jobs:
       - run: echo "VM_PRIMARY_NAME=${{env.VM_PRIMARY_NAME}}"
       - run: echo "VM_Primary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name ${{env.VM_PRIMARY_NAME}} --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
       - run: echo "VM_Primary_IP_Address=${{env.VM_Primary_IP_Address}}"
-      
-#       # Get Subscription ID
-#       - name: 🔎 Get Subscription ID
-#         id: subid
-#         run: echo "SubscriptionID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
-#       - run: echo ${{env.SubscriptionID}} 
+      - run: echo "SubscriptionID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
+      - run: echo ${{env.SubscriptionID}} 
+
+# fixme add tags to resource group
 
       
       - name: 🔑 Login via Az PowerShell Module
@@ -163,9 +161,9 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $JitPolicyVm1 = (@{id="/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
+            $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
             $JitPolicyArr=@($JitPolicyVm1)
-            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
+            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr
           azPSVersion: "latest"
 
       - name: 🧮 Get Known Hosts parameter using ssh-keyscan

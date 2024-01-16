@@ -135,7 +135,7 @@ jobs:
       - name: 🔎 Get dynamic values
         run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
-      - run: echo "VM_PRIMARY_NAME=$(az vm list --resource-group ${{env.ResourceGroupName}} --query [0].name -o tsv" >> $GITHUB_ENV
+      - run: echo "VM_PRIMARY_NAME=$(az vm list --resource-group ${{env.ResourceGroupName}} --query [0].name -o tsv)" >> $GITHUB_ENV
       - run: echo "VM_Primary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name ${{env.VM_PRIMARY_NAME}} --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
       
 #       # Get Subscription ID

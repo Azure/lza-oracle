@@ -10,7 +10,7 @@ targetScope = 'subscription'
 //import * as avmtypes from '../../bicep_units/modules/common_infrastructure/common_types.bicep'
 
 @description('Name of the Resource Group')
-param resourceGroupName string = 'oraGroup2'
+param resourceGroupName string 
 
 @description('Location')
 param location string = 'centralindia'

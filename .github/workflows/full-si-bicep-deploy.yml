@@ -132,23 +132,24 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: 🔎 Get dynamic values
-        run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
+      - name: 🔎 Get/set dynamic values
+        run: echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $GITHUB_ENV
+      - run: echo "endTimeUtc=${{env.endTimeUtc}}"
+      - run: echo "ResourceGroupName=${{needs.bicep.outputs.ResourceGroupName}}" >> $GITHUB_ENV
+      - run: echo "ResourceGroupName=${{env.ResourceGroupName}}"
+      - run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
       - run: echo "VM_PRIMARY_NAME=$(az vm list --resource-group ${{env.ResourceGroupName}} --query [0].name -o tsv)" >> $GITHUB_ENV
+      - run: echo "VM_PRIMARY_NAME=${{env.VM_PRIMARY_NAME}}"
       - run: echo "VM_Primary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name ${{env.VM_PRIMARY_NAME}} --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
+      - run: echo "VM_Primary_IP_Address=${{env.VM_Primary_IP_Address}}"
       
 #       # Get Subscription ID
 #       - name: 🔎 Get Subscription ID
 #         id: subid
 #         run: echo "SubscriptionID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
 #       - run: echo ${{env.SubscriptionID}} 
-      
-      - name: ⌛ Calculate endTimeUTC for JIT request 
-        run: echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $GITHUB_ENV
-      - run: echo "endTimeUtc=${{env.endTimeUtc}}"
-      - run: echo "ResourceGroupName=${{needs.bicep.outputs.ResourceGroupName}}" >> $GITHUB_ENV
-      - run: echo "ResourceGroupName=${{env.ResourceGroupName}}"
+
       
       - name: 🔑 Login via Az PowerShell Module
         uses: azure/login@v1

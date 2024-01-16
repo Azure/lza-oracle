@@ -10,12 +10,8 @@ param virtualNetworks = [
     virtualNetworkName: 'vnet1'
     addressPrefixes: [
       '10.0.0.0/16' ]
-    subnets: [
-      {
-        subnetName: 'subnet1'
-        addressPrefix: '10.0.0.0/24'
-      }
-    ]
+    subnetName: 'subnet1'
+    addressPrefix: '10.0.0.0/24'
   } ]
 
 param networkSecurityGroups = [

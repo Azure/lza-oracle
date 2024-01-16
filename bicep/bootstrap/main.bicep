@@ -80,7 +80,7 @@ module networks 'br/public:avm/res/network/virtual-network:0.1.1' = [for (vnet, 
     name: vnet.virtualNetworkName
     subnets: [ {
         name: vnet.subnetName
-        addressPrefix: vnet.addressPrefixes
+        addressPrefix: vnet.addressPrefix
         networkSecurityGroupResourceId: nsgs[0].outputs.resourceId
       }
     ]

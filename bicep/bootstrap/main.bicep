@@ -21,9 +21,6 @@ param oracleImageReference object
 @description('List of virtual networks')
 param virtualNetworks array
 
-@description('List of subnets')
-param vnetSubnets array
-
 @description('List of network security groups')
 param networkSecurityGroups array
 
@@ -211,7 +208,7 @@ module vms 'br/public:avm/res/compute/virtual-machine:0.1.0' = [for (vm, i) in v
             pipConfiguration: {
               publicIpNameSuffix: '-pip-01'
             }
-            subnetResourceId: subnets[0].outputs.subnetId
+            subnetResourceId: networks[0].outputs.subnetResourceIds[0]
           }
         ]
         nicSuffix: '-nic-01'

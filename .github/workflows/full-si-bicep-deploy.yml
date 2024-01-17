@@ -161,9 +161,10 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            echo "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}"
-            echo 'endTimeUtc="${{env.endTimeUtc}}"'
-            echo 'allowedSourceAddressPrefix="${{env.currentRunnerIP}}"'
+            $JitPolicy1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}";ports=(@{number=22;protocol="*";allowedSourceAddressPrefix=@("*"); maxRequestAccessDuration="PT3H"})})
+            $JitPolicyArr1=@($JitPolicy1)
+            Set-AzJitNetworkAccessPolicy -Kind "Basic" -Location ${{env.AZ_LOCATION}} -Name "JIT-SSH-Policy" -ResourceGroupName ${{env.ResourceGroupName}} -VirtualMachine $JitPolicyArr1
+
             $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
             $JitPolicyArr=@($JitPolicyVm1)
             Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy" -VirtualMachine $JitPolicyArr

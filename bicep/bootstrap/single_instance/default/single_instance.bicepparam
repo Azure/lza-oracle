@@ -31,14 +31,14 @@ param virtualMachines = [
       {
         caching: 'None'
         writeAcceleratorEnabled: false
-        diskSizeGB: '128'
+        diskSizeGB: '1024'
         managedDisk: {
           storageAccountType: 'Premium_LRS'
         }
       }
       {
         caching: 'None'
-        diskSizeGB: '128'
+        diskSizeGB: '1024'
         managedDisk: {
           storageAccountType: 'Premium_LRS'
         }
@@ -47,7 +47,7 @@ param virtualMachines = [
         name: 'redo'
         caching: 'ReadOnly'
         writeAcceleratorEnabled: false
-        diskSizeGB: '128'
+        diskSizeGB: '1024'
         managedDisk: {
           storageAccountType: 'Premium_LRS'
         }

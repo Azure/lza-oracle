@@ -1,4 +1,4 @@
-name: Deploy Single Instance Oracle DB on Azure with Bicep and Ansible
+name: Deploy an Oracle DB in a Data Guard configuration on Azure with Bicep and Ansible
 on:
   workflow_dispatch: {}
   push:

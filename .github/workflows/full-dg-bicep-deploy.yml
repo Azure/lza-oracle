@@ -1,0 +1,205 @@
+name: Deploy Single Instance Oracle DB on Azure with Bicep and Ansible
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths:
+      - ".github/workflows/full-dg-bicep-deploy.yml"
+      - "bicep/bootstrap/data_guard/**"
+      - "bicep_units/**"
+      - "ansible/bootstrap/oracle/**"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - ".github/workflows/full-dg-bicep-deploy.yml"
+      - "bicep/bootstrap/data_guard/**"
+      - "bicep_units/**"
+      - "ansible/bootstrap/oracle/**"
+    
+env:
+  #TF_LOG: "INFO"
+  AZ_LOCATION: "norwayeast" # can be parameterized
+  AZ_RG_BASENAME: "Oracle-test" # can be parameterized
+  VM_PRIMARY_NAME: "vm-primary-0" 
+  VM_SECONDARY_NAME: "vm-secondary-0" 
+
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+  pull-requests: write
+  
+jobs:
+  bicep:
+    name: '🔧 Bicep'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+  
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./bicep/bootstrap
+    steps:
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    #Check if the SSH key is empty
+    - name: 🔎 Validate SSH Key is not empty
+      run: |
+        if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]
+        then
+          echo "SSH_PRIVATE_KEY is empty, you should add a SSH key to the repository secrets. Name of the secret should be SSH_PRIVATE_KEY"
+          exit 1
+        else
+          echo "SSH_PRIVATE_KEY is not empty"
+        fi
+   
+
+    - name: 🗒️ Create the SSH public key for VM
+      run: |
+        cat > temp_ssh_key <<EOF
+        ${{ secrets.SSH_PRIVATE_KEY }}
+        EOF
+        
+        chmod 400 temp_ssh_key
+        ssh-keygen -f temp_ssh_key -y > temp_ssh_key.pub
+
+        echo "SSH_KEY=$(cat temp_ssh_key.pub)" >> $GITHUB_ENV
+        echo "SSH_KEY=${{env.SSH_KEY}}"
+
+        echo "currentDate=$(date)" >> $GITHUB_ENV
+        echo "currentDate=${{env.currentDate}}"
+
+      # Generate random string for suffix
+    - name: 🔎 Generate Random String for Resource Group Name
+      id: resourcegroup-generator
+      run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-$(date +%s) >> $GITHUB_ENV 
+    - run: echo ${{env.ResourceGroupName}}
+
+    - name: 🗒️ Update the parameter file with run time values
+      run: |
+        # In the line "param resourceGroupName = 'oraGroup5'" replace oraGroup5 with the value of the variable ResourceGroupName
+        sed -i "s|resourceGroupName = 'oraGroup5'|resourceGroupName = '${{env.ResourceGroupName}}'|" single_instance/default/single_instance.bicepparam
+        # In the line "sshPublicKey: '<sshKey>'' replace <sshKey> with the value of the variable SSH_KEY
+        sed -i "s|sshPublicKey: '<sshKey>'|sshPublicKey: '${{env.SSH_KEY}}'|g" single_instance/default/single_instance.bicepparam
+
+    #Login to Azure
+    - name: 🔑 Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Deploy infrastructure
+      #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        az deployment sub create --location ${{env.AZ_LOCATION}} --name ${{env.ResourceGroupName}} --template-file main.bicep --parameters ./data_guard/default/data_guard.bicepparam resourceGroupName=${{env.ResourceGroupName}} --verbose
+ 
+    outputs:
+      ResourceGroupName: ${{ env.ResourceGroupName }}
+
+##############################################################################################################################################
+#                                     SSH Keys and parameter preparation for Ansible                                                         #
+##############################################################################################################################################
+  ssh-keys:
+    needs: bicep
+    name: '🧮 Prepare and run Ansible Playbook'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ansible/bootstrap/oracle
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v4
+
+      - name: 'Install SSH Key'
+        uses: shimataro/ssh-key-action@v2
+        with: 
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          name: 'github_actions_id_rsa'
+          known_hosts: "sometin"
+      
+      # Login to Azure CLI
+      - name: 🔑 Login via Azure CLI
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🔎 Get/set dynamic values
+        run: echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $GITHUB_ENV
+      - run: echo "endTimeUtc=${{env.endTimeUtc}}"
+      - run: echo "ResourceGroupName=${{needs.bicep.outputs.ResourceGroupName}}" >> $GITHUB_ENV
+      - run: echo "ResourceGroupName=${{env.ResourceGroupName}}"
+      - run: echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
+      - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
+      - run: echo "VM_Primary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name ${{env.VM_PRIMARY_NAME}} --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
+      - run: echo "VM_Primary_IP_Address=${{env.VM_Primary_IP_Address}}"
+      - run: echo "VM_Secondary_IP_Address=$(az vm list-ip-addresses --resource-group ${{env.ResourceGroupName}} --name ${{env.VM_SECONDARY_NAME}} --query [0].virtualMachine.network.publicIpAddresses[0].ipAddress -o tsv)" >> $GITHUB_ENV
+      - run: echo "VM_Secondary_IP_Address=${{env.VM_Secondary_IP_Address}}"
+      - run: echo "SubscriptionID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
+      - run: echo ${{env.SubscriptionID}} 
+
+# fixme add tags to resource group
+
+      
+      - name: 🔑 Login via Az PowerShell Module
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true 
+
+      - name: ✅ Enable JIT on VM
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            #Enable JIT on VMs
+            $JitPolicy1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}";ports=(@{number=22;protocol="*";allowedSourceAddressPrefix=@("*"); maxRequestAccessDuration="PT3H"})})
+            $JitPolicyArr1=@($JitPolicy1)
+            Set-AzJitNetworkAccessPolicy -Kind "Basic" -Location ${{env.AZ_LOCATION}} -Name "JIT-SSH-Policy-primary" -ResourceGroupName ${{env.ResourceGroupName}} -VirtualMachine $JitPolicyArr1
+            $JitPolicy2 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_SECONDARY_NAME}}";ports=(@{number=22;protocol="*";allowedSourceAddressPrefix=@("*"); maxRequestAccessDuration="PT3H"})})
+            $JitPolicyArr2=@($JitPolicy2)
+            Set-AzJitNetworkAccessPolicy -Kind "Basic" -Location ${{env.AZ_LOCATION}} -Name "JIT-SSH-Policy-secondary" -ResourceGroupName ${{env.ResourceGroupName}} -VirtualMachine $JitPolicyArr2
+            #Start JIT on VM
+            $JitPolicyVm1 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_PRIMARY_NAME}}"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
+            $JitPolicyVm2 = (@{id="/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Compute/virtualMachines/${{env.VM_SECONDARY_NAME}}"; ports=(@{number=22;endTimeUtc="${{env.endTimeUtc}}";allowedSourceAddressPrefix=@("${{env.currentRunnerIP}}")})})
+            $JitPolicyArr1=@($JitPolicyVm1)
+            $JitPolicyArr2=@($JitPolicyVm2)
+            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy-primary" -VirtualMachine $JitPolicyArr1
+            Start-AzJitNetworkAccessPolicy -ResourceId "/subscriptions/${{env.SubscriptionID}}/resourceGroups/${{env.ResourceGroupName}}/providers/Microsoft.Security/locations/${{env.AZ_LOCATION}}/jitNetworkAccessPolicies/JIT-SSH-Policy-secondary" -VirtualMachine $JitPolicyArr2
+          azPSVersion: "latest"
+
+      - name: 🧮 Get Known Hosts parameter using ssh-keyscan
+        run: |
+            ssh-keyscan -T 300 -H ${{env.VM_Primary_IP_Address}} >> /home/runner/.ssh/known_hosts
+            ssh-keyscan -T 300 -H ${{env.VM_Secondary_IP_Address}} >> /home/runner/.ssh/known_hosts
+
+
+      - name: 🗒️ Create the inventory file
+        run: |
+            cat > inventory <<EOF
+            [ora-x1]
+            ${{env.VM_PRIMARY_NAME}} ansible_host=${{env.VM_Primary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+
+            [ora-x2]
+            ${{env.VM_SECONDARY_NAME}} ansible_host=${{env.VM_Secondary_IP_Address}} ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+            EOF
+
+      - name: 🗒️ Show the inventory file
+        run: cat inventory
+
+# ##############################################################################################################################################
+# #                                    Ansible                                                                                                 #
+# ##############################################################################################################################################
+      - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
+        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=yes"

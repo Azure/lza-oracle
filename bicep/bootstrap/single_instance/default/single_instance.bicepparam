@@ -1,5 +1,4 @@
 using '../../main.bicep'
-//import * as avmtypes from '../../../../bicep_units/modules/common_infrastructure/common_types.bicep'
 
 param resourceGroupName = 'oraGroup5'
 
@@ -20,51 +19,6 @@ param networkSecurityGroups = [
     securityRules: []
   }
 ]
-
-// param publicIPAddresses = [
-//   {
-//     publicIPAddressName: 'pip01'
-//   }
-// ]
-
-// param networkInterfaces = [
-//   {
-//     virtualNetworkName: 'vnet1'
-//     subnetName: 'subnet1'
-//     networkInterfaceName: 'ora01nic0'
-//     publicIPAddressName: 'pip01'
-//   }
-// ]
-
-// param dataDisks = [
-//   {
-//     diskName: 'oracle-data-0'
-//     diskSizeGB: 1024
-//     type: 'Premium_LRS'
-//     lun: 20
-//     hostDiskCaching: 'ReadOnly'
-//     virtualMachineName: 'ora01'
-//     avZone: 1
-//   }
-//   {
-//     diskName: 'oracle-asm-0'
-//     diskSizeGB: 1024
-//     type: 'Premium_LRS'
-//     lun: 10
-//     hostDiskCaching: 'ReadOnly'
-//     virtualMachineName: 'ora01'
-//     avZone: 1
-//   }
-//   {
-//     diskName: 'oracle-redo-0'
-//     diskSizeGB: 1024
-//     type: 'Premium_LRS'
-//     lun: 60
-//     hostDiskCaching: 'None'
-//     virtualMachineName: 'ora01'
-//     avZone: 1
-//   }
-// ]
 
 param virtualMachines = [
   {

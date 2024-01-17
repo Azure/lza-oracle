@@ -7,8 +7,6 @@
 
 targetScope = 'subscription'
 
-//import * as avmtypes from '../../bicep_units/modules/common_infrastructure/common_types.bicep'
-
 @description('Name of the Resource Group')
 param resourceGroupName string 
 
@@ -27,27 +25,22 @@ param networkSecurityGroups array
 @description('List of virtual machines')
 param virtualMachines array
 
-@description('Workspace Resource ID DCR for VMs')
-param dcrWorkspaceResourceId string?
-
 @description('Tags to be added to the resources')
 param tags object = {}
 
-//var rgName = '${avmtypes.resourceGroupPrefix}-${resourceGroupName}'
 
-// Create the Resource Group
-module rg '../../bicep_units/modules/common_infrastructure/infrastructure.bicep' = {
+module rg 'br/public:avm/res/resources/resource-group:0.2.1' = {
   name: 'rg'
   scope: subscription()
   params: {
-    resourceGroupName: resourceGroupName
+    name: resourceGroupName
     location: location
+    enableTelemetry: false
+    tags: tags
   }
 }
 
 // Create a list of virtual networks, based on parameter values.
-// Subnets will also have to be provided, subnets will be created as part 
-// of vnet resource - to avoid idempotency issues.
 module networks 'br/public:avm/res/network/virtual-network:0.1.1' = [for (vnet, i) in virtualNetworks: {
   name: '${vnet.virtualNetworkName}${i}'
   dependsOn: [ rg, nsgs ]
@@ -113,7 +106,7 @@ module nsgs 'br/public:avm/res/network/network-security-group:0.1.2' = [for (nsg
 // Create a set of VMs based on the supplied Oracle Image
 module vms 'br/public:avm/res/compute/virtual-machine:0.1.0' = [for (vm, i) in virtualMachines: {
   name: vm.virtualMachineName
-  dependsOn: [ dcr ]
+  dependsOn: [ networks ]
   scope: resourceGroup(resourceGroupName)
   params: {
     name: vm.virtualMachineName
@@ -152,9 +145,6 @@ module vms 'br/public:avm/res/compute/virtual-machine:0.1.0' = [for (vm, i) in v
     vmSize: vm.vmSize
     location: location
     encryptionAtHost: false //revisit this
-    // diagnosticSettings: !empty(vm.?diagnosticSettings) ? vm.diagnosticSettings : []
-    // roleAssignments: !empty(vm.?roleAssignments) ? vm.roleAssignments : []
-    // lock: !empty(vm.?lock) ? vm.lock : null
     enableTelemetry: false
     tags: tags
     imageReference: oracleImageReference

@@ -4,7 +4,7 @@
 #                                                                                       #
 #########################################################################################
 resource "azurerm_network_interface" "oracle_db" {
-  count = var.is_data_guard ? 3 : 1
+  count = var.is_data_guard ? 2 : 1
   name  = "oraclevmnic-${count.index}"
 
   location                      = var.resource_group.location
@@ -41,7 +41,7 @@ resource "azurerm_network_interface" "oracle_db" {
 }
 
 data "azurerm_network_interface" "oracle_db" {
-  count               = var.is_data_guard ? 3 : 1
+  count               = var.is_data_guard ? 2 : 1
   name                = "oraclevmnic-${count.index}"
   resource_group_name = var.resource_group.name
 
@@ -49,7 +49,7 @@ data "azurerm_network_interface" "oracle_db" {
 }
 
 resource "azurerm_public_ip" "vm_pip" {
-  count               = var.is_data_guard ? 3 : 1
+  count               = var.is_data_guard ? 2 : 1
   name                = "vmpip-${count.index}"
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
@@ -60,7 +60,7 @@ resource "azurerm_public_ip" "vm_pip" {
 }
 
 data "azurerm_public_ip" "vm_pip" {
-  count               = var.is_data_guard ? 3 : 1
+  count               = var.is_data_guard ? 2 : 1
   name                = "vmpip-${count.index}"
   resource_group_name = var.resource_group.name
 

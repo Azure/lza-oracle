@@ -23,10 +23,6 @@ output "nics_oracledb_secondary" {
   value = var.is_data_guard ? azurerm_network_interface.oracle_db[1] : null
 }
 
-output "nics_oracledb_observer" {
-  value = var.is_data_guard ? azurerm_network_interface.oracle_db[2] : null
-}
-
 output "db_server_ips" {
   value = azurerm_network_interface.oracle_db[*].private_ip_addresses[0]
 }

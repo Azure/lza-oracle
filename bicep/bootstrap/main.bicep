@@ -132,6 +132,7 @@ module vms 'br/public:avm/res/compute/virtual-machine:0.1.0' = [for (vm, i) in v
 
 resource defaultTelemetry 'Microsoft.Resources/deployments@2023-07-01' = if (enableTelemetry) {
   name: 'pid-${telemetryPid}-${uniqueString(deployment().name, location)}'
+  location: location
   properties: {
     mode: 'Incremental'
     template: {

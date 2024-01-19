@@ -100,3 +100,7 @@ param oracleImageReference = {
   sku: 'oracle-database-19-0904'
   version: 'latest'
 }
+
+
+param enableTelemetry = true
+param telemetryPid = '53df3afd-6e55-4930-a481-69938a5b8f0a'

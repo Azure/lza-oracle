@@ -28,6 +28,12 @@ param virtualMachines array
 @description('Tags to be added to the resources')
 param tags object = {}
 
+@description('Optional. Enable telemetry via a Globally Unique Identifier (GUID).')
+param enableTelemetry bool = true
+
+@description('Optional. Enable telemetry via a Globally Unique Identifier (GUID).')
+param telemetryPid string = ''
+
 
 module rg 'br/public:avm/res/resources/resource-group:0.2.1' = {
   name: 'rg'
@@ -61,23 +67,6 @@ module networks 'br/public:avm/res/network/virtual-network:0.1.1' = [for (vnet, 
 }
 ]
 
-// // Create NSG resources, based on parameter values.
-// module nsgs '../../bicep_units/modules/network/nsg.bicep' = [for (nsg, i) in networkSecurityGroups: {
-//   name: '${nsg.networkSecurityGroupName}${i}'
-//   dependsOn: [ rg ]
-//   scope: resourceGroup(resourceGroupName)
-//   params: {
-//     networkSecurityGroupName: nsg.networkSecurityGroupName
-//     securityRules: nsg.securityRules
-//     location: location
-//     diagnosticSettings: !empty(nsg.?diagnosticSettings) ? nsg.diagnosticSettings : []
-//     roleAssignments: !empty(nsg.?roleAssignments) ? nsg.roleAssignments : []
-//     lock: !empty(nsg.?lock) ? nsg.lock : null
-//     enableTelemetry: false
-//     tags: tags
-//   }
-// }]
-
 module nsgs 'br/public:avm/res/network/network-security-group:0.1.2' = [for (nsg, i) in networkSecurityGroups: {
   name: '${nsg.networkSecurityGroupName}${i}'
   dependsOn: [ rg ]
@@ -91,17 +80,6 @@ module nsgs 'br/public:avm/res/network/network-security-group:0.1.2' = [for (nsg
   }
 }]
 
-// // Create a Data collection rule, if a workspace ID has been defined for collecting 
-// // metrics and logs.
-// module dcr '../../bicep_units/modules/common_infrastructure/data_collection_rules.bicep' = if (!empty(dcrWorkspaceResourceId)) {
-//   scope: resourceGroup(resourceGroupName)
-//   dependsOn: [ rg ]
-//   name: 'dcr'
-//   params: {
-//     workspaceResourceId: dcrWorkspaceResourceId
-//     location: location
-//   }
-// }
 
 // Create a set of VMs based on the supplied Oracle Image
 module vms 'br/public:avm/res/compute/virtual-machine:0.1.0' = [for (vm, i) in virtualMachines: {
@@ -152,3 +130,14 @@ module vms 'br/public:avm/res/compute/virtual-machine:0.1.0' = [for (vm, i) in v
   }
 }]
 
+resource defaultTelemetry 'Microsoft.Resources/deployments@2023-07-01' = if (enableTelemetry) {
+  name: 'pid-${telemetryPid}-${uniqueString(deployment().name, location)}'
+  properties: {
+    mode: 'Incremental'
+    template: {
+      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
+      contentVersion: '1.0.0.0'
+      resources: []
+    }
+  }
+}

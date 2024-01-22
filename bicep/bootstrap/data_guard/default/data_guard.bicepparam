@@ -57,7 +57,7 @@ param virtualMachines = [
   {
     virtualMachineName: 'vm-secondary-0'
     vmSize: 'Standard_D4s_v5'
-    avZone: 1
+    avZone: 2
     adminUsername: 'oracle'
     sshPublicKey: '<sshKey>'
     dataDisks: [

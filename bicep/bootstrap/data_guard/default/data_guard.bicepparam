@@ -1,115 +1,91 @@
 using '../../main.bicep'
-import * as avmtypes from '../../../../bicep_units/modules/common_infrastructure/common_types.bicep'
 
-param resourceGroupName = 'oraGroup1'
+param resourceGroupName = 'oraGroup5'
 
-param location = 'centralindia'
+param location = 'norwayeast'
 
 param virtualNetworks = [
   {
     virtualNetworkName: 'vnet1'
     addressPrefixes: [
       '10.0.0.0/16' ]
-  }
-]
-
-param vnetSubnets = [
-  {
-    virtualNetworkName: 'vnet1'
     subnetName: 'subnet1'
     addressPrefix: '10.0.0.0/24'
-    networkSecurityGroupName: 'ora01nsg'
-  }
-]
+  } ]
 
 param networkSecurityGroups = [
   {
     networkSecurityGroupName: 'ora01nsg'
-    securityRules: [
-    ]
-  }
-]
-
-param publicIPAddresses = [
-  {
-    publicIPAddressName: '01'
-  }
-  {
-    publicIPAddressName: '02'
-  }
-  {
-    publicIPAddressName: '03'
-  }
-]
-
-param networkInterfaces = [
-  {
-    virtualNetworkName: 'vnet1'
-    subnetName: 'subnet1'
-    networkInterfaceName: '01'
-    publicIPAddressName: '01'
-  }
-  {
-    virtualNetworkName: 'vnet1'
-    subnetName: 'subnet1'
-    networkInterfaceName: '02'
-    publicIPAddressName: '02'
-  }
-  {
-    virtualNetworkName: 'vnet1'
-    subnetName: 'subnet1'
-    networkInterfaceName: '03'
-    publicIPAddressName: '03'
-  }
-]
-
-param dataDisks = [
-  {
-    diskName: 'primary'
-    diskSizeGB: 256
-    type: 'Premium_LRS'
-    lun: 0
-    virtualMachineName: 'primary'
-    avZone: '1'
-  }
-  {
-    diskName: 'secondary'
-    diskSizeGB: 256
-    type: 'Premium_LRS'
-    lun: 0
-    virtualMachineName: 'secondary'
-    avZone: '2'
-  }
-  {
-    diskName: 'observer'
-    diskSizeGB: 256
-    type: 'Premium_LRS'
-    lun: 0
-    virtualMachineName: 'observer'
-    avZone: '2'
+    securityRules: []
   }
 ]
 
 param virtualMachines = [
   {
-    virtualMachineName: 'primary'
+    virtualMachineName: 'vm-primary-0'
     vmSize: 'Standard_D4s_v5'
-    avZone: '1'
-    adminUsername : 'oracle'
-    sshPublicKey : ''
+    avZone: 1
+    adminUsername: 'oracle'
+    sshPublicKey: '<sshKey>'
+    dataDisks: [
+      {
+        caching: 'None'
+        writeAcceleratorEnabled: false
+        diskSizeGB: '1024'
+        managedDisk: {
+          storageAccountType: 'Premium_LRS'
+        }
+      }
+      {
+        caching: 'None'
+        diskSizeGB: '1024'
+        managedDisk: {
+          storageAccountType: 'Premium_LRS'
+        }
+      }
+      {
+        name: 'redo'
+        caching: 'ReadOnly'
+        writeAcceleratorEnabled: false
+        diskSizeGB: '1024'
+        managedDisk: {
+          storageAccountType: 'Premium_LRS'
+        }
+      }
+    ]
   }
   {
-    virtualMachineName: 'secondary'
+    virtualMachineName: 'vm-secondary-0'
     vmSize: 'Standard_D4s_v5'
-    avZone: '2'
-    adminUsername : 'oracle'
-    sshPublicKey : ''  }
-  {
-    virtualMachineName: 'observer'
-    vmSize: 'Standard_D4s_v5'
-    avZone: '2'
-    adminUsername : 'oracle'
-    sshPublicKey : ''
+    avZone: 2
+    adminUsername: 'oracle'
+    sshPublicKey: '<sshKey>'
+    dataDisks: [
+      {
+        caching: 'None'
+        writeAcceleratorEnabled: false
+        diskSizeGB: '1024'
+        managedDisk: {
+          storageAccountType: 'Premium_LRS'
+        }
+      }
+      {
+        caching: 'None'
+        diskSizeGB: '1024'
+        managedDisk: {
+          storageAccountType: 'Premium_LRS'
+        }
+      }
+      {
+        name: 'redo'
+        caching: 'ReadOnly'
+        writeAcceleratorEnabled: false
+        diskSizeGB: '1024'
+        managedDisk: {
+          storageAccountType: 'Premium_LRS'
+        }
+      }
+    ]
   }
 ]
 
@@ -124,3 +100,7 @@ param oracleImageReference = {
   sku: 'oracle-database-19-0904'
   version: 'latest'
 }
+
+
+param enableTelemetry = true
+param telemetryPid = '53df3afd-6e55-4930-a481-69938a5b8f0a'

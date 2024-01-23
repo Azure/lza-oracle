@@ -57,9 +57,9 @@ variable "vm_source_image_reference" {
   description = "The source image reference of the virtual machine"
   default = {
     publisher = "Oracle"
-    offer     = "Oracle-Linux"
-    sku       = "79-gen2"
-    version   = "7.9.36"
+    offer     = "oracle-database-19-3"
+    sku       = "oracle-database-19-0904"
+    version   = "latest"
   }
 }
 
@@ -116,7 +116,7 @@ variable "database_disks_options" {
         caching                   = "ReadOnly"
         create_option             = "Empty"
         disk_size_gb              = 1024
-        lun                       = 20
+        lun                       = 1
         disk_type                 = "Premium_LRS"
         write_accelerator_enabled = false
       }
@@ -127,7 +127,7 @@ variable "database_disks_options" {
         caching                   = "ReadOnly"
         create_option             = "Empty"
         disk_size_gb              = 1024
-        lun                       = 10
+        lun                       = 0
         disk_type                 = "Premium_LRS"
         write_accelerator_enabled = false
       }
@@ -138,7 +138,7 @@ variable "database_disks_options" {
         caching                   = "None"
         create_option             = "Empty"
         disk_size_gb              = 1024
-        lun                       = 60
+        lun                       = 2
         disk_type                 = "Premium_LRS"
         write_accelerator_enabled = false
       }

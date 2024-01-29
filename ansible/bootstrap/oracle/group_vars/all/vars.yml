@@ -25,7 +25,6 @@ data_disk_mount: /u01
 
 stage_dir: /tmp
 
-# ORACLE_HOME basename, {{ oracle_path }}/oracle/product/19.3.0/{{ oracle_db_home }}
 oracle_db_home: /u01/app/oracle/product/19.3.0/dbhome_1
 
 sysPassword: Oracle123.?

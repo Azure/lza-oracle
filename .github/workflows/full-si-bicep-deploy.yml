@@ -20,6 +20,7 @@ env:
   #TF_LOG: "INFO"
   AZ_LOCATION: "norwayeast" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
+  ORCL_DB_NAME: "ORCL" # can be parameterized
 
 permissions:
   id-token: write
@@ -195,10 +196,9 @@ jobs:
   
       - name: Evaluate test output
         run: |
-          cat ansible_output.txt
           lines=(
             "INSTANCE_NAME\t STATUS       DATABASE_STATUS"
-            "ORCL\t\t OPEN\t      ACTIVE"
+            "${{env.ORCL_DB_NAME}}\t\t OPEN\t      ACTIVE"
           )
           found_all=true
           for line in "${lines[@]}"; do
@@ -211,6 +211,7 @@ jobs:
             echo "All lines found in the output."
             # Perform further actions based on the output
           else
-            echo "Not all lines found in the output."
-            # Handle other cases
+            echo "Not all lines found in the output. Showing ansible output:"
+            cat ansible_output.txt
+            exit 1  # Exit with a non-zero code to indicate failure
           fi

@@ -20,6 +20,7 @@ env:
   TF_LOG: "INFO"
   AZ_LOCATION: "eastus" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
+  ORCL_DB_NAME: "ORCL" # can be parameterized
 
 permissions:
   id-token: write
@@ -270,3 +271,28 @@ jobs:
 ##############################################################################################################################################
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
         run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"
+
+      - name: Run Ansible playbook to test Oracle database state
+        run: ansible-playbook testplaybook.yml -i inventory > ansible_output.txt
+  
+      - name: Evaluate test output
+        run: |
+          lines=(
+            "INSTANCE_NAME\t STATUS       DATABASE_STATUS"
+            "${{env.ORCL_DB_NAME}}\t\t OPEN\t      ACTIVE"
+          )
+          found_all=true
+          for line in "${lines[@]}"; do
+            if ! grep -qF "$line" "ansible_output.txt"; then
+              found_all=false
+              break
+            fi
+          done
+          if $found_all; then
+            echo "All lines found in the output."
+            # Perform further actions based on the output
+          else
+            echo "Not all lines found in the output. Showing ansible output:"
+            cat ansible_output.txt
+            exit 1  # Exit with a non-zero code to indicate failure
+          fi        

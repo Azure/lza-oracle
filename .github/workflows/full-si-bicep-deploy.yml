@@ -189,3 +189,18 @@ jobs:
 # ##############################################################################################################################################
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
         run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"
+
+      - name: Run Ansible playbook to test Oracle database state
+        run: ansible-playbook testplaybook.yml -i inventory > ansible_output.txt
+  
+      - name: Evaluate test output
+        run: |
+          output=$(cat ansible_output.txt)
+          echo "Output: $output"
+          # if [[ "$output" == *"Some specific output"* ]]; then
+          #   echo "Output contains specific message."
+          #   # Perform further actions based on the output
+          # else
+          #   echo "Output does not contain specific message."
+          #   # Handle other cases
+          # fi

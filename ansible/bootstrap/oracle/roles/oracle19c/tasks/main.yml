@@ -5,7 +5,7 @@
   lineinfile: dest=/home/{{ oracle_user }}/.bashrc state=present line="{{ item }}"
   with_items:
     - "export ORACLE_BASE={{ ora_user_env.ORACLE_BASE }}"
-    - "export ORACLE_SID={{ ora_user_env.ORACLE_SID }}"
+    - "export ORACLE_SID={{ ora_user_env.ORACLE_SID }}DG1"
     - "export ORACLE_HOME={{ ora_user_env.ORACLE_HOME }}"
     - "export PATH=$PATH:$ORACLE_HOME/bin"
     - "export NLS_LANG={{ ora_user_env.NLS_LANG }}"

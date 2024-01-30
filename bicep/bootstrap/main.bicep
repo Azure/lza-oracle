@@ -36,7 +36,7 @@ param telemetryPid string = ''
 
 
 module rg 'br/public:avm/res/resources/resource-group:0.2.1' = {
-  name: 'rg'
+  name: 'rg-${resourceGroupName}'
   scope: subscription()
   params: {
     name: resourceGroupName

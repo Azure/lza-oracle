@@ -195,12 +195,23 @@ jobs:
   
       - name: Evaluate test output
         run: |
-          output=$(cat ansible_output.txt)
-          echo "Output: $output"
-          # if [[ "$output" == *"Some specific output"* ]]; then
-          #   echo "Output contains specific message."
-          #   # Perform further actions based on the output
-          # else
-          #   echo "Output does not contain specific message."
-          #   # Handle other cases
-          # fi
+          cat ansible_output.txt
+          lines=(
+            "INSTANCE_NAME\t STATUS       DATABASE_STATUS"
+            "---------------- ------------ -----------------"
+            "ORCL\t\t OPEN\t      ACTIVE"
+          )
+          found_all=true
+          for line in "${lines[@]}"; do
+            if ! grep -qF "$line" "ansible_output.txt"; then
+              found_all=false
+              break
+            fi
+          done
+          if $found_all; then
+            echo "All lines found in the output."
+            # Perform further actions based on the output
+          else
+            echo "Not all lines found in the output."
+            # Handle other cases
+          fi

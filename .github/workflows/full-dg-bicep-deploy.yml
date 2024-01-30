@@ -76,7 +76,8 @@ jobs:
       # Generate random string for suffix
     - name: 🔎 Generate Random String for Resource Group Name
       id: resourcegroup-generator
-      run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-$(date +%s) >> $GITHUB_ENV 
+      run: echo random=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 8; echo) >> $GITHUB_ENV
+    - run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-${{env.random}} >> $GITHUB_ENV 
     - run: echo ${{env.ResourceGroupName}}
 
     - name: 🗒️ Update the parameter file with run time values

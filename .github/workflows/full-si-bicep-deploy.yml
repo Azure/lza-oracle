@@ -198,7 +198,6 @@ jobs:
           cat ansible_output.txt
           lines=(
             "INSTANCE_NAME\t STATUS       DATABASE_STATUS"
-            "---------------- ------------ -----------------"
             "ORCL\t\t OPEN\t      ACTIVE"
           )
           found_all=true

@@ -111,6 +111,7 @@ jobs:
     needs: bicep
     name: '🧮 Prepare and run Ansible Playbook'
     runs-on: ubuntu-latest
+    environment: test-deploy
 
     defaults:
       run:

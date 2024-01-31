@@ -32,6 +32,7 @@ jobs:
   bicep:
     name: '🔧 Bicep'
     runs-on: ubuntu-latest
+    environment: test-deploy
     strategy:
       fail-fast: false
   

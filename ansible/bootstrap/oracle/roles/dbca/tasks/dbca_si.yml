@@ -4,8 +4,7 @@
 #
 - block:
 
-  #create recovery area directory
-  - name: Create Folder Strucutre in Standby
+  - name: Create Fast recovery folder Structure
     become_user: "{{ oracle_user }}"
     file:
       path: "{{ item }}"
@@ -13,9 +12,7 @@
       owner: oracle
       group: oinstall
     loop:
-      #- /u01/app/oracle/oradata/{{ sid }}
       - /u01/app/oracle/fast_recovery_area/{{ sid }}
-
 
   - name: copy response file for silent install
     template: src=dbca.rsp.j2 dest=/home/{{ oracle_user }}/dbca.rsp
@@ -30,7 +27,6 @@
     shell: sed -i 's/:N/:Y/' /etc/oratab
     become: true
     become_user: root
-
    
   - name: copy response file for silent install
     template: src=dbora.j2 dest=/etc/init.d/dbora

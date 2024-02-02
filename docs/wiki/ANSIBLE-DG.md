@@ -1,11 +1,11 @@
-# Configure Oracle DB single instance via Ansible
+# Configure Oracle Data Guard via Ansible
 
 On the compute source running Ubuntu or on Azure Cloud Shell, follow the steps given below:
 
 1. Switch to the oracle subdirectory:
 
 ```bash
-cd ~/lza-oracle/ansible/bootstrap/oracle
+cd <THIS_REPO>/lza-oracle/ansible/bootstrap/oracle
 ```
 
 1. Create a new file called inventory and populate it with the following content. Replace <hostname> and <Public IP address of the Azure VM created via terraform> with the appropriate values before running the command:
@@ -33,18 +33,18 @@ ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes"
 
 (If using Azure Cloud Shell, remember to refresh your browser by scrolling up or down, every 15 minutes or so since the shell times out after 20 minutes of inaction.)
 
-1. If you get an error stating "ERROR! Invalid callback for stdout specified: community.general.yaml" then run the following step and then re-run the previous step.
+If you get an error stating "ERROR! Invalid callback for stdout specified: community.general.yaml" then run the following step and then re-run the previous step.
 
 ```bash
 ansible-galaxy collection install community.general
 ```
 
-1. It is acceptable to see warnings highlighted in red.
+It is acceptable to see warnings highlighted in red.
 
 ![Warnings dg](media/warnings.jpg)
 
-Once the installation and configuration completes, you will see a screen similar to the one below.
+2. Once the installation and configuration completes, you will see a screen similar to the one below.
 
 ![Complete dg](media/complete.jpg)
 
-The installation has now completed and you can connect to the database.
+3. The installation has now completed and you can connect to the datbases to test failover and failback. See the [Ansible Data Guard Testing](TEST-DG.md) for more details.

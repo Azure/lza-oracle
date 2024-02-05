@@ -1,8 +1,8 @@
 name: Only Deploy Single Instance Oracle DB on Azure with Terraform
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: { }
   push:
-    branches: [ feature/* ]
+    branches: [ feature/*, fix/* ]
     paths:
       - ".github/workflows/only-si-tf-deploy.yml"
       - "terraform/bootstrap/single_instance/**"

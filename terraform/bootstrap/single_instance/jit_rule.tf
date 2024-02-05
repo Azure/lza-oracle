@@ -11,6 +11,10 @@ data "azurerm_virtual_machine" "oracle_vm" {
   ]
 }
 
+resource "time_sleep" "wait" {
+  create_duration = "400s"
+}
+
 resource "azapi_resource" "jit_ssh_policy" {
   count                     = module.vm.database_server_count
   name                      = "JIT-SSH-Policy"
@@ -35,5 +39,6 @@ resource "azapi_resource" "jit_ssh_policy" {
   })
 
   depends_on = [module.vm
+  ,time_sleep.wait
   ]
 }

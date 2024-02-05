@@ -12,7 +12,7 @@ data "azurerm_virtual_machine" "oracle_vm" {
 }
 
 resource "time_sleep" "wait" {
-  create_duration = "400s"
+  create_duration = "200s"
 }
 
 resource "azapi_resource" "jit_ssh_policy" {

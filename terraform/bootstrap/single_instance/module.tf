@@ -115,33 +115,3 @@ module "storage" {
   }
 }
 
-#########################################################################################
-#                                                                                       #
-#  JIT Access Policy                                                                    #
-#                                                                                       #
-#########################################################################################
-resource "azapi_resource" "jit_ssh_policy" {
-  count                     = module.vm.database_server_count
-  name                      = "JIT-SSH-Policy"
-  parent_id                 = "${module.common_infrastructure.resource_group.id}/providers/Microsoft.Security/locations/${module.common_infrastructure.resource_group.location}"
-  type                      = "Microsoft.Security/locations/jitNetworkAccessPolicies@2020-01-01"
-  schema_validation_enabled = false
-  body = jsonencode({
-    "kind" : "Basic"
-    "properties" : {
-      "virtualMachines" : [{
-        "id" : "/subscriptions/${module.common_infrastructure.current_subscription.subscription_id}/resourceGroups/${module.common_infrastructure.resource_group.name}/providers/Microsoft.Compute/virtualMachines/${module.vm.vm[0].name}",
-        "ports" : [
-          {
-            "number" : 22,
-            "protocol" : "TCP",
-            "allowedSourceAddressPrefix" : "*",
-            "maxRequestAccessDuration" : "PT3H"
-          }
-        ]
-      }]
-    }
-  })
-
-  depends_on = [module.vm]
-}

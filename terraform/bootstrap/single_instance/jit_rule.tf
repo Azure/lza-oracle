@@ -48,6 +48,5 @@ resource "azapi_resource" "jit_ssh_policy" {
     , module.storage.data_disks_resource
     , module.storage.asm_disks_resource
     , module.storage.redo_disks_resource
-    # , time_sleep.wait
   ]
 }

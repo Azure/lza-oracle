@@ -47,7 +47,6 @@ resource "azapi_resource" "jit_ssh_policy_primary" {
     , module.storage_primary.data_disks_resource
     , module.storage_primary.asm_disks_resource
     , module.storage_primary.redo_disks_resource
-    # , time_sleep.wait
   ]
 }
 
@@ -78,6 +77,5 @@ resource "azapi_resource" "jit_ssh_policy_secondary" {
     , module.storage_secondary.data_disks_resource
     , module.storage_secondary.asm_disks_resource
     , module.storage_secondary.redo_disks_resource
-    # , time_sleep.wait
   ]
 }

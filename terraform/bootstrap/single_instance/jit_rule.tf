@@ -11,15 +11,15 @@ data "azurerm_virtual_machine" "oracle_vm" {
   ]
 }
 
-resource "time_sleep" "wait" {
-  create_duration = "200s"
+# resource "time_sleep" "wait" {
+#   create_duration = "200s"
 
-  depends_on = [
-    module.storage.data_disks_resource,
-    module.storage.asm_disks_resource,
-    module.storage.redo_disks_resource
-  ]
-}
+#   depends_on = [
+#     module.storage.data_disks_resource,
+#     module.storage.asm_disks_resource,
+#     module.storage.redo_disks_resource
+#   ]
+# }
 
 resource "azapi_resource" "jit_ssh_policy" {
   count                     = module.vm.database_server_count
@@ -44,7 +44,10 @@ resource "azapi_resource" "jit_ssh_policy" {
     }
   })
 
-  depends_on = [module.vm
-    , time_sleep.wait
+  depends_on = [data.azurerm_virtual_machine.oracle_vm
+    , module.storage.data_disks_resource
+    , module.storage.asm_disks_resource
+    , module.storage.redo_disks_resource
+    # , time_sleep.wait
   ]
 }

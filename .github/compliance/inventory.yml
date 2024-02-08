@@ -1,4 +1,0 @@
-inventory:
-- source: ServiceTree
-  isProduction: true
-  items:

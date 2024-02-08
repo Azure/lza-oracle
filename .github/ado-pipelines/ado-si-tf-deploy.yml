@@ -1,0 +1,210 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - ".github/workflows/full-si-tf-deploy.yml"
+      - "terraform/bootstrap/single_instance/**"
+      - "terraform_units/**"
+      - "ansible/bootstrap/oracle/**"
+    exclude:
+      - /README.md
+stages:
+- stage: Terraform
+  displayName: 'Deploy single instance VM using Terraform'
+  pool:
+    vmImage: 'ubuntu-latest'
+  variables:
+    TF_LOG: "INFO"
+    AZ_LOCATION: "eastus" 
+    AZ_RG_BASENAME: "Oracle-test" 
+    ORCL_DB_NAME: "ORCL" 
+  jobs:
+  - job: TF
+    steps:   
+    - task: CopyFiles@2
+      displayName: Copy Files
+      inputs:
+        Contents: |
+          *.*
+        targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Pipeline Artifact
+      inputs:
+        artifactName: 'drop'
+        targetPath: $(Build.ArtifactStagingDirectory)
+    - script: |
+          cat > temp_ssh_key <<EOF
+            $(SSH_PRIVATE_KEY)
+            EOF
+            
+            chmod 400 temp_ssh_key
+            ssh-keygen -f temp_ssh_key -y > temp_ssh_key.pub
+
+            echo "SSH_KEY=$(cat temp_ssh_key.pub)" >> $(GITHUB_ENV)
+            echo "SSH_KEY=$(SSH_KEY)"
+
+            echo "currentDate=$(date)" >> $(GITHUB_ENV)
+            echo "currentDate=$(currentDate)"
+
+          displayName: 'Create the SSH public key for VM'
+
+        # - script: |
+        #     echo random=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 8; echo) >> $(GITHUB_ENV)
+        #     echo ResourceGroupName=$(AZ_RG_BASENAME)-$(random) >> $(GITHUB_ENV)
+        #     echo $(ResourceGroupName)
+
+        #   displayName: 'Generate Random String for Resource Group Name'
+
+        # - script: |
+        #     cat > terraform.tfvars <<EOF
+        #     location = "$(AZ_LOCATION)"
+        #     resourcegroup_name = "$(ResourceGroupName)"
+        #     resourcegroup_tags = {
+        #       "environment" = "dev"
+        #       "project"     = "oracle"
+        #       "created"     = "$(currentDate)"
+        #       "GITHUB_ACTOR" = "$(github.actor)"
+        #       "GITHUB_ACTION_REPOSITORY" = "$(github.repository)"
+        #       "GITHUB_ACTION_REF" = "$(github.ref)"
+        #       "GITHUB_RUN_ID" = "$(github.run_id)"
+        #       "GITHUB_WORKFLOW" = "$(github.workflow)"
+        #     }
+        #     is_resource_lock_enabled = false
+        #     #is_diagnostic_settings_enabled = true
+        #     #diagnostic_target              = "Log_Analytics_Workspace"
+            
+        #     ssh_key = "$(SSH_KEY)"
+        #     EOF
+
+        #   displayName: 'Create a tfvars file for terraform'
+
+        # - task: AzureCLI@2
+        #   inputs:
+        #     azureSubscription: 'Your Azure subscription'
+        #     scriptType: 'bash'
+        #     scriptLocation: 'inlineScript'
+        #     inlineScript: |
+        #       az login --service-principal --username $(AZURE_CLIENT_ID) --password $(AZURE_CLIENT_SECRET) --tenant $(AZURE_TENANT_ID)
+        #       az account set --subscription $(AZURE_SUBSCRIPTION_ID)
+        #       az group create --name $(ResourceGroupName) --location $(AZ_LOCATION)
+        #       az vm create --resource-group $(ResourceGroupName) --name 'vm-0' --image 'UbuntuLTS' --admin-username 'admin' --ssh-key-value "$(SSH_KEY)"
+        #       az vm open-port --resource-group $(ResourceGroupName) --name 'vm-0' --port '22'
+
+        #   displayName: 'Provision VM using Azure CLI'
+
+        # - task: UsePythonVersion@0
+        #   inputs:
+        #     versionSpec: '3.x'
+        #     addToPath: true
+
+        # - script: |
+        #     echo "currentRunnerIP=$(curl https://api.ipify.org)" >> $(GITHUB_ENV)
+        #     echo "currentRunnerIP=$(currentRunnerIP)"
+        #     echo "VM_Public_IP_Address=$(needs.terraform.outputs.VM_Public_IP_Address)" >> $(GITHUB_ENV)
+        #     echo "VM_Public_IP_Address=$(VM_Public_IP_Address)"
+
+        #   displayName: 'Prepare and run Ansible Playbook'
+
+        # - task: UsePythonVersion@0
+        #   inputs:
+        #     versionSpec: '3.x'
+        #     addToPath: true
+
+        # - script: |
+        #     echo "SubscriptionID=$(az account show --query id -o tsv)" >> $(GITHUB_ENV)
+        #     echo $(SubscriptionID)
+
+        #   displayName: 'Get Subscription ID'
+
+        # - script: |
+        #     echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $(GITHUB_ENV)
+        #     echo "endTimeUtc=$(endTimeUtc)"
+        #     echo "ResourceGroupName=$(needs.terraform.outputs.ResourceGroupName)" >> $(GITHUB_ENV)
+        #     echo "ResourceGroupName=$(ResourceGroupName)"
+
+        #   displayName: 'Calculate endTimeUTC for JIT request'
+
+        # - task: UsePythonVersion@0
+        #   inputs:
+        #     versionSpec: '3.x'
+        #     addToPath: true
+
+        # - script: |
+        #     az login --service-principal --username $(AZURE_CLIENT_ID) --password $(AZURE_CLIENT_SECRET) --tenant $(AZURE_TENANT_ID)
+        #     az account set --subscription $(AZURE_SUBSCRIPTION_ID)
+        #     az vm update --resource-group $(ResourceGroupName) --name 'vm-0' --set identity.type='SystemAssigned'
+        #     az vm identity assign --resource-group $(ResourceGroupName) --name 'vm-0'
+        #     az vm update --resource-group $(ResourceGroupName) --name 'vm-0' --add identity.assignedIdentities.default
+        #     az vm update --resource-group $(ResourceGroupName) --name 'vm-0' --set identity.type='None'
+        #     az vm update --resource-group $(ResourceGroupName) --name 'vm-0' --remove identity.assignedIdentities.default
+
+        #   displayName: 'Enable JIT on VM'
+
+        # - task: UsePythonVersion@0
+        #   inputs:
+        #     versionSpec: '3.x'
+        #     addToPath: true
+
+        # - script: |
+        #     ssh-keyscan -T 300 -H $(VM_Public_IP_Address) >> /home/runner/.ssh/known_hosts
+
+        #   displayName: 'Get Known Hosts parameter using ssh-keyscan'
+
+        # - script: |
+        #     cat > inventory <<EOF
+        #     [dbservers]
+        #     $(VM_Public_IP_Address) ansible_ssh_private_key_file=/home/runner/.ssh/github_actions_id_rsa ansible_user=oracle
+        #     EOF
+
+        #   displayName: 'Create the inventory file'
+
+        # - script: |
+        #     cat inventory
+
+        #   displayName: 'Show the inventory file'
+
+        # - task: UsePythonVersion@0
+        #   inputs:
+        #     versionSpec: '3.x'
+        #     addToPath: true
+
+        # - script: |
+        #     ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"
+
+        #   displayName: 'Invoke ansible playbook'
+
+        # - task: UsePythonVersion@0
+        #   inputs:
+        #     versionSpec: '3.x'
+        #     addToPath: true
+
+        # - script: |
+        #     ansible-playbook testplaybook.yml -i inventory > ansible_output.txt
+
+        #   displayName: 'Run Ansible playbook to test Oracle database state'
+
+        # - script: |
+        #     lines=(
+        #       "INSTANCE_NAME\t STATUS       DATABASE_STATUS"
+        #       "$(ORCL_DB_NAME)\t\t OPEN\t      ACTIVE"
+        #     )
+        #     found_all=true
+        #     for line in "${lines[@]}"; do
+        #       if ! grep -qF "$line" "ansible_output.txt"; then
+        #         found_all=false
+        #         break
+        #       fi
+        #     done
+        #     if $found_all; then
+        #       echo "All lines found in the output."
+        #       # Perform further actions based on the output
+        #     else
+        #       echo "Not all lines found in the output. Showing ansible output:"
+        #       cat ansible_output.txt
+        #       exit 1  # Exit with a non-zero code to indicate failure
+        #     fi
+
+        #   displayName: 'Evaluate test output'

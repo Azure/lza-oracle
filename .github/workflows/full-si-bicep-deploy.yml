@@ -191,7 +191,7 @@ jobs:
 # #                                    Ansible                                                                                                 #
 # ##############################################################################################################################################
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
-        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"
+        run: ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=no"
 
       - name: Run Ansible playbook to test Oracle database state
         run: ansible-playbook testplaybook.yml -i inventory > ansible_output.txt

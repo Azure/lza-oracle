@@ -19,7 +19,7 @@ vm-secondary-0 ansible_host=<Public IP address of the secondary node created via
 EOF
 ```
 
-YOu can also edit the existing "inventory_dg" file and rename it as "inventory".
+You can also edit the existing "inventory_dg" file and rename it as "inventory".
 
 Below is an example of what the "inventory" file should look like after running the above command:
 

@@ -18,7 +18,7 @@
     template: src=tnsnames.ora.j2 dest={{ oracle_db_home }}/network/admin/tnsnames.ora
     when: inventory_hostname in groups['ora-x1']
 
-    - debug: var=out.stdout_lines
+  - debug: var=out.stdout_lines
   - name: copy TNS LISTENER FILE to standby
     become_user: "{{ oracle_user }}"
     template: src=tnsnames.ora.j2 dest={{ oracle_db_home }}/network/admin/tnsnames.ora

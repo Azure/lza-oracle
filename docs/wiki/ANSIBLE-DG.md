@@ -5,7 +5,7 @@ On the compute source running Ubuntu or on Azure Cloud Shell, follow the steps g
 1. Switch to the oracle subdirectory:
 
 ```bash
-cd <THIS_REPO>/lza-oracle/ansible/bootstrap/oracle
+cd ~/lza-oracle/ansible/bootstrap/oracle
 ```
 
 1. Create a new file called inventory and populate it with the following content. Replace <hostname> and <Public IP address of the Azure VM created via terraform> with the appropriate values before running the command:
@@ -13,17 +13,19 @@ cd <THIS_REPO>/lza-oracle/ansible/bootstrap/oracle
 ```bash
 cat > inventory <<EOF
 [ora-x1]
-<hostname for the primary node> ansible_host=<Public IP address of the primary node created via terraform or Bicep>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
+vm-primary-0 ansible_host=<Public IP address of the primary node created via terraform or Bicep>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
 [ora-x2]
-<hostname for the secondary node> ansible_host=<Public IP address of the secondary node created via terraform or Bicep>   ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
+vm-secondary-0 ansible_host=<Public IP address of the secondary node created via terraform or Bicep>   ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
 EOF
 ```
 
-Below is an example of what the file should look like after running the above command:
+YOu can also edit the existing "inventory_dg" file and rename it as "inventory".
+
+Below is an example of what the "inventory" file should look like after running the above command:
 
  ![Inventory file data guard](media/inventory_dg.jpg)
 
-1. Start the ansible playbook
+2. Start the ansible playbook
 
 ```bash
 ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes"
@@ -43,8 +45,8 @@ It is acceptable to see warnings highlighted in red.
 
 ![Warnings dg](media/warnings.jpg)
 
-2. Once the installation and configuration completes, you will see a screen similar to the one below.
+3. Once the installation and configuration completes, you will see a screen similar to the one below.
 
 ![Complete dg](media/complete.jpg)
 
-3. The installation has now completed and you can connect to the datbases to test failover and failback. See the [Ansible Data Guard Testing](TEST-DG.md) for more details.
+4. The installation has now completed and you can connect to the datbases to test failover and failback. See the [Ansible Data Guard Testing](TEST-DG.md) for more details.

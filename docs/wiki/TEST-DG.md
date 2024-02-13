@@ -14,17 +14,17 @@ $ env | grep -i oracle
 3. Connect to the database:
 ```
 $ sqlplus / as sysdba
-SQL> show user
+show user
 ```
 
 4. You can display configuration parameters related to Data Guard as follows:
 
 ```
-SQL> set linesize 500 pages 100
-SQL> col name format a30
-SQL> col value format a100
+set linesize 500 pages 100
+col name format a30
+col value format a100
 
-SQL> select name, value from v$parameter
+select name, value from v$parameter
 where name in ('db_name', 'db_unique_name', 'log_archive_config',
 'log_archive_dest_1', 'log_archive_dest_2', 
 'log_archive_dest_state_1', 'log_archive_dest_state_2', 
@@ -37,32 +37,32 @@ order by 1;
 5. Check the current status of Data Guard configuration:
 
 ```
-SQL> select status,instance_name,database_role, protection_mode from v$database,v$instance;
+select status,instance_name,database_role, protection_mode from v$database,v$instance;
 ```
 
 6. On the primary server, confirm that synchronization is ready to perform a switchover:
 
 ```
-SQL> select dest_name,status,error from v$archive_dest where dest_name='LOG_ARCHIVE_DEST_2';
-SQL> select name,value from v$parameter where name='log_archive_dest_2';
+select dest_name,status,error from v$archive_dest where dest_name='LOG_ARCHIVE_DEST_2';
+select name,value from v$parameter where name='log_archive_dest_2';
 ```
 
 7. Verify switch over configuration:
 
 ```
-SQL> alter database switchover to orcldg1 verify;
+alter database switchover to orcldg1 verify;
 ```
 
 8. Check for gaps:
 
 ```
-SQL> select status, gap_status  from v$archive_dest_status  where dest_id = 2;
+select status, gap_status  from v$archive_dest_status  where dest_id = 2;
 ```
 
 9. Perform the actual switchover:
 
 ```
-SQL> alter database switchover to orcldg1;
+alter database switchover to orcldg1;
 ```
 
 10. Next, ssh into the old standby server ("vm-secondary-0") and start the database:
@@ -71,13 +71,13 @@ SQL> alter database switchover to orcldg1;
 ```
 $ ssh -i ~/.ssh/lza-oracle-data-guard  oracle@<PUBLIC_IP_ADDRESS_OF_VM_SECONDARY_0>
 $ sqplus / as sysdba
-SQL> alter database open;
+alter database open;
 ```
 
 Now "vm-secodary-0" has become the primary server. You can check its new role as follows:
 
 ```
-SQL> select status,instance_name,database_role, protection_mode from v$database,v$instance;
+select status,instance_name,database_role, protection_mode from v$database,v$instance;
 ```
 
 
@@ -87,9 +87,9 @@ SQL> select status,instance_name,database_role, protection_mode from v$database,
 ```
 $ ssh -i ~/.ssh/lza-oracle-data-guard  oracle@<PUBLIC_IP_ADDRESS_OF_VM_PRIMARY_0>
 $ sqplus / as sysdba
-SQL> startup mount;
-SQL> alter database recover managed standby database disconnect;
-SQL> select status,instance_name,database_role, protection_mode from v$database,v$instance;
+startup mount;
+alter database recover managed standby database disconnect;
+select status,instance_name,database_role, protection_mode from v$database,v$instance;
 ```
 
 

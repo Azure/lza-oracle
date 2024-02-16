@@ -17,6 +17,7 @@ stages:
   pool:
     vmImage: 'ubuntu-latest'
   variables:
+  - group: lza-oracle
     TF_LOG: "INFO"
     AZ_LOCATION: "eastus" 
     AZ_RG_BASENAME: "Oracle-test" 
@@ -36,23 +37,23 @@ stages:
     #     artifactName: 'drop'
     #     targetPath: $(Build.ArtifactStagingDirectory)
 
-    - script: |
-          ls -al $(Build.ArtifactStagingDirectory)
-          ls -al $(System.DefaultWorkingDirectory)
-          # cat > temp_ssh_key <<EOF
-          #   $(SSH_PRIVATE_KEY)
-          #   EOF
+    - task: ShellScript@2
+      displayName: 'Create the SSH public key for VM'
+      scriptType: 'bash'
+      inputs: |
+          cat > temp_ssh_key <<EOF
+            $(SSH_PRIVATE_KEY)
+            EOF
             
-          #   chmod 400 temp_ssh_key
-          #   ssh-keygen -f temp_ssh_key -y > temp_ssh_key.pub
+            chmod 400 temp_ssh_key
+            ssh-keygen -f temp_ssh_key -y > temp_ssh_key.pub
 
-          #   echo "SSH_KEY=$(cat temp_ssh_key.pub)" >> $(GITHUB_ENV)
-          #   echo "SSH_KEY=$(SSH_KEY)"
+            echo "##vso[task.setvariable variable=SSH_KEY;]$(cat temp_ssh_key.pub)"
+            echo $(SSH_KEY)
 
-          #   echo "currentDate=$(date)" >> $(GITHUB_ENV)
-          #   echo "currentDate=$(currentDate)"
+            echo "##vso[task.setvariable variable=currentDate;]$(currentDate)"
+            echo "currentDate=$(currentDate)"
 
-          # displayName: 'Create the SSH public key for VM'
 
         # - script: |
         #     echo random=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 8; echo) >> $(GITHUB_ENV)

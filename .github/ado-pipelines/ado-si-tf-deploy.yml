@@ -18,10 +18,10 @@ stages:
     vmImage: 'ubuntu-latest'
   variables:
   - group: lza-oracle
-    TF_LOG: "INFO"
-    AZ_LOCATION: "eastus" 
-    AZ_RG_BASENAME: "Oracle-test" 
-    ORCL_DB_NAME: "ORCL" 
+  # -name: TF_LOG: "INFO"
+  #   AZ_LOCATION: "eastus" 
+  #   AZ_RG_BASENAME: "Oracle-test" 
+  #   ORCL_DB_NAME: "ORCL" 
   jobs:
   - job: TF
     steps:   
@@ -39,7 +39,6 @@ stages:
 
     - task: ShellScript@2
       displayName: 'Create the SSH public key for VM'
-      scriptType: 'bash'
       inputs: |
           cat > temp_ssh_key <<EOF
             $(SSH_PRIVATE_KEY)

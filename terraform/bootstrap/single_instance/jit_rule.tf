@@ -23,6 +23,7 @@ data "azurerm_virtual_machine" "oracle_vm" {
 
 resource "azapi_resource" "jit_ssh_policy" {
   count                     = module.vm.database_server_count
+  provider = azapi
   name                      = "JIT-SSH-Policy"
   parent_id                 = "${module.common_infrastructure.resource_group.id}/providers/Microsoft.Security/locations/${module.common_infrastructure.resource_group.location}"
   type                      = "Microsoft.Security/locations/jitNetworkAccessPolicies@2020-01-01"

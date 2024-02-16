@@ -71,6 +71,6 @@ output "vm_public_ip_address" {
 ###############################################################################
 
 output "si_jit_ssh_policy" {
-  value = jsondecode(azapi_resource.jit_ssh_policy.output)
+  value = jsondecode(azapi_resource.jit_ssh_policy[0].output)
 }
 

@@ -69,10 +69,8 @@ output "vm_public_ip_address" {
 ###############################################################################
 #                    J I T    Rules                                           #
 ###############################################################################
-output "vm_public_ip_address" {
-  value = module.network.db_server_puplic_ip
-}
-output "login_server" {
+
+output "si_jit_ssh_policy" {
   value = jsondecode(azapi_resource.jit_ssh_policy.output)
 }
 

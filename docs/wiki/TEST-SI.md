@@ -14,7 +14,7 @@ $ env | grep -i oracle
 3. Connect to the database:
 ```
 $ sqlplus / as sysdba
-SQL> show user
+show user
 ```
 
 <img src="../media/test.jpg" />

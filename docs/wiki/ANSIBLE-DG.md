@@ -1,4 +1,4 @@
-# Configure Oracle DB single instance via Ansible
+# Configure Oracle Data Guard via Ansible
 
 On the compute source running Ubuntu or on Azure Cloud Shell, follow the steps given below:
 
@@ -13,17 +13,19 @@ cd ~/lza-oracle/ansible/bootstrap/oracle
 ```bash
 cat > inventory <<EOF
 [ora-x1]
-<hostname for the primary node> ansible_host=<Public IP address of the primary node created via terraform or Bicep>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
+vm-primary-0 ansible_host=<Public IP address of the primary node created via terraform or Bicep>  ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
 [ora-x2]
-<hostname for the secondary node> ansible_host=<Public IP address of the secondary node created via terraform or Bicep>   ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
+vm-secondary-0 ansible_host=<Public IP address of the secondary node created via terraform or Bicep>   ansible_ssh_private_key_file=~/.ssh/lza-oracle-data-guard ansible_user=oracle
 EOF
 ```
 
-Below is an example of what the file should look like after running the above command:
+You can also edit the existing "inventory_dg" file and rename it as "inventory".
+
+Below is an example of what the "inventory" file should look like after running the above command:
 
  ![Inventory file data guard](media/inventory_dg.jpg)
 
-1. Start the ansible playbook
+2. Start the ansible playbook
 
 ```bash
 ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes"
@@ -33,18 +35,18 @@ ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes"
 
 (If using Azure Cloud Shell, remember to refresh your browser by scrolling up or down, every 15 minutes or so since the shell times out after 20 minutes of inaction.)
 
-1. If you get an error stating "ERROR! Invalid callback for stdout specified: community.general.yaml" then run the following step and then re-run the previous step.
+If you get an error stating "ERROR! Invalid callback for stdout specified: community.general.yaml" then run the following step and then re-run the previous step.
 
 ```bash
 ansible-galaxy collection install community.general
 ```
 
-1. It is acceptable to see warnings highlighted in red.
+It is acceptable to see warnings highlighted in red.
 
 ![Warnings dg](media/warnings.jpg)
 
-Once the installation and configuration completes, you will see a screen similar to the one below.
+3. Once the installation and configuration completes, you will see a screen similar to the one below.
 
 ![Complete dg](media/complete.jpg)
 
-The installation has now completed and you can connect to the database.
+4. The installation has now completed and you can connect to the datbases to test failover and failback. See the [Ansible Data Guard Testing](TEST-DG.md) for more details.

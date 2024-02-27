@@ -17,6 +17,6 @@ Create a Github Secret in your repo with the name SSH_PRIVATE_KEY, containing th
 To deploy through GitHub actions, please refer to the [Single instance GitHub Bicep workflow](../blob/main/.github/workflows/full-si-bicep-deploy.yml) and follow the guidance below.
 
 - Modify the following values in [Single instance GitHub Bicep workflow](../blob/main/.github/workflows/full-si-bicep-deploy.yml):
-  - Change _AZ_LOCATION: "eastus"_, to your preferred Azure region
+  - Change _AZ_LOCATION: "swedencentral"_, to your preferred Azure region
   - Change _AZ_RG_BASENAME: "Oracle-test"_, to your preferred resource group name prefix.
 - Go to GitHub actions and run the action *Deploy Single Instance Oracle DB on Azure with Bicep and Ansible*

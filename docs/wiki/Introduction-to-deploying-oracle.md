@@ -33,6 +33,7 @@ The components are created as follows:
 - Fork this repo to your own GitHub organization, you should not create a direct clone of the repo. Pull requests based off direct clones of the repo will not be accepted.
 - Clone the forked repo from your own GitHub organization to your developer workstation.
 - Determine how you want to proceed with deployment, depending on what flavor of Oracle database VM you wish to deploy and the method you wish to use. See the section below for more details.
+- If you wish to deploy through Github Actions, which is the recommended method, be mindful that you will need to enable the workflows on the action tabs after forking the repo.
 
 ### Deploy through GitHub Actions (recommended method)
 

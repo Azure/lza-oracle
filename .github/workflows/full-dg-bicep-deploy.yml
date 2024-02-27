@@ -18,7 +18,7 @@ on:
     
 env:
   #TF_LOG: "INFO"
-  AZ_LOCATION: "norwayeast" # can be parameterized
+  AZ_LOCATION: "eastus" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
   VM_PRIMARY_NAME: "vm-primary-0" 
   VM_SECONDARY_NAME: "vm-secondary-0"

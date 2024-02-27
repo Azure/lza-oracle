@@ -83,9 +83,9 @@ jobs:
     - name: 🗒️ Update the parameter file with run time values
       run: |
         # In the line "param resourceGroupName = '<rgName>'" replace <rgName> with the value of the variable ResourceGroupName
-        sed -i "s|resourceGroupName = '<rgName>'|resourceGroupName = '${{env.ResourceGroupName}}'|" data_guard/default/data_guard.bicepparam
+        sed -i "s|resourceGroupName = '<rgName>'|resourceGroupName = '${{env.ResourceGroupName}}'|" single_instance/default/single_instance.bicepparam
         # In the line "location = '<location>'" replace <location> with the value of the variable AZ_LOCATION
-        sed -i "s|location = '<location>|location = '${{env.AZ_LOCATION}}|" data_guard/default/data_guard.bicepparam
+        sed -i "s|location = '<location>|location = '${{env.AZ_LOCATION}}|" single_instance/default/single_instance.bicepparam
         # In the line "sshPublicKey: '<sshKey>'' replace <sshKey> with the value of the variable SSH_KEY
         sed -i "s|sshPublicKey: '<sshKey>'|sshPublicKey: '${{env.SSH_KEY}}'|g" single_instance/default/single_instance.bicepparam
 

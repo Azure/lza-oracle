@@ -1,5 +1,9 @@
 using '../../main.bicep'
 
+param resourceGroupName = '<rgName>'
+
+param location = '<location>'
+
 param virtualNetworks = [
   {
     virtualNetworkName: 'vnet1'

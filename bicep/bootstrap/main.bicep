@@ -11,7 +11,7 @@ targetScope = 'subscription'
 param resourceGroupName string 
 
 @description('Location')
-param location string = 'centralindia'
+param location string = 'eastus'
 
 @description('Oracle VM Image reference')
 param oracleImageReference object

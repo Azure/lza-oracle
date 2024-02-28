@@ -66,3 +66,11 @@ output "vm_public_ip_address" {
   value = module.network.db_server_puplic_ip
 }
 
+###############################################################################
+#                    J I T    Rules                                           #
+###############################################################################
+
+output "si_jit_ssh_policy" {
+  value = jsondecode(azapi_resource.jit_ssh_policy[0].output)
+}
+

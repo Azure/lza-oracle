@@ -7,7 +7,10 @@ data "azurerm_virtual_machine" "oracle_primary_vm" {
   name                = module.vm_primary.vm[0].name
   resource_group_name = module.common_infrastructure.resource_group.name
 
-  depends_on = [module.vm_primary
+  depends_on = [module.vm_primary,
+    module.storage_primary.data_disks_resource
+    , module.storage_primary.asm_disks_resource
+    , module.storage_primary.redo_disks_resource
   ]
 }
 
@@ -16,6 +19,29 @@ data "azurerm_virtual_machine" "oracle_secondary_vm" {
   resource_group_name = module.common_infrastructure.resource_group.name
 
   depends_on = [module.vm_secondary
+    , module.storage_secondary.data_disks_resource
+    , module.storage_secondary.asm_disks_resource
+    , module.storage_secondary.redo_disks_resource
+  ]
+}
+
+resource "time_sleep" "wait_for_primary_vm_creation" {
+  create_duration = "120s"
+
+  depends_on = [data.azurerm_virtual_machine.oracle_primary_vm,
+    module.storage_primary.data_disks_resource
+    , module.storage_primary.asm_disks_resource
+    , module.storage_primary.redo_disks_resource
+  ]
+}
+
+resource "time_sleep" "wait_for_secondary_vm_creation" {
+  create_duration = "120s"
+
+  depends_on = [data.azurerm_virtual_machine.oracle_secondary_vm
+    , module.storage_secondary.data_disks_resource
+    , module.storage_secondary.asm_disks_resource
+    , module.storage_secondary.redo_disks_resource
   ]
 }
 
@@ -43,11 +69,7 @@ resource "azapi_resource" "jit_ssh_policy_primary" {
     }
   })
 
-    depends_on = [data.azurerm_virtual_machine.oracle_primary_vm
-    , module.storage_primary.data_disks_resource
-    , module.storage_primary.asm_disks_resource
-    , module.storage_primary.redo_disks_resource
-  ]
+  depends_on = [time_sleep.wait_for_primary_vm_creation]
 }
 
 resource "azapi_resource" "jit_ssh_policy_secondary" {
@@ -73,9 +95,5 @@ resource "azapi_resource" "jit_ssh_policy_secondary" {
     }
   })
 
-      depends_on = [data.azurerm_virtual_machine.oracle_secondary_vm
-    , module.storage_secondary.data_disks_resource
-    , module.storage_secondary.asm_disks_resource
-    , module.storage_secondary.redo_disks_resource
-  ]
+  depends_on = [time_sleep.wait_for_secondary_vm_creation]
 }

@@ -11,18 +11,19 @@ data "azurerm_virtual_machine" "oracle_vm" {
   ]
 }
 
-# resource "time_sleep" "wait" {
-#   create_duration = "200s"
+resource "time_sleep" "wait_for_vm_creation" {
+  create_duration = "120s"
 
-#   depends_on = [
-#     module.storage.data_disks_resource,
-#     module.storage.asm_disks_resource,
-#     module.storage.redo_disks_resource
-#   ]
-# }
+  depends_on = [data.azurerm_virtual_machine.oracle_vm,
+    module.storage.data_disks_resource,
+    module.storage.asm_disks_resource,
+    module.storage.redo_disks_resource
+  ]
+}
 
 resource "azapi_resource" "jit_ssh_policy" {
   count                     = module.vm.database_server_count
+  provider = azapi
   name                      = "JIT-SSH-Policy"
   parent_id                 = "${module.common_infrastructure.resource_group.id}/providers/Microsoft.Security/locations/${module.common_infrastructure.resource_group.location}"
   type                      = "Microsoft.Security/locations/jitNetworkAccessPolicies@2020-01-01"
@@ -44,9 +45,7 @@ resource "azapi_resource" "jit_ssh_policy" {
     }
   })
 
-  depends_on = [data.azurerm_virtual_machine.oracle_vm
-    , module.storage.data_disks_resource
-    , module.storage.asm_disks_resource
-    , module.storage.redo_disks_resource
+  depends_on = [
+    time_sleep.wait_for_vm_creation
   ]
 }

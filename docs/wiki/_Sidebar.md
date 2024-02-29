@@ -13,9 +13,4 @@
 - [Frequently Asked Questions](./FAQ)
 - [Contributing](./Contributing)
 - [Known Issues](./KnownIssues)
-- [Versioning](./Versioning)
 - [Telemetry](./Telemetry)
-- 
-- 
-- 
-- 

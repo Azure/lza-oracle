@@ -4,10 +4,12 @@
 
 This repository contains code to install and configure Oracle databases on Azure VM for various scenarios in an automated fashion. The following scenarios are covered.
 
-- A single VM with an Oracle database installed on it, deployed through Terraform and Ansible.
-- Two VMs in an Oracle Dataguard configuration, deployed through Terraform and Ansible.
+- A single VM with an Oracle database installed on it, deployed through Terraform and Ansible or Bicep and Ansible.
+- Two VMs in an Oracle Dataguard configuration, deployed through Terraform and Ansible or Bicep and Ansible.
 
-> Note that the code for doing the above in Bicep/Ansible is currently under development. Code for deploying via GitHub Actions is also under development.
+The above infrastructures can be deployed using the sample Github action workflows provided in the repository. The workflows are designed to deploy the infrastructure and configure the Oracle database on the VMs. This is the recommended way to deploy the infrastructure and configure the Oracle database. Alternatively the infrastructure can be deployed using Azure CLI and the Oracle database can be configured using Ansible.
+
+Note that the code provided in this repository is for demonstration purposes only and should not be used in a production environment without thorough testing.
 
 ## Step-by-step Instructions
 

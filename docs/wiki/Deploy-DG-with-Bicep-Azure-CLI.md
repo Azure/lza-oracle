@@ -65,34 +65,4 @@ Next step is to proceed with Ansible configuration to get the Oracle database op
 
 ## Optional Settings
 
-
-fixme to update
-
-### Note
-fixme to verify
-#### Lun numbers of managed disks
-
-This is the default lun nubmer of managed disks.
-
-|           |     |
-| :-------- | :-- |
-| Data disk | 20  |
-| ASM disk  | 10  |
-| Redo disk | 60  |
-
-We set these as default values in ansible part.
-
-```ansible
-  - name: Get ASM Disks
-    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun[1][0-9]$` ; readlink -f ${lunpath}"
-    become_user: root
-    register: asm_disks
-  - name: Get Data Disks
-    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun[2,3,4,5][0-9]$` ; readlink -f ${lunpath}"
-    become_user: root
-    register: data_disks
-  - name: Get Redo Disks
-    shell: "cd /dev/disk/azure/scsi1 ; lunpath=`ls /dev/disk/azure/scsi1 | grep -e lun[6][0-9]$` ; readlink -f ${lunpath}"
-    become_user: root
-    register: redo_disks
-```
+There are a number of optional settings which the module enables. These are described below. Overall if you wish to modify one or more variables in the module, you can do so by modifying the `bicep/bootstrap/data_guard/default/data_guard.bicepparam`.

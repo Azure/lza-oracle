@@ -1,8 +1,8 @@
 using '../../main.bicep'
 
-param resourceGroupName = 'oraGroup5'
+param resourceGroupName = '<rgName>'
 
-param location = 'norwayeast'
+param location = '<location>'
 
 param virtualNetworks = [
   {

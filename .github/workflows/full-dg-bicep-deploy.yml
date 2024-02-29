@@ -18,7 +18,7 @@ on:
     
 env:
   #TF_LOG: "INFO"
-  AZ_LOCATION: "norwayeast" # can be parameterized
+  AZ_LOCATION: "swedencentral" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
   VM_PRIMARY_NAME: "vm-primary-0" 
   VM_SECONDARY_NAME: "vm-secondary-0"
@@ -84,8 +84,10 @@ jobs:
 
     - name: 🗒️ Update the parameter file with run time values
       run: |
-        # In the line "param resourceGroupName = 'oraGroup5'" replace oraGroup5 with the value of the variable ResourceGroupName
-        sed -i "s|resourceGroupName = 'oraGroup5'|resourceGroupName = '${{env.ResourceGroupName}}'|" data_guard/default/data_guard.bicepparam
+        # In the line "param resourceGroupName = '<rgName>'" replace <rgName> with the value of the variable ResourceGroupName
+        sed -i "s|resourceGroupName = '<rgName>'|resourceGroupName = '${{env.ResourceGroupName}}'|" data_guard/default/data_guard.bicepparam
+        # In the line "location = '<location>'" replace <location> with the value of the variable AZ_LOCATION
+        sed -i "s|location = '<location>|location = '${{env.AZ_LOCATION}}|" data_guard/default/data_guard.bicepparam
         # In the line "sshPublicKey: '<sshKey>'' replace <sshKey> with the value of the variable SSH_KEY
         sed -i "s|sshPublicKey: '<sshKey>'|sshPublicKey: '${{env.SSH_KEY}}'|g" data_guard/default/data_guard.bicepparam
 
@@ -101,7 +103,7 @@ jobs:
       #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        az deployment sub create --location ${{env.AZ_LOCATION}} --name ${{env.ResourceGroupName}} --template-file main.bicep --parameters ./data_guard/default/data_guard.bicepparam resourceGroupName=${{env.ResourceGroupName}} --verbose
+        az deployment sub create --location ${{env.AZ_LOCATION}} --name ${{env.ResourceGroupName}} --template-file main.bicep --parameters ./data_guard/default/data_guard.bicepparam resourceGroupName=${{env.ResourceGroupName}} location=${{env.AZ_LOCATION}} --verbose
  
     outputs:
       ResourceGroupName: ${{ env.ResourceGroupName }}

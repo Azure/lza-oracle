@@ -18,7 +18,7 @@ on:
     
 env:
   #TF_LOG: "INFO"
-  AZ_LOCATION: "norwayeast" # can be parameterized
+  AZ_LOCATION: "swedencentral" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
   ORCL_DB_NAME: "ORCL" # can be parameterized
 
@@ -82,8 +82,10 @@ jobs:
 
     - name: 🗒️ Update the parameter file with run time values
       run: |
-        # In the line "param resourceGroupName = 'oraGroup5'" replace oraGroup5 with the value of the variable ResourceGroupName
-        sed -i "s|resourceGroupName = 'oraGroup5'|resourceGroupName = '${{env.ResourceGroupName}}'|" single_instance/default/single_instance.bicepparam
+        # In the line "param resourceGroupName = '<rgName>'" replace <rgName> with the value of the variable ResourceGroupName
+        sed -i "s|resourceGroupName = '<rgName>'|resourceGroupName = '${{env.ResourceGroupName}}'|" single_instance/default/single_instance.bicepparam
+        # In the line "location = '<location>'" replace <location> with the value of the variable AZ_LOCATION
+        sed -i "s|location = '<location>|location = '${{env.AZ_LOCATION}}|" single_instance/default/single_instance.bicepparam
         # In the line "sshPublicKey: '<sshKey>'' replace <sshKey> with the value of the variable SSH_KEY
         sed -i "s|sshPublicKey: '<sshKey>'|sshPublicKey: '${{env.SSH_KEY}}'|g" single_instance/default/single_instance.bicepparam
 
@@ -99,7 +101,7 @@ jobs:
       #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        az deployment sub create --location ${{env.AZ_LOCATION}} --name ${{env.ResourceGroupName}} --template-file main.bicep --parameters ./single_instance/default/single_instance.bicepparam resourceGroupName=${{env.ResourceGroupName}}--verbose
+        az deployment sub create --location ${{env.AZ_LOCATION}} --name ${{env.ResourceGroupName}} --template-file main.bicep --parameters ./single_instance/default/single_instance.bicepparam --verbose
  
     outputs:
       ResourceGroupName: ${{ env.ResourceGroupName }}

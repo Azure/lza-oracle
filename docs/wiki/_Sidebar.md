@@ -2,12 +2,20 @@
 
 - [Wiki Home](./Home)
 - [Introduction to deploying Oracle](./Introduction-to-deploying-oracle)
-  - [Deploying Oracle Single Instance with Terraform, Ansible and GitHub Actions](./Deploy-SI-with-TF-GitHub-Actions)
-  - [Deploying Oracle Single Instance with Terraform and Ansible manually](./Deploy-SI-with-TF-Azure-CLI)
-  - [Deploying Oracle Data Guard configuration with Terraform, Ansible and GitHub Actions](./Deploy-DG-with-TF-GitHub-Actions)
-  - [Deploying Oracle Data Guard configuration with Terraform and Ansible manually](./Deploy-DG-with-TF-Azure-CLI)
+  - [Single instance automated deployment with Terraform through GitHub Actions](./Deploy-SI-with-TF-GitHub-Actions.md) (recommended method)
+  - [Single instance automated deployment with Bicep through GitHub Actions](./Deploy-SI-with-Bicep-GitHub-Actions.md) (recommended method)
+  - [Dataguard automated deployment with Terraform through GitHub Actions](./Deploy-DG-with-TF-GitHub-Actions.md) (recommended method)
+  - [Dataguard automated deployment with Bicep through GitHub Actions](./Deploy-DG-with-Bicep-GitHub-Actions.md) (recommended method)
+  - [Single Instance manual deployment with Terraform through Azure CLI](./Deploy-SI-with-TF-Azure-CLI.md)
+  - [Single Instance manual deployment with Bicep through Azure CLI](./Deploy-SI-with-Bicep-Azure-CLI.md)
+  - [Dataguard manual deployment with Terraform through Azure CLI](./Deploy-DG-with-TF-Azure-CLI.md)
+  - [Dataguard manual deployment with Bicep through Azure CLI](./Deploy-DG-with-Bicep-Azure-CLI.md)
 - [Frequently Asked Questions](./FAQ)
 - [Contributing](./Contributing)
 - [Known Issues](./KnownIssues)
 - [Versioning](./Versioning)
 - [Telemetry](./Telemetry)
+- 
+- 
+- 
+- 

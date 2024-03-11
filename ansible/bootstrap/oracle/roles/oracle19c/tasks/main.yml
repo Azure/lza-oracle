@@ -99,16 +99,16 @@
       src: db_install.rsp.j2
       dest: /home/{{ oracle_user }}/db_install.rsp
   
-  - name: Download Oracle Linux Zip File
-    ansible.builtin.get_url:
-      url: https://oraclebinarysa.blob.core.windows.net/oracle/LINUX.X64_193000_db_home.zip?sp=r&st=2023-09-13T00:14:00Z&se=2025-07-12T08:14:00Z&spr=https&sv=2022-11-02&sr=b&sig=q6BVLxDZWn%2FkQsGTJ6yXjrejJSCZ00t4gO1tc4tIL3o%3D
-      dest: /home/{{ oracle_user }}/LINUX.X64_193000_db_home.zip
+  # - name: Download Oracle Linux Zip File
+  #   ansible.builtin.get_url:
+  #     url: https://oraclebinarysa.blob.core.windows.net/oracle/LINUX.X64_193000_db_home.zip?sp=r&st=2023-09-13T00:14:00Z&se=2025-07-12T08:14:00Z&spr=https&sv=2022-11-02&sr=b&sig=q6BVLxDZWn%2FkQsGTJ6yXjrejJSCZ00t4gO1tc4tIL3o%3D
+  #     dest: /home/{{ oracle_user }}/LINUX.X64_193000_db_home.zip
 
-  - name: extract the installation media to $ORACLE_HOME
-    unarchive:
-      src: /home/oracle/LINUX.X64_193000_db_home.zip
-      dest: "{{ oracle_db_home }}"
-      remote_src: yes
+  # - name: extract the installation media to $ORACLE_HOME
+  #   unarchive:
+  #     src: /home/oracle/LINUX.X64_193000_db_home.zip
+  #     dest: "{{ oracle_db_home }}"
+  #     remote_src: yes
 
   - name: runInstaller      
     shell: echo "{{ oracle_pass_raw }}" | ./runInstaller -responseFile /home/{{ oracle_user }}/db_install.rsp -silent #-applyRU {{ oracle_db_home }}/patch/{{ oracle_patch_number }}

@@ -20,12 +20,9 @@ variable "public_key" {
   description = "Public key used for authentication in ssh-rsa format"
 }
 
-# variable "deployer" {
-#   description = "Details of deployer"
-#   default = {
-#     "disk_type" : "Premium_LRS"
-#   }
-# }
+variable "vm_user_assigned_identity_id" {
+  description = "The resource id of the user assigned identity"
+}
 
 # variable "options" {
 #   description = "Options for the Oracle deployment"

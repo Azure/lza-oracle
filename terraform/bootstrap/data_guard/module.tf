@@ -19,6 +19,7 @@ module "vm_primary" {
   nic_id                    = module.network.nics_oracledb_primary.id
   vm_sku                    = var.vm_sku
   vm_source_image_reference = var.vm_source_image_reference
+  vm_user_assigned_identity_id = var.vm_user_assigned_identity_id
 
   vm_os_disk = {
     name                   = "osdisk-primary"
@@ -61,6 +62,7 @@ module "vm_secondary" {
   nic_id                    = module.network.nics_oracledb_secondary.id
   vm_sku                    = var.vm_sku
   vm_source_image_reference = var.vm_source_image_reference
+  vm_user_assigned_identity_id = var.vm_user_assigned_identity_id
 
   vm_os_disk = {
     name                   = "osdisk-secondary"

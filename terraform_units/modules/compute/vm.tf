@@ -42,7 +42,7 @@ resource "azurerm_linux_virtual_machine" "oracle_vm" {
 
   identity {
     type         = var.aad_system_assigned_identity ? "SystemAssigned, UserAssigned" : "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.deployer[0].id]
+    identity_ids = [var.vm_user_assigned_identity_id]
   }
 
   zone                = var.availability_zone

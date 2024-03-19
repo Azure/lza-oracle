@@ -19,6 +19,7 @@ module "vm" {
   nic_id                    = module.network.nics_oracledb[0].id
   vm_sku                    = var.vm_sku
   vm_source_image_reference = var.vm_source_image_reference
+  vm_user_assigned_identity_id = var.vm_user_assigned_identity_id
 
   vm_os_disk = var.vm_os_disk
 
@@ -42,6 +43,7 @@ module "vm" {
       skip_service_principal_aad_check = false
     }
   }
+
 }
 
 module "network" {

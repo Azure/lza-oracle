@@ -100,7 +100,11 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Get the ID of the user-assigned managed identity
-      run: echo usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) >> $GITHUB_ENV
+      run: |
+        usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) 
+        usId_modified=$(echo "$usId" | sed 's/resourcegroups/resourceGroups/g')
+        echo "usId=${usId_modified}" >> $GITHUB_ENV
+     
 
     - name: 🗒️ Create a tfvars file for terraform
       run: |

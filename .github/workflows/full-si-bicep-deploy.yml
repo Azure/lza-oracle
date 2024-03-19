@@ -90,8 +90,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Get the ID of the user-assigned managed identity
-      run: |
-        az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv
+      run: echo usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) >> $GITHUB_ENV
 
     - name: 🗒️ Update the parameter file with run time values
       run: |
@@ -102,7 +101,7 @@ jobs:
         # In the line "sshPublicKey: '<sshKey>'' replace <sshKey> with the value of the variable SSH_KEY
         sed -i "s|sshPublicKey: '<sshKey>'|sshPublicKey: '${{env.SSH_KEY}}'|g" single_instance/default/single_instance.bicepparam
         # In the line "userAssignedId: '<userAssignedId>'" replace <userAssignedId> with the value of the variable USER_ASSIGNED_IDENTITY
-        sed -i "s|'<userAssignedId>'|'${{ env.USER_ASSIGNED_IDENTITY }}'|" single_instance/default/single_instance.bicepparam
+        sed -i "s|'<userAssignedId>'|'${{ env.usId }}'|" single_instance/default/single_instance.bicepparam
 
     - name: Deploy infrastructure
       #if: github.ref == 'refs/heads/main' && github.event_name == 'push'

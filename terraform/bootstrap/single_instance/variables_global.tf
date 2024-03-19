@@ -77,7 +77,6 @@ variable "vm_os_disk" {
 
 variable "vm_user_assigned_identity_id" {
   description = "The ID of the user assigned identity to be used for the virtual machine"
-  default     = ""
 }
 
 #########################################################################################

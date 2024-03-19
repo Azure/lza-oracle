@@ -21,6 +21,8 @@ env:
   AZ_LOCATION: "swedencentral" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
   ORCL_DB_NAME: "ORCL" # can be parameterized
+  SOFTWARE_RG: "binaryresource"
+  USER_ASSIGNED_IDENTITY: "oraclelza"
 
 permissions:
   id-token: write
@@ -56,7 +58,6 @@ jobs:
         else
           echo "SSH_PRIVATE_KEY is not empty"
         fi
-   
 
     - name: 🗒️ Create the SSH public key for VM
       run: |
@@ -80,6 +81,18 @@ jobs:
     - run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-${{env.random}} >> $GITHUB_ENV 
     - run: echo ${{env.ResourceGroupName}}
 
+    #Login to Azure
+    - name: 🔑 Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get the ID of the user-assigned managed identity
+      run: |
+        az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv
+
     - name: 🗒️ Update the parameter file with run time values
       run: |
         # In the line "param resourceGroupName = '<rgName>'" replace <rgName> with the value of the variable ResourceGroupName
@@ -88,14 +101,8 @@ jobs:
         sed -i "s|location = '<location>|location = '${{env.AZ_LOCATION}}|" single_instance/default/single_instance.bicepparam
         # In the line "sshPublicKey: '<sshKey>'' replace <sshKey> with the value of the variable SSH_KEY
         sed -i "s|sshPublicKey: '<sshKey>'|sshPublicKey: '${{env.SSH_KEY}}'|g" single_instance/default/single_instance.bicepparam
-
-    #Login to Azure
-    - name: 🔑 Login via Azure CLI
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        # In the line "userAssignedId: '<userAssignedId>'" replace <userAssignedId> with the value of the variable USER_ASSIGNED_IDENTITY
+        sed -i "s|'<userAssignedId>'|'${{ env.USER_ASSIGNED_IDENTITY }}'|" single_instance/default/single_instance.bicepparam
 
     - name: Deploy infrastructure
       #if: github.ref == 'refs/heads/main' && github.event_name == 'push'

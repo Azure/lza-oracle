@@ -44,8 +44,9 @@ module "vm" {
   }
 }
 
+#New module for network
 module "network" {
-  source = "../../../terraform_units/modules/network"
+  source = "../../../terraform_units/modules/network_avmwrapper"
 
   resource_group                 = module.common_infrastructure.resource_group
   is_data_guard                  = module.common_infrastructure.is_data_guard
@@ -92,6 +93,59 @@ module "network" {
     }
   }
 }
+
+#########################################################################################
+
+
+
+# module "network" {
+#   source = "../../../terraform_units/modules/network"
+
+#   resource_group                 = module.common_infrastructure.resource_group
+#   is_data_guard                  = module.common_infrastructure.is_data_guard
+#   is_diagnostic_settings_enabled = module.common_infrastructure.is_diagnostic_settings_enabled
+#   diagnostic_target              = module.common_infrastructure.diagnostic_target
+#   storage_account_id             = module.common_infrastructure.target_storage_account_id
+#   log_analytics_workspace_id     = module.common_infrastructure.log_analytics_workspace_id
+#   eventhub_authorization_rule_id = module.common_infrastructure.eventhub_authorization_rule_id
+#   partner_solution_id            = module.common_infrastructure.partner_solution_id
+#   tags                           = module.common_infrastructure.tags
+
+#   role_assignments_nic = {
+#     role_assignment_1 = {
+#       name                             = "Contributor"
+#       skip_service_principal_aad_check = false
+#     }
+#   }
+
+#   role_assignments_pip = {
+#     role_assignment_1 = {
+#       name                             = "Contributor"
+#       skip_service_principal_aad_check = false
+#     }
+#   }
+
+#   role_assignments_nsg = {
+#     role_assignment_1 = {
+#       name                             = "Contributor"
+#       skip_service_principal_aad_check = false
+#     }
+#   }
+
+#   role_assignments_vnet = {
+#     role_assignment_1 = {
+#       name                             = "Contributor"
+#       skip_service_principal_aad_check = false
+#     }
+#   }
+
+#   role_assignments_subnet = {
+#     role_assignment_1 = {
+#       name                             = "Contributor"
+#       skip_service_principal_aad_check = false
+#     }
+#   }
+# }
 
 module "storage" {
   source = "../../../terraform_units/modules/storage"

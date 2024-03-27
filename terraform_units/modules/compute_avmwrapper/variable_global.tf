@@ -7,31 +7,36 @@ variable "vm_name" {
   description = "The name of the Oracle VM"
 }
 
-variable "resource_group" {
-  description = "Details of the resource group"
-  default     = {}
+# variable "resource_group" {
+#   description = "Details of the resource group"
+#   default     = {}
+# }
+
+
+variable "created_resource_group_name"{
+  description = "Created resource group name"
 }
 
-variable "sid_username" {
-  description = "SDU username"
+variable "location" {
+  description = "The location of the resource"
+  
 }
 
-variable "public_key" {
-  description = "Public key used for authentication in ssh-rsa format"
-}
+
 
 variable "database" {
   description = "Details of the database node"
   default = {
+    use_DHCP = true
     authentication = {
       type = "key"
     }
   }
 }
 
-variable "nic_id" {
-  description = "value of the nic id"
-}
+# variable "nic_id" {
+#   description = "value of the nic id"
+# }
 
 variable "subscription_id" {
   description = "Subscription ID"
@@ -150,10 +155,57 @@ variable "availability_zone" {
 
 variable "enable_telemetry" {
   type        = bool
-  default     = true
+  default     = false
   description = <<DESCRIPTION
 This variable controls whether or not telemetry is enabled for the module.
 For more information see https://aka.ms/avm/telemetryinfo.
 If it is set to false, then no telemetry will be collected.
 DESCRIPTION
+}
+
+
+variable "is_data_guard" {
+  description = "Whether Data Guard is enabled"
+  default     = false
+}
+
+
+###Variables for creating NICs
+variable "use_secondary_ips" {
+  description = "Defines if secondary IPs are used for the SAP Systems virtual machines"
+  default     = false
+}
+
+variable "database_nic_ips" {
+  description = "If provided, the database tier virtual machines will be configured using the specified IPs"
+  default     = [""]
+}
+
+variable "database_nic_secondary_ips" {
+  description = "If provided, the database tier virtual machines will be configured using the specified IPs as secondary IPs"
+  default     = [""]
+}
+
+variable "db_subnet" {
+  description = "Details of the database subnet"
+  default     = {}
+}
+
+variable "deployer"{ 
+  description = "Details of the deployer"
+  default     = {}
+}
+
+variable "key_vault_id" {
+  description = "The ID of the key vault"
+  default     = null
+  
+}
+
+variable "sid_username" {
+  description = "SDU username"
+}
+
+variable "public_key" {
+  description = "Public key used for authentication in ssh-rsa format"
 }

@@ -40,31 +40,41 @@ output "db_subnet" {
   value = module.network.db_subnet
 }
 
+# #ToDo: Remover
+# output "nics_oracledb" {
+#   value = module.network.nics_oracledb
+# }
+# #ToDo: Remover
+# output "nics_oracledb_primary" {
+#   value = module.network.nics_oracledb_primary
+# }
+
+
 ###############################################################################
 #                                                                             #
 #                            Storage                                          #
 #                                                                             #
 ###############################################################################
-output "database_data_disks" {
-  value = module.storage.data_disks
-}
+# output "database_data_disks" {
+#   value = module.storage.data_disks
+# }
 
-output "database_asm_disks" {
-  value = module.storage.asm_disks
-}
+# output "database_asm_disks" {
+#   value = module.storage.asm_disks
+# }
 
-output "database_redo_disks" {
-  value = module.storage.redo_disks
-}
+# output "database_redo_disks" {
+#   value = module.storage.redo_disks
+# }
 
 ###############################################################################
 #                                                                             #
 #                    Virtual Machine                                          #
 #                                                                             #
 ###############################################################################
-output "vm_public_ip_address" {
-  value = module.network.db_server_puplic_ip
-}
+# output "vm_public_ip_address" {
+#   value = module.network.db_server_puplic_ip_resource.ip_address
+# }
 
 ###############################################################################
 #                    J I T    Rules                                           #

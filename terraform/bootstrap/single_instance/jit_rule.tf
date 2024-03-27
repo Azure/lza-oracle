@@ -4,7 +4,7 @@
 #                                                                                       #
 #########################################################################################
 data "azurerm_virtual_machine" "oracle_vm" {
-  name                = module.vm.vm[0].name
+  name                = module.vm.vm.name
   resource_group_name = module.common_infrastructure.resource_group.name
 
   depends_on = [module.vm

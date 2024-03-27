@@ -1,11 +1,11 @@
-resource "azurerm_management_lock" "nic" {
-  count      = length(var.nic_locks) > 1 && length(try(var.nic_locks.name, "")) > 0 ? 1 : 0
-  name       = var.nic_locks.name
-  scope      = data.azurerm_network_interface.oracle_db[0].id
-  lock_level = var.nic_locks.type
+# resource "azurerm_management_lock" "nic" {
+#   count      = length(var.nic_locks) > 1 && length(try(var.nic_locks.name, "")) > 0 ? 1 : 0
+#   name       = var.nic_locks.name
+#   scope      = data.azurerm_network_interface.oracle_db[0].id
+#   lock_level = var.nic_locks.type
 
-  depends_on = [azurerm_network_interface.oracle_db]
-}
+#   depends_on = [azurerm_network_interface.oracle_db]
+# }
 
 resource "azurerm_management_lock" "nsg" {
   count      = length(var.nsg_locks) > 1 && length(try(var.nsg_locks.name, "")) > 0 ? 1 : 0

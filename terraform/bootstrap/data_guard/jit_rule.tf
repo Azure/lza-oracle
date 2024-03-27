@@ -36,7 +36,7 @@ resource "time_sleep" "wait_for_primary_vm_creation" {
 }
 
 resource "time_sleep" "wait_for_secondary_vm_creation" {
-  create_duration = "120s"
+  create_duration = "300s"
 
   depends_on = [data.azurerm_virtual_machine.oracle_secondary_vm
     , module.storage_secondary.data_disks_resource

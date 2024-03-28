@@ -14,7 +14,7 @@ module "avm-res-compute-virtualmachine" {
   # insert the 3 required variables here
   count = var.is_data_guard ? 2 : 1
 
-  admin_credential_key_vault_resource_id = var.key_vault_id
+  #admin_credential_key_vault_resource_id = var.key_vault_id
 
   name                   = "${var.vm_name}-${count.index}"
   location               = var.location                    #var.resource_group.location
@@ -127,7 +127,7 @@ generate_admin_password_or_ssh_key = false
 
 
   managed_identities = {
-    system_assigned            = true#var.aad_system_assigned_identity # Este para que es ??? de donde?
+    system_assigned            = false#var.aad_system_assigned_identity # Este para que es ??? de donde?
     user_assigned_resource_ids = [var.deployer.id]                # [azurerm_user_assigned_identity.deployer[0].id]
   }
 

@@ -18,7 +18,7 @@ on:
     
 env:
   TF_LOG: "INFO"
-  AZ_LOCATION: "eastus" 
+  AZ_LOCATION: "swedencentral" 
   AZ_RG_BASENAME: "Oracle-test" 
   VM_PRIMARY_NAME: "vm-primary-0" 
   VM_SECONDARY_NAME: "vm-secondary-0"

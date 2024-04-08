@@ -42,8 +42,8 @@ To allow for Oracle software binaries download you will need to update informati
 - Resource Id of the user assigned managed identity you have created as described [here](./Introduction-to-deploying-oracle.md), should be gathered and added to the `bicep/bootstrap/data_guard/default/data_guard.bicepparam` file, replacing all occurences of `<userAssignedId>` in the file. To get the resource id , run the following command, replacing the values for $umi and $rg with the name of the user managed identity and the resource group it is in respectively:
 
 ```bash
-umi=$"oraclelza"
-rg=$"binaryresource"
+umi="<User managed identity name>"
+rg="<Resource group where user managed identity is placed>"
 az identity show --name $umi --resource-group $rg --query id --output tsv
 ```
 
@@ -89,7 +89,3 @@ ssh -i ~/.ssh/lza-oracle-data-guard  oracle@<PUBLIC_IP_ADDRESS_secondary>
 ```
 
 Next step is to proceed with Ansible configuration to get the Oracle database operational. See the [Ansible Data Guard documentation](ANSIBLE-DG.md) for more details.
-
-## Optional Settings
-
-There are a number of optional settings which the module enables. These are described below. Overall if you wish to modify one or more variables in the module, you can do so by modifying the `bicep/bootstrap/data_guard/default/data_guard.bicepparam`.

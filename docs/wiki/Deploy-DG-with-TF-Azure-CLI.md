@@ -4,7 +4,7 @@ The code is intended as an example for deployment of two Azure Virtual Machines 
 
  ![Data Guard configuration](media/dg_vms.png)
 
-## Deployment steps
+## Preparations
 
 - To use Terraform commands against your Azure subscription, you must first authenticate Terraform to that subscription. [This doc](https://learn.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash) describes how to authenticate Terraform to your Azure subscription.
 
@@ -35,11 +35,34 @@ Run the following commands to include the public key in the fixtures.tfvars file
 pubkey="$HOME/.ssh/lza-oracle-data-guard.pub"
 key_content=$(awk -F= '{print $1 FS}' "$pubkey")
 fixtures="ssh_key = \"$key_content\""
-echo $fixtures > <THIS_REPO>/terraform/bootstrap/data_guard/fixtures.tfvars
+echo $fixtures > terraform/bootstrap/data_guard/fixtures.tfvars
 ```
+
 The fixtures.tfvars file should now contain the public key, see below for an example:
 
 ![fixtures](media/fixtures-dg.jpg)
+
+### Oracle binaries download
+
+To allow for Oracle software binaries download you will need to update information on the following parameters as well:
+
+- Resource Id of the user assigned managed identity you have created as described [here](./Introduction-to-deploying-oracle.md), should be gathered and added to the `/terraform/bootstrap/data_guard/fixtures.tfvars` file. To get the resource id , run the following command, replacing the values for $umi and $rg with the name of the user managed identity and the resource group it is in respectively:
+
+```bash
+umi="<User managed identity name>"
+rg="<Resource group where user managed identity is placed>"
+mi_id=$(az identity show --name $umi --resource-group $rg --query id --output tsv)
+miid_mod=$(echo "$mi_id" | sed 's/resourcegroups/resourceGroups/g')
+fixtures="vm_user_assigned_identity_id = \"$miid_mod\""
+echo $fixtures >> terraform/bootstrap/data_guard/fixtures.tfvars
+```
+
+To further ensure that the Ansible workflow will run successfully, open the file ansible/bootstrap/oracle/group_vars/all/vars.yml and update the following parameters:
+
+- The value for storage_account should be updated with the name of the storage account where the Oracle binaries are stored.
+- The value for storage_container should be updated with the name of the container on the storage account where the Oracle binaries are stored.
+
+There are a number of optional settings which the module enables. Overall if you wish to modify one or more variables in the module, you can do so by modifying the `terraform/bootstrap/data_guard/variables_global.tf` or the `terraform/bootstrap/data_guard/variables_local.tf` file. Be mindful that the Oracle installation through Ansible does require a disk setup similar to the one specified, i.e. three disks, so changes to this may cause the Ansible playbook to fail.
 
 ### Deploy the virtual machine
 

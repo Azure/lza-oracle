@@ -42,8 +42,8 @@ To allow for Oracle software binaries download you will need to update informati
 - Resource Id of the user assigned managed identity you have created as described [here](./Introduction-to-deploying-oracle.md), should be gathered and added to the `bicep/bootstrap/single_instance/default/single_instance.bicepparam` file, replacing `<userAssignedId>` in the file. To get the resource id , run the following command, replacing the values for $umi and $rg with the name of the user managed identity and the resource group it is in respectively:
 
 ```bash
-umi=$"oraclelza"
-rg=$"binaryresource"
+umi="<User managed identity name>"
+rg="<Resource group where user managed identity is placed>"
 az identity show --name $umi --resource-group $rg --query id --output tsv
 ```
 

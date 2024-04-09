@@ -8,7 +8,7 @@ On the compute source running Ubuntu or on Azure Cloud Shell, follow the steps g
 cd <THIS_REPO>/lza-oracle/ansible/bootstrap/oracle
 ```
 
-1. Create a new file called inventory and populate it with the following content. Replace <hostname> and <Public IP address of the Azure VM created via terraform> with the appropriate values before running the command:
+1. Create a new file called inventory and populate it with the following content. Replace `<hostname>` and `<Public IP address of the Azure VM created via terraform>` with the appropriate values before running the command:
 
 ```bash
 cat > inventory <<EOF

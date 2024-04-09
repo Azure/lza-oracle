@@ -8,15 +8,6 @@ module "common_infrastructure" {
   tags                           = var.resourcegroup_tags
 }
 
-module "kv" {
-  source = "../../../terraform_units/modules/keyvault"
-
-  resource_group = module.common_infrastructure.resource_group
-  tags           = module.common_infrastructure.tags
-
-
-}
-
 #New module for Compute, this is the new module that will be used to create the VM, using AVM
 module "vm" {
   source = "../../../terraform_units/modules/compute_avmwrapper"
@@ -64,7 +55,7 @@ module "vm" {
   #New
   db_subnet = module.network.db_subnet
 
-depends_on = [ module.network, module.common_infrastructure, module.kv ]
+depends_on = [ module.network, module.common_infrastructure ]
 }
 
 

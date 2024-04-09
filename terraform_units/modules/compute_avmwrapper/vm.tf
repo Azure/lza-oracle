@@ -4,43 +4,25 @@
 #                                                                                       #
 #########################################################################################
 
-# data "azurerm_resource_group" "rg" {
-#   name = var.created_resource_group_name
-# }
 
 module "avm-res-compute-virtualmachine" {
-  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.8.0"
-  # insert the 3 required variables here
-  count = var.is_data_guard ? 2 : 1
+  source   = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version  = "0.8.0"
+  for_each = local.vm_data_config
 
-  #admin_credential_key_vault_resource_id = var.key_vault_id
 
-  name                   = "${var.vm_name}-${count.index}"
+  name                   = each.value.name
   location               = var.location                    #var.resource_group.location
   resource_group_name    = var.created_resource_group_name #var.resource_group.name
-  virtualmachine_os_type = "Linux"
+  virtualmachine_os_type = each.value.os_type
 
-generate_admin_password_or_ssh_key = false
- disable_password_authentication = !local.enable_auth_password
-  admin_username                  = var.sid_username
-
-  admin_ssh_keys = [{
-    username   = var.sid_username
-    public_key = var.public_key
-  }]
-
-
-  source_image_reference  = var.vm_source_image_reference
-  virtualmachine_sku_size = var.vm_sku
-
-  os_disk = {
-    name                   = var.vm_os_disk.name
-    caching                = var.vm_os_disk.caching
-    storage_account_type   = var.vm_os_disk.storage_account_type
-    disk_encryption_set_id = try(var.vm_os_disk.disk_encryption_set_id, null)
-    disk_size_gb           = var.vm_os_disk.disk_size_gb
-  }
+  generate_admin_password_or_ssh_key = each.value.generate_admin_password_or_ssh_key #false
+  disable_password_authentication    = !each.value.enable_auth_password              #!local.enable_auth_password
+  admin_username                     = each.value.admin_username                     #var.sid_username
+  admin_ssh_keys = each.value.admin_ssh_keys
+  source_image_reference  = each.value.source_image_reference
+  virtualmachine_sku_size = each.value.virtualmachine_sku_size
+  os_disk = each.value.os_disk
 
 
   # network_interface_ids = [var.nic_id]
@@ -111,8 +93,8 @@ generate_admin_password_or_ssh_key = false
 
 
 
-  zone                            = var.availability_zone #common_infrastructure.availability_zone = 1
- 
+  zone = var.availability_zone #common_infrastructure.availability_zone = 1
+
 
   availability_set_resource_id = var.availability_zone == null ? data.azurerm_availability_set.oracle_vm[0].id : null
   tags                         = merge(local.tags, var.tags)
@@ -127,8 +109,8 @@ generate_admin_password_or_ssh_key = false
 
 
   managed_identities = {
-    system_assigned            = false#var.aad_system_assigned_identity # Este para que es ??? de donde?
-    user_assigned_resource_ids = [var.deployer.id]                # [azurerm_user_assigned_identity.deployer[0].id]
+    system_assigned            = false             #var.aad_system_assigned_identity # Este para que es ??? de donde?
+    user_assigned_resource_ids = [var.deployer.id] # [azurerm_user_assigned_identity.deployer[0].id]
   }
 
   role_assignments_system_managed_identity = {

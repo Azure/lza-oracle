@@ -8,7 +8,7 @@
 module "avm-res-compute-virtualmachine" {
   source   = "Azure/avm-res-compute-virtualmachine/azurerm"
   version  = "0.8.0"
-  for_each = local.vm_data_config
+  for_each = local.vm_config_data_parameter
 
 
   name                   = each.value.name
@@ -19,10 +19,10 @@ module "avm-res-compute-virtualmachine" {
   generate_admin_password_or_ssh_key = each.value.generate_admin_password_or_ssh_key #false
   disable_password_authentication    = !each.value.enable_auth_password              #!local.enable_auth_password
   admin_username                     = each.value.admin_username                     #var.sid_username
-  admin_ssh_keys = each.value.admin_ssh_keys
-  source_image_reference  = each.value.source_image_reference
-  virtualmachine_sku_size = each.value.virtualmachine_sku_size
-  os_disk = each.value.os_disk
+  admin_ssh_keys                     = each.value.admin_ssh_keys
+  source_image_reference             = each.value.source_image_reference
+  virtualmachine_sku_size            = each.value.virtualmachine_sku_size
+  os_disk                            = each.value.os_disk
 
 
   # network_interface_ids = [var.nic_id]
@@ -42,58 +42,15 @@ module "avm-res-compute-virtualmachine" {
           private_ip_subnet_resource_id = var.db_subnet.id
           create_public_ip_address      = true
           public_ip_address_name        = "vmpip-0" #ToDo: cambiar
-          # public_ip_address_resource_id = var.db_server_public_ip_resource.id
         }
       }
-
-      # name                          = "oraclevmnic-${count.index}"
-      # location                      = var.resource_group.location
-      # resource_group_name           = var.resource_group.name
-      # enable_accelerated_networking = true
-      # tags                          = merge(local.tags, var.tags)
-
-
-
-      #ip_configurations = local.ip_configuration_list
-
-      # ip_configurations = {
-      #   ip_configuration_1 = {
-      #     name
-      # subnet_id
-      # private_ip_address
-      # private_ip_address_allocation
-      # public_ip_address_id
-      # primary
-
-
-
-
-
-
-      # }
-      # }
-
     }
   }
 
 
-  #Simple private IP single NIC with IPV4 private address
-  # # # network_interfaces = {
-  # # #   network_interface_1 = {
-  # # #     name = "testnic1"
-  # # #     ip_configurations = {
-  # # #       ip_configuration_1 = {
-  # # #         name                          = "testnic1-ipconfig1"
-  # # #         private_ip_subnet_resource_id = azurerm_subnet.this_subnet_1.id
-  # # #       }
-  # # #     }
-  # # #   }
-  # # # }
 
 
-
-
-  zone = var.availability_zone #common_infrastructure.availability_zone = 1
+  zone =  each.value.availability_zone #var.availability_zone #common_infrastructure.availability_zone = 1
 
 
   availability_set_resource_id = var.availability_zone == null ? data.azurerm_availability_set.oracle_vm[0].id : null
@@ -113,13 +70,13 @@ module "avm-res-compute-virtualmachine" {
     user_assigned_resource_ids = [var.deployer.id] # [azurerm_user_assigned_identity.deployer[0].id]
   }
 
-  role_assignments_system_managed_identity = {
-    role_assignment_1 = {
-      scope_resource_id          = var.key_vault_id #module.avm_res_keyvault_vault.resource.id
-      role_definition_id_or_name = "Key Vault Secrets Officer"
-      description                = "Assign the Key Vault Secrets Officer role to the virtual machine's system managed identity"
-    }
-  }
+  # role_assignments_system_managed_identity = {
+  #   role_assignment_1 = {
+  #     scope_resource_id          = var.key_vault_id #module.avm_res_keyvault_vault.resource.id
+  #     role_definition_id_or_name = "Key Vault Secrets Officer"
+  #     description                = "Assign the Key Vault Secrets Officer role to the virtual machine's system managed identity"
+  #   }
+  # }
 
   role_assignments = {
     role_assignment_2 = {
@@ -131,16 +88,7 @@ module "avm-res-compute-virtualmachine" {
 
 
 
-  #admin_credential_key_vault_resource_id
-  #     lifecycle {
-  #     ignore_changes = [
-  #       // Ignore changes to computername
-  #       tags,
-  #       computer_name
-  #     ]
-  #   }
-
-  #depends_on = [ data.azurerm_resource_group.rg ]
+  depends_on = [ data.azurerm_resource_group.rg ]
 }
 
 data "azurerm_virtual_machine" "oracle_vm" {

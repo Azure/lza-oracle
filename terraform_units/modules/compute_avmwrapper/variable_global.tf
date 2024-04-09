@@ -13,13 +13,13 @@ variable "vm_name" {
 # }
 
 
-variable "created_resource_group_name"{
+variable "created_resource_group_name" {
   description = "Created resource group name"
 }
 
 variable "location" {
   description = "The location of the resource"
-  
+
 }
 
 
@@ -191,7 +191,7 @@ variable "db_subnet" {
   default     = {}
 }
 
-variable "deployer"{ 
+variable "deployer" {
   description = "Details of the deployer"
   default     = {}
 }
@@ -199,7 +199,7 @@ variable "deployer"{
 variable "key_vault_id" {
   description = "The ID of the key vault"
   default     = null
-  
+
 }
 
 variable "sid_username" {
@@ -208,4 +208,48 @@ variable "sid_username" {
 
 variable "public_key" {
   description = "Public key used for authentication in ssh-rsa format"
+}
+
+
+variable "vm_config_data" {
+  description = "VM configuration data"
+
+  type = map(object({
+
+    name                               = string
+    os_type                            = string
+    generate_admin_password_or_ssh_key = bool
+    enable_auth_password               = bool
+    admin_username                     = string
+    virtualmachine_sku_size            = string
+    availability_zone                  = string
+    enable_telemetry                   = bool
+    encryption_at_host_enabled         = bool
+    zone                               = string
+
+
+    admin_ssh_keys = object({
+      public_key = string
+      username   = string
+
+    })
+    os_disk = object({
+      name                   = string
+      caching                = string
+      storage_account_type   = string
+      disk_encryption_set_id = number
+      disk_size_gb           = number
+    })
+
+    source_image_reference = object({
+      publisher = string
+      offer     = string
+      sku       = string
+      version   = string
+    })
+
+  }))
+
+
+  default = null
 }

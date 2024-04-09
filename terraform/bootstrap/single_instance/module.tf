@@ -21,13 +21,12 @@ module "vm" {
   #resource_group            = module.common_infrastructure.resource_group
   created_resource_group_name = module.common_infrastructure.created_resource_group_name
   location                    = var.location
-  vm_name                     = "vm"
+  vm_name                     = "vm-0"
   public_key                  = var.ssh_key
   sid_username                = "oracle"
   # nic_id                      = module.network.nics_oracledb[0].id
   vm_sku                      = var.vm_sku
   vm_source_image_reference   = var.vm_source_image_reference
-  # key_vault_id              = module.kv.key_vault_id
 
   assign_subscription_permissions = true
   aad_system_assigned_identity    = false

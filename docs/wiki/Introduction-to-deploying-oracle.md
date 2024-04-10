@@ -27,6 +27,11 @@ The components are created as follows:
 4. Key vault or similar to manage public/private key pair for Oracle VM is not included in the code. You should create a key vault or similar and store the public/private key pair in that. Public key needs to be specified while deploying the virtual machines, either in a parameter file or from the command line.
 5. Terraform state file is not stored in Azure. You will need to store the Terraform state file in a location of your choice.
 6. The solution does not provide Oracle licensing, please ensure that you have sufficient Oracle licenses to deploy the solution.
+7. To be able to leverage the solution accelerator for other platforms than Oracle Enterprise Linux and since the Oracle database version in the Oracle marketplace images is fairly old, the accelerator is dependent on Oracle binaries being present on a storage account in your environment. To this end you need to create the following items in your environment:
+    - A storage account accessible from the virtual network where the Oracle VMs are to be deployed.
+    - A container in the storage account where the Oracle binaries are stored.
+    - A user assigned managed identity with read access to the storage account and the container.
+    - Oracle 19c binaries in zip file format uploaded to the container. Testing has been done with version 19.3 downloaded from [here](https://www.oracle.com/database/technologies/oracle19c-linux-downloads.html#license-lightbox).
 
 ## Getting started
 

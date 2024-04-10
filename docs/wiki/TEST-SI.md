@@ -1,23 +1,24 @@
 # Testing the final configuration
 
-
 1. From the compute source, ssh into the Azure VM:
-```
-$ ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
+
+```bash
+ssh -i ~/.ssh/lza-oracle-single-instance  oracle@<PUBLIC_IP_ADDRESS>
 ```
 
-2. Check the Oracle related environment variables:
-```
-$ env | grep -i oracle
+1. Check the Oracle related environment variables:
+
+```bash
+env | grep -i oracle
 ```
 
-3. Connect to the database:
-```
-$ sqlplus / as sysdba
+1. Connect to the database:
+
+```bash
+sqlplus / as sysdba
 show user
 ```
 
-<img src="../media/test.jpg" />
-
+![Test image](media/test.jpg)
 
 Congratulations!!! Now, you have a functional Oracle DB running on the Azure VM.

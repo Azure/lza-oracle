@@ -8,7 +8,7 @@ On the compute source running Ubuntu or on Azure Cloud Shell, follow the steps g
 cd ~/lza-oracle/ansible/bootstrap/oracle
 ```
 
-1. Create a new file called inventory and populate it with the following content. Replace <hostname> and <Public IP address of the Azure VM created via terraform> with the appropriate values before running the command:
+1. Create a new file called inventory and populate it with the following content. Replace `<hostname>` and `<Public IP address of the Azure VM created via terraform>` with the appropriate values before running the command:
 
 ```bash
 cat > inventory <<EOF
@@ -25,7 +25,7 @@ Below is an example of what the "inventory" file should look like after running 
 
  ![Inventory file data guard](media/inventory_dg.jpg)
 
-2. Start the ansible playbook
+1. Start the ansible playbook
 
 ```bash
 ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes"
@@ -45,8 +45,8 @@ It is acceptable to see warnings highlighted in red.
 
 ![Warnings dg](media/warnings.jpg)
 
-3. Once the installation and configuration completes, you will see a screen similar to the one below.
+1. Once the installation and configuration completes, you will see a screen similar to the one below.
 
 ![Complete dg](media/complete.jpg)
 
-4. The installation has now completed and you can connect to the datbases to test failover and failback. See the [Ansible Data Guard Testing](TEST-DG.md) for more details.
+1. The installation has now completed and you can connect to the databases to test failover and failback. See the [Ansible Data Guard Testing](TEST-DG.md) for more details.

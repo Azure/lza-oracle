@@ -90,6 +90,7 @@ module vms 'br/public:avm/res/compute/virtual-machine:0.1.0' = [for (vm, i) in v
     name: vm.virtualMachineName
     adminUsername: vm.adminUsername
     availabilityZone: vm.avZone
+    managedIdentities: vm.managedIdentities
     osDisk: {
       caching: 'ReadWrite'
       diskSizeGB: '128'
@@ -126,7 +127,7 @@ module vms 'br/public:avm/res/compute/virtual-machine:0.1.0' = [for (vm, i) in v
     enableTelemetry: false
     tags: tags
     imageReference: oracleImageReference
-    //dataCollectionRuleId: !empty(dcrWorkspaceResourceId) ? dcr.outputs.dataCollectionRuleId : null
+    
   }
 }]
 

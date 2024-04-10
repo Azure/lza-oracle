@@ -18,11 +18,13 @@ on:
     
 env:
   TF_LOG: "INFO"
-  AZ_LOCATION: "eastus" 
+  AZ_LOCATION: "swedencentral" 
   AZ_RG_BASENAME: "Oracle-test" 
   VM_PRIMARY_NAME: "vm-primary-0" 
   VM_SECONDARY_NAME: "vm-secondary-0"
   ORCL_DB_NAME: "ORCL"
+  SOFTWARE_RG: "binaryresource"
+  USER_ASSIGNED_IDENTITY: "oraclelza"
 
 permissions:
   id-token: write
@@ -88,6 +90,20 @@ jobs:
       run: echo random=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 8; echo) >> $GITHUB_ENV
     - run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-${{env.random}} >> $GITHUB_ENV 
     - run: echo ${{env.ResourceGroupName}}
+    
+    #Login to Azure
+    - name: 🔑 Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get the ID of the user-assigned managed identity
+      run: |
+        usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) 
+        usId_modified=$(echo "$usId" | sed 's/resourcegroups/resourceGroups/g')
+        echo "usId=${usId_modified}" >> $GITHUB_ENV
 
     - name: 🗒️ Create a tfvars file for terraform
       run: |
@@ -104,21 +120,13 @@ jobs:
           "GITHUB_RUN_ID" = "${{ github.run_id }}"
           "GITHUB_WORKFLOW" = "${{ github.workflow }}"
         }
+        vm_user_assigned_identity_id = "${{env.usId}}"
         is_resource_lock_enabled = false
         #is_diagnostic_settings_enabled = true
         #diagnostic_target              = "Log_Analytics_Workspace"
         
         ssh_key = "${{env.SSH_KEY}}"
         EOF
-
-    #Login to Azure
-    - name: 🔑 Login via Azure CLI
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: 📦 Terraform Init

@@ -6,7 +6,7 @@
 # Although the author has attempted to find and correct any bugs in the free software programs, 
 # the author is not responsible for any damage or losses of any kind caused by the use or misuse of this script. 
 # The author is under no obligation to provide support, service, corrections, or upgrades to for this free script. 
-# For more information, please send and email to Anthony de Lagarde anthony.delagarde@microsoft.com. 
+# For more information, please send and email to Anthony de Lagarde, Microsoft. 
 # Script written 03.21.2024. 
 
 # Version 1.1.0

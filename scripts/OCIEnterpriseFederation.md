@@ -1,7 +1,7 @@
 # Instructions for using the Entra Id PowerShell Accelerator Script for Azure and Oracle Cloud Infrastructure Federation
 
 ## Summary
-The following document provides instructions for automating the creation of an Enterprise Application within Azure Entra Id for Federation with Oracle Cloud Infrastructure (OCI). By utilizing this solution accelerator, organizations can ensure a more consistent deployment experience, which is crucial for maintaining system integrity and reliability. This automation not only aims to eliminate potential errors that often occur during manual configuration but also seeks to expedite the implementation process. This process outlined in this document will only automate the Entra Id process and will not address OCI setup or configuration. The following two articles from Microsoft and Oracle document the step-by-step creation of federation between the two cloud platforms: [Tutorial: Microsoft Entra SSO integration with Oracle Cloud Infrastructure Console - Microsoft Entra ID | Microsoft Learn](Microsoft Entra ID | Microsoft Learn) and [SSO Between OCI and Microsoft Azure](oracle.com).
+The following document provides instructions for automating the creation of an Enterprise Application within Azure Entra Id for Federation with Oracle Cloud Infrastructure (OCI). By utilizing this solution accelerator, organizations can ensure a more consistent deployment experience, which is crucial for maintaining system integrity and reliability. This automation not only aims to eliminate potential errors that often occur during manual configuration but also seeks to expedite the implementation process. This process outlined in this document will only automate the Entra Id process and will not address OCI setup or configuration. The following two articles from Microsoft and Oracle document the step-by-step creation of federation between the two cloud platforms: [Tutorial: Microsoft Entra SSO integration with Oracle Cloud Infrastructure Console - Microsoft Entra ID | Microsoft Learn](https://learn.microsoft.com/en-us/entra/identity/saas-apps/oracle-cloud-tutorial) and [SSO Between OCI and Microsoft Azure](oracle.com).
 
 ## Audience
 This document is intended primarily for IT planners, architects, and managers who are responsible for establishing and reviewing overall deployments and oversee operational practices. As a result, this guide emphasizes overall technical controls for implementation. It is assumed the person implementing the steps outlined in this guide has a basic understanding of identity and cloud concepts such as federation as it relates to both Azure and OCI. The person reading this script should have a basic understanding of operating a Windows 10 or 11 OS.
@@ -39,7 +39,7 @@ The following prerequisites are required to complete these steps successfully:
 The following will be achieved by executing the accelerator PowerShell script:
 - Adding both the Azure AD and Graph PowerShell modules if not installed on the Windows device.
 - The creation of an Entra Id Enterprise Application configured for SSO.
-- Adding a test user to the Enterprise application for testing.
+- Adding a user to the Enterprise application for testing.
 - The creation of the following Entra Id Groups to match those within OCI:
   - odbaa-exa-infra-administrator
   - odbaa-vm-cluster-administrator
@@ -48,7 +48,7 @@ The following will be achieved by executing the accelerator PowerShell script:
   - odbaa-exa-cdb-administrators
   - odbaa-exa-pdb-administrators
   - odbaa-costmgmt-administrators
-- Adding the specified test user into the above-mentioned groups.
+- Adding the specified user into the above-mentioned groups.
 
 ## Instructions
 The following are the instructions for using the Accelerator PowerShell script with Entra Id.

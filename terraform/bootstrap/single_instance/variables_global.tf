@@ -41,6 +41,30 @@ variable "disable_telemetry" {
   description = "If set to true, will disable telemetry for the module. See https://aka.ms/alz-terraform-module-telemetry."
   default     = false
 }
+variable "lock" {
+  type = object({
+    name = optional(string, null)
+    kind = optional(string, "None")
+  })
+  default     = {}
+  description = <<LOCK
+"The lock level to apply to all child resources. The default value is none. Possible values are `None`, `CanNotDelete`, and `ReadOnly`. Set the lock value on child resource values explicitly to override any inherited locks." 
+
+Example Inputs:
+```hcl
+lock = {
+  name = "lock-{resourcename}" # optional
+  type = "CanNotDelete" 
+}
+```
+LOCK
+  nullable    = false
+
+  validation {
+    condition     = contains(["CanNotDelete", "ReadOnly", "None"], var.lock.kind)
+    error_message = "The lock level must be one of: 'None', 'CanNotDelete', or 'ReadOnly'."
+  }
+}
 
 #########################################################################################
 #  Virtual Machine parameters                                                           #
@@ -75,6 +99,31 @@ variable "vm_os_disk" {
   }
 }
 
+variable "vm_user_assigned_identity_id" {
+  description = "The ID of the user assigned identity to be used for the virtual machine"
+}
+
+variable "vm_extensions" {
+  description = "The extensions to be added to the virtual machine"
+  type = map(object({
+    name                        = string
+    publisher                   = string
+    type                        = string
+    type_handler_version        = string
+    auto_upgrade_minor_version  = optional(bool)
+    automatic_upgrade_enabled   = optional(bool)
+    failure_suppression_enabled = optional(bool, false)
+    settings                    = optional(string)
+    protected_settings          = optional(string)
+    provision_after_extensions  = optional(list(string), [])
+    tags                        = optional(map(any))
+    protected_settings_from_key_vault = optional(object({
+      secret_url      = string
+      source_vault_id = string
+    }))
+  }))
+  default = {}
+}
 #########################################################################################
 #  Database parameters                                                                  #
 #########################################################################################
@@ -150,4 +199,10 @@ variable "database_disks_options" {
 variable "database_db_nic_ips" {
   description = "If provided, the database tier virtual machines will be configured using the specified IPs"
   default     = [""]
+}
+
+
+variable "jit_wait_for_vm_creation" {
+  description = "The duration to wait for the virtual machine to be created before creating the JIT policy"
+  default     = "300s"
 }

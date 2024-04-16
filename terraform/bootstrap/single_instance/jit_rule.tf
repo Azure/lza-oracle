@@ -12,7 +12,7 @@ data "azurerm_virtual_machine" "oracle_vm" {
 }
 
 resource "time_sleep" "wait_for_vm_creation" {
-  create_duration = "300s"
+  create_duration = var.jit_wait_for_vm_creation
 
   depends_on = [data.azurerm_virtual_machine.oracle_vm,
     module.storage.data_disks_resource,

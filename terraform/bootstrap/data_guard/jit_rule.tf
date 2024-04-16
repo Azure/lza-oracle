@@ -4,7 +4,7 @@
 #                                                                                       #
 #########################################################################################
 data "azurerm_virtual_machine" "oracle_primary_vm" {
-  name                = module.vm_primary.vm[0].name
+  name                = module.vm_primary.vm.name
   resource_group_name = module.common_infrastructure.resource_group.name
 
   depends_on = [module.vm_primary,
@@ -15,7 +15,7 @@ data "azurerm_virtual_machine" "oracle_primary_vm" {
 }
 
 data "azurerm_virtual_machine" "oracle_secondary_vm" {
-  name                = module.vm_secondary.vm[0].name
+  name                = module.vm_secondary.vm.name
   resource_group_name = module.common_infrastructure.resource_group.name
 
   depends_on = [module.vm_secondary
@@ -26,7 +26,7 @@ data "azurerm_virtual_machine" "oracle_secondary_vm" {
 }
 
 resource "time_sleep" "wait_for_primary_vm_creation" {
-  create_duration = "300s"
+  create_duration = var.jit_wait_for_vm_creation
 
   depends_on = [data.azurerm_virtual_machine.oracle_primary_vm,
     module.storage_primary.data_disks_resource
@@ -36,7 +36,7 @@ resource "time_sleep" "wait_for_primary_vm_creation" {
 }
 
 resource "time_sleep" "wait_for_secondary_vm_creation" {
-  create_duration = "300s"
+  create_duration = var.jit_wait_for_vm_creation
 
   depends_on = [data.azurerm_virtual_machine.oracle_secondary_vm
     , module.storage_secondary.data_disks_resource
@@ -56,7 +56,7 @@ resource "azapi_resource" "jit_ssh_policy_primary" {
     "kind" : "Basic"
     "properties" : {
       "virtualMachines" : [{
-        "id" : "/subscriptions/${module.common_infrastructure.current_subscription.subscription_id}/resourceGroups/${module.common_infrastructure.resource_group.name}/providers/Microsoft.Compute/virtualMachines/${module.vm_primary.vm[0].name}",
+        "id" : "/subscriptions/${module.common_infrastructure.current_subscription.subscription_id}/resourceGroups/${module.common_infrastructure.resource_group.name}/providers/Microsoft.Compute/virtualMachines/${module.vm_primary.vm.name}",
         "ports" : [
           {
             "number" : 22,
@@ -82,7 +82,7 @@ resource "azapi_resource" "jit_ssh_policy_secondary" {
     "kind" : "Basic"
     "properties" : {
       "virtualMachines" : [{
-        "id" : "/subscriptions/${module.common_infrastructure.current_subscription.subscription_id}/resourceGroups/${module.common_infrastructure.resource_group.name}/providers/Microsoft.Compute/virtualMachines/${module.vm_secondary.vm[0].name}",
+        "id" : "/subscriptions/${module.common_infrastructure.current_subscription.subscription_id}/resourceGroups/${module.common_infrastructure.resource_group.name}/providers/Microsoft.Compute/virtualMachines/${module.vm_secondary.vm.name}",
         "ports" : [
           {
             "number" : 22,

@@ -3,66 +3,47 @@
 #  Virtual Machine                                                                      #
 #                                                                                       #
 #########################################################################################
-resource "azurerm_linux_virtual_machine" "oracle_vm" {
-  count               = 1
-  name                = "${var.vm_name}-${count.index}"
-  location            = var.resource_group.location
-  resource_group_name = var.resource_group.name
 
-  admin_username                  = var.sid_username
-  disable_password_authentication = !local.enable_auth_password
 
-  admin_ssh_key {
-    username   = var.sid_username
-    public_key = var.public_key
+module "avm-res-compute-virtualmachine" {
+  source   = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version  = "0.11.0"
+  for_each = local.vm_config_data_parameter
+
+
+  name                   = each.value.name
+  location               = var.location
+  resource_group_name    = var.resource_group_name
+  virtualmachine_os_type = each.value.os_type
+
+  generate_admin_password_or_ssh_key = each.value.generate_admin_password_or_ssh_key
+  disable_password_authentication    = !each.value.enable_auth_password #!local.enable_auth_password #should be true
+  admin_username                     = each.value.admin_username
+  admin_ssh_keys                     = [each.value.admin_ssh_keys]
+  source_image_reference             = each.value.source_image_reference
+  virtualmachine_sku_size            = each.value.virtualmachine_sku_size
+  os_disk                            = each.value.os_disk
+  extensions                         = var.vm_extensions
+  network_interfaces                 = each.value.network_interfaces
+
+
+  zone                         = each.value.availability_zone
+  availability_set_resource_id = var.availability_zone == null ? data.azurerm_availability_set.oracle_vm[0].id : null
+  tags                         = merge(local.tags, var.tags)
+  lock                         = var.vm_lock
+
+
+  vm_additional_capabilities = {
+    ultra_ssd_enabled = var.enable_ultradisk
   }
 
-  source_image_reference {
-    publisher = var.vm_source_image_reference.publisher
-    offer     = var.vm_source_image_reference.offer
-    sku       = var.vm_source_image_reference.sku
-    version   = var.vm_source_image_reference.version
-  }
-  size = var.vm_sku
-
-  os_disk {
-    name                   = var.vm_os_disk.name
-    caching                = var.vm_os_disk.caching
-    storage_account_type   = var.vm_os_disk.storage_account_type
-    disk_encryption_set_id = try(var.vm_os_disk.disk_encryption_set_id, null)
-    disk_size_gb           = var.vm_os_disk.disk_size_gb
+  managed_identities = {
+    system_assigned            = var.aad_system_assigned_identity
+    user_assigned_resource_ids = [each.value.user_assigned_identity_id]
   }
 
-  network_interface_ids = [var.nic_id]
-
-
-  additional_capabilities {
-    ultra_ssd_enabled = local.enable_ultradisk
-  }
-
-  identity {
-    type         = var.aad_system_assigned_identity ? "SystemAssigned, UserAssigned" : "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.deployer[0].id]
-  }
-
-  zone                = var.availability_zone
-  availability_set_id = var.availability_zone == null ? data.azurerm_availability_set.oracle_vm[0].id : null
-
-  tags = merge(local.tags, var.tags)
-
-  lifecycle {
-    ignore_changes = [
-      // Ignore changes to computername
-      tags,
-      computer_name
-    ]
-  }
+  role_assignments = each.value.role_assignments
 }
 
-data "azurerm_virtual_machine" "oracle_vm" {
-  count               = 1
-  name                = "${var.vm_name}-${count.index}"
-  resource_group_name = var.resource_group.name
 
-  depends_on = [azurerm_linux_virtual_machine.oracle_vm]
-}
+

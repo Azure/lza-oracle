@@ -72,9 +72,13 @@ output "db_subnet" {
 #                    Virtual Machine                                          #
 #                                                                             #
 ###############################################################################
-# output "vm_public_ip_address" {
-#   value = module.network.db_server_puplic_ip_resource.ip_address
-# }
+
+
+output "vm_map_collection" {
+  value = module.vm.vm_map_collection
+
+}
+
 
 ###############################################################################
 #                    J I T    Rules                                           #

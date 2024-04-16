@@ -1,4 +1,4 @@
-﻿# Source script is beuilt upon https://learn.microsoft.com/en-us/graph/application-saml-sso-configure-api?tabs=powershell%2Cpowershell-script#activate-the-custom-signing-key﻿
+# Source script is beuilt upon https://learn.microsoft.com/en-us/graph/application-saml-sso-configure-api?tabs=powershell%2Cpowershell-script#activate-the-custom-signing-key﻿
 
 # Version 1.1.0
 
@@ -9,7 +9,7 @@
 # For more information, please send and email to Anthony de Lagarde, Microsoft. 
 # Script written 03.21.2024. 
 
-# Version 1.1.0
+# Version 1.1.1.0
 
 # Read ME!!!
 
@@ -164,7 +164,22 @@ Write-Host "You need a valid Oracle Cloud Subscription to complete this implemen
 
 # Requesting the operator to enter the OCI Domain eq https://idcs-< Unique identifier >.identity.oraclecloud.com // You need a valid Oracle Cloud Subscription
   
-        $OCIFQDN = Read-Host "Please enter your Oracle Domain FQDN, example: https://idcs-< Unique identifier >.identity.oraclecloud.com" 
+
+# PowerShell script to validate user input of OCI IDC
+    $regex = '^https:\/\/idcs-[a-z0-9]{32}\.identity\.oraclecloud\.com$'
+do {
+    # Prompt the user for input
+    $OCIFQDN = Read-Host "Please enter your Oracle Domain FQDN, example: https://idcs-< Unique identifier >.identity.oraclecloud.com"
+    
+    # Validate the input
+    if ($OCIFQDN -match $regex) {
+        Write-Host "Thank you! Your input ($OCIFQDN) is in a valid format." -ForegroundColor Green
+        $isValid = $true
+    } else {
+        Write-Host "Invalid input. Please try again." -ForegroundColor Red 
+        $isValid = $false
+    } 
+} while (-not $isValid)
 
 # Getting the metadata from OCI and setting it as a property within the enterprise application SAML section
 
@@ -300,11 +315,3 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
  Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!"  -ForegroundColor Green
 
 # Assigning a Group to the Enterprise Application Requires P1 or P2 Entra Id Licensces
-
-# Getting the Group Name
-   
-   # $group  = Read-Host "Please enter the name of the entra Id Group you would like to add"
-   #         $groupId = (Get-AzureAdGroup -Filter "DisplayName eq '$group'").ObjectId
-   # $groupId
-    
-# New-AzureADServiceAppRoleAssignment -ObjectId $resource.ObjectId -ResourceId $resource.ObjectId -Id $appRole.Id -PrincipalId $groupId.ObjectId

@@ -26,6 +26,11 @@ param virtualMachines = [
     vmSize: 'Standard_D4s_v5'
     avZone: 1
     adminUsername: 'oracle'
+    managedIdentities: {
+      userAssignedResourceIds: [
+        '<userAssignedId>'
+      ]
+    }
     sshPublicKey: '<sshKey>'
     dataDisks: [
       {
@@ -59,6 +64,11 @@ param virtualMachines = [
     vmSize: 'Standard_D4s_v5'
     avZone: 2
     adminUsername: 'oracle'
+    managedIdentities: {
+      userAssignedResourceIds: [
+        '<userAssignedId>'
+      ]
+    }
     sshPublicKey: '<sshKey>'
     dataDisks: [
       {

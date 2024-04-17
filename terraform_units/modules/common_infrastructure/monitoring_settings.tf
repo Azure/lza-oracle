@@ -32,20 +32,40 @@ resource "azurerm_monitor_data_collection_rule" "collection_rule_linux" {
       name           = "sysLogsDataSource-1688419672"
     }
   }
+
+
   destinations {
-    log_analytics {
-      name                  = data.azurerm_log_analytics_workspace.diagnostic[0].name
-      workspace_resource_id = data.azurerm_log_analytics_workspace.diagnostic[0].id
+
+    dynamic "log_analytics" {
+      for_each = local.law_destination_settings
+      iterator = dest
+
+      content {
+        workspace_resource_id = dest.value.resource_id
+        name                  = dest.value.name
+      }
     }
 
-    azure_monitor_metrics {
-      name = "destination-metrics"
+    dynamic "event_hub" {
+      for_each = local.eventhub_destination_settings
+
+      content {
+        event_hub_id = each.value.resource_id
+        name         = each.value.name
+      }
     }
 
-    
+    dynamic "storage_blob" {
+      for_each = local.storage_account_destination_settings
 
-
+      content {
+        storage_account_id = each.value.resource_id
+        container_name     = each.value.container_name
+        name               = each.value.name
+      }
+    }
   }
+
 
   depends_on = [data.azurerm_log_analytics_workspace.diagnostic]
 }

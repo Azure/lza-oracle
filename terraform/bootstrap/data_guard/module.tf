@@ -17,7 +17,6 @@ module "common_infrastructure" {
 module "vm_primary" {
   source = "../../../terraform_units/modules/compute"
 
-  subscription_id     = module.common_infrastructure.current_subscription.subscription_id
   resource_group_name = module.common_infrastructure.created_resource_group_name
   location            = var.location
   vm_name             = "vm-primary"
@@ -27,7 +26,6 @@ module "vm_primary" {
 
   vm_source_image_reference       = var.vm_source_image_reference
   vm_user_assigned_identity_id    = var.vm_user_assigned_identity_id
-  assign_subscription_permissions = true
   aad_system_assigned_identity    = true
   public_ip_address_resource_id   = module.network.db_server_puplic_ip_resources[0].id
 
@@ -93,7 +91,6 @@ module "vm_primary" {
 module "vm_secondary" {
   source = "../../../terraform_units/modules/compute"
 
-  subscription_id     = module.common_infrastructure.current_subscription.subscription_id
   resource_group_name = module.common_infrastructure.created_resource_group_name
   location            = var.location
   vm_name             = "vm-secondary"
@@ -103,7 +100,6 @@ module "vm_secondary" {
 
   vm_source_image_reference       = var.vm_source_image_reference
   vm_user_assigned_identity_id    = var.vm_user_assigned_identity_id
-  assign_subscription_permissions = true
   aad_system_assigned_identity    = true
   public_ip_address_resource_id   = module.network.db_server_puplic_ip_resources[1].id
 

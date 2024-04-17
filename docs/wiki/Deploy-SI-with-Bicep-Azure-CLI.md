@@ -4,7 +4,9 @@ The code is intended as an example for deployment of a single instance virtual m
 
 ![Single VM](media/single_vm.png)
 
-### Preparations
+## Preparations
+
+### SSH Key
 
 Before using this module, you have to create your own ssh key to deploy and connect the virtual machine you will create. To do this follow these steps on your compute source:
 
@@ -32,7 +34,32 @@ cat .ssh/lza-oracle-single-instance.pub
 ```
 
 Copy the output to the clipboard and paste into the `bicep/bootstrap/single_instance/default/single_instance.bicepparam` file in the `sshPublicKey` parameter.
-Additonal parameters you may wish to modify such as location, resource group name, virtual machine name, etc. can also be modified in this file.
+
+### Oracle binaries download
+
+To allow for Oracle software binaries download you will need to update information on the following parameters as well:
+
+- Resource Id of the user assigned managed identity you have created as described [here](./Introduction-to-deploying-oracle.md), should be gathered and added to the `bicep/bootstrap/single_instance/default/single_instance.bicepparam` file, replacing `<userAssignedId>` in the file. To get the resource id , run the following command, replacing the values for $umi and $rg with the name of the user managed identity and the resource group it is in respectively:
+
+```bash
+umi="<User managed identity name>"
+rg="<Resource group where user managed identity is placed>"
+az identity show --name $umi --resource-group $rg --query id --output tsv
+```
+
+To further ensure that the Ansible workflow will run successfully, open the file ansible/bootstrap/oracle/group_vars/all/vars.yml and update the following parameters:
+
+- The value for storage_account should be updated with the name of the storage account where the Oracle binaries are stored.
+- The value for storage_container should be updated with the name of the container on the storage account where the Oracle binaries are stored.
+
+### Miscellaneous parameters
+
+Update the following parameters in `bicep/bootstrap/single_instance/default/single_instance.bicepparam` as well:
+
+- `<rgName>` should be replaced with the resource group name you will be deploying the Oracle VM and associated resources to. The resource group will be created if it does not exist by the Bicep deployment.
+- `<location>` should be replaced with the Azure region where you want to deploy the Oracle VM and associated resources.
+
+Additonal parameters you may wish to modify such as virtual machine name, vnet name, ip range etc. can also be modified in the `bicep/bootstrap/single_instance/default/single_instance.bicepparam` file. Be mindful that the Oracle installation through Ansible does require a disk setup similar to the one specified, i.e. three disks, so changes to this may cause the Ansible playbook to fail.
 
 ## Deployment steps
 

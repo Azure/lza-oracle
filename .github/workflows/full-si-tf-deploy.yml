@@ -37,18 +37,23 @@ jobs:
     runs-on: ubuntu-latest
     environment: test-deploy
     steps:
-      - if: ${{vars.USER_ASSIGNED_IDENTITY == ''}}
+      - name: "Check USER_ASSIGNED_IDENTITY variable"
+        if: ${{vars.USER_ASSIGNED_IDENTITY == ''}}
         run: | 
           echo "USER_ASSIGNED_IDENTITY is empty, default value 'oraclelza' will be used"
           echo "USER_ASSIGNED_IDENTITY='oraclelza'" >> $GITHUB_ENV
-      - if: ${{ vars.AZ_LOCATION == ''}}
+      
+      - name: "Check AZ_LOCATION variable"
+        if: ${{ vars.AZ_LOCATION == ''}}
         run: | 
           echo "AZ_LOCATION is empty, default value 'swedencentral' will be used"
           echo "AZ_LOCATION='swedencentral'" >> $GITHUB_ENV
-      - if: ${{ vars.SOFTWARE_RG == ''}}
+
+      - name: "Check SOFTWARE_RG variable"
+        if: ${{ vars.SOFTWARE_RG == ''}}
         run: | 
           echo "SOFTWARE_RG is empty, default value 'binaryresource' will be used"
-          echo "SOFTWARE_RG='binaryresource'" >> $GITHUB_ENV
+          echo "SOFTWARE_RG=binaryresource" >> $GITHUB_ENV
 
 
   terraform:

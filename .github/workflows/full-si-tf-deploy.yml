@@ -22,7 +22,7 @@ env:
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
   ORCL_DB_NAME: "ORCL" # can be parameterized
   SOFTWARE_RG: "binaryresource"
-  USER_ASSIGNED_IDENTITY: "oraclelza"
+  # USER_ASSIGNED_IDENTITY: "oraclelza"
 
 permissions:
   id-token: write

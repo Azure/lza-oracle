@@ -15,9 +15,7 @@ resource "time_sleep" "wait_for_vm_creation" {
   create_duration = var.jit_wait_for_vm_creation
 
   depends_on = [data.azurerm_virtual_machine.oracle_vm,
-    module.storage.data_disks_resource,
-    module.storage.asm_disks_resource,
-    module.storage.redo_disks_resource
+    module.storage
   ]
 }
 

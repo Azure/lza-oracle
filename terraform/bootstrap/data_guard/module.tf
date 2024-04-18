@@ -24,9 +24,9 @@ module "vm_primary" {
   sid_username        = "oracle"
   vm_sku              = var.vm_sku
 
-  vm_source_image_reference       = var.vm_source_image_reference
-  aad_system_assigned_identity    = true
-  public_ip_address_resource_id   = module.network.db_server_puplic_ip_resources[0].id
+  vm_source_image_reference     = var.vm_source_image_reference
+  aad_system_assigned_identity  = true
+  public_ip_address_resource_id = module.network.db_server_puplic_ip_resources[0].id
 
 
   is_diagnostic_settings_enabled = module.common_infrastructure.is_diagnostic_settings_enabled
@@ -46,14 +46,8 @@ module "vm_primary" {
 
   availability_zone = 1
 
-  subscription_id           = module.common_infrastructure.current_subscription.subscription_id
-  resource_group            = module.common_infrastructure.resource_group
-  vm_name                   = "vm-primary"
-  public_key                = var.ssh_key
-  sid_username              = "oracle"
-  nic_id                    = module.network.nics_oracledb_primary.id
-  vm_sku                    = var.vm_sku
-  vm_source_image_reference = var.vm_source_image_reference
+
+
   vm_user_assigned_identity_id = var.vm_user_assigned_identity_id
 
   vm_os_disk = {
@@ -106,10 +100,10 @@ module "vm_secondary" {
   sid_username        = "oracle"
   vm_sku              = var.vm_sku
 
-  vm_source_image_reference       = var.vm_source_image_reference
-  vm_user_assigned_identity_id    = var.vm_user_assigned_identity_id
-  aad_system_assigned_identity    = true
-  public_ip_address_resource_id   = module.network.db_server_puplic_ip_resources[1].id
+  vm_source_image_reference     = var.vm_source_image_reference
+  vm_user_assigned_identity_id  = var.vm_user_assigned_identity_id
+  aad_system_assigned_identity  = true
+  public_ip_address_resource_id = module.network.db_server_puplic_ip_resources[1].id
 
   is_diagnostic_settings_enabled = module.common_infrastructure.is_diagnostic_settings_enabled
   diagnostic_target              = module.common_infrastructure.diagnostic_target

@@ -18,7 +18,7 @@ on:
     
 env:
   TF_LOG: "INFO"
-  AZ_LOCATION: "swedencentral" # can be parameterized
+  AZ_LOCATION: ${{ vars.AZ_LOCATION }} #"swedencentral" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
   ORCL_DB_NAME: "ORCL" # can be parameterized
   SOFTWARE_RG: "binaryresource"
@@ -31,6 +31,22 @@ permissions:
   pull-requests: write
   
 jobs:
+
+  Checks:
+    name: '🔍 Checks'
+    runs-on: ubuntu-latest
+    environment: test-deploy
+    steps:
+      - if: ${{vars.USER_ASSIGNED_IDENTITY == ''}}
+        run: | 
+          echo "USER_ASSIGNED_IDENTITY is empty, default value 'oraclelza' will be used"
+          echo "USER_ASSIGNED_IDENTITY='oraclelza'" >> $GITHUB_ENV
+      - if: ${{ vars.AZ_LOCATION == ''}}
+        run: | 
+          echo "AZ_LOCATION is empty, default value 'swedencentral' will be used"
+          echo "AZ_LOCATION='swedencentral'" >> $GITHUB_ENV
+
+
   terraform:
     name: '🔧 Terraform'
     runs-on: ubuntu-latest

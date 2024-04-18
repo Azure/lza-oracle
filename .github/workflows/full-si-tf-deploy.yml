@@ -18,10 +18,10 @@ on:
     
 env:
   TF_LOG: "INFO"
-  AZ_LOCATION: ${{ vars.AZ_LOCATION }} #"swedencentral" # can be parameterized
+  AZ_LOCATION: ${{vars.AZ_LOCATION}} #"swedencentral" # can be parameterized
   AZ_RG_BASENAME: "Oracle-test" # can be parameterized
   ORCL_DB_NAME: "ORCL" # can be parameterized
-  SOFTWARE_RG: "binaryresource"
+  SOFTWARE_RG:  ${{vars.SOFTWARE_RG}} #"binaryresource"
   USER_ASSIGNED_IDENTITY: ${{vars.USER_ASSIGNED_IDENTITY}} #"oraclelza"
 
 permissions:
@@ -45,11 +45,16 @@ jobs:
         run: | 
           echo "AZ_LOCATION is empty, default value 'swedencentral' will be used"
           echo "AZ_LOCATION='swedencentral'" >> $GITHUB_ENV
+      - if: ${{ vars.SOFTWARE_RG == ''}}
+        run: | 
+          echo "SOFTWARE_RG is empty, default value 'binaryresource' will be used"
+          echo "SOFTWARE_RG='binaryresource'" >> $GITHUB_ENV
 
 
   terraform:
     name: '🔧 Terraform'
     runs-on: ubuntu-latest
+    needs: Checks
     environment: test-deploy
     strategy:
       fail-fast: false

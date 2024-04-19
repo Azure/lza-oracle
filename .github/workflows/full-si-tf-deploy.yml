@@ -17,12 +17,12 @@ on:
       - "ansible/bootstrap/oracle/**"
     
 env:
-  TF_LOG: "INFO"
-  AZ_LOCATION: ${{vars.AZ_LOCATION}} #"swedencentral" # can be parameterized
-  AZ_RG_BASENAME: "Oracle-test" # can be parameterized
-  ORCL_DB_NAME: "ORCL" # can be parameterized
-  SOFTWARE_RG:  ${{vars.SOFTWARE_RG == '' && 'binaryresource' || vars.SOFTWARE_RG  }} #"binaryresource"
-  USER_ASSIGNED_IDENTITY: ${{vars.USER_ASSIGNED_IDENTITY}} #"oraclelza"
+  TF_LOG: ${{ vars.TF_LOG == '' && 'INFO' || vars.TF_LOG }}                                                     #"INFO"
+  AZ_LOCATION: ${{ vars.AZ_LOCATION == '' && 'swedencentral' || vars.AZ_LOCATION }}                             #"swedencentral" # can be parameterized
+  AZ_RG_BASENAME: ${{ vars.AZ_RG_BASENAME == '' && 'Oracle-test' || vars.AZ_RG_BASENAME }}                      #"Oracle-test" # can be parameterized
+  ORCL_DB_NAME: ${{ vars.ORCL_DB_NAME == '' && 'ORCL' || vars.ORCL_DB_NAME }}                                   #"ORCL" # can be parameterized
+  SOFTWARE_RG:  ${{ vars.SOFTWARE_RG == '' && 'binaryresource' || vars.SOFTWARE_RG }}                           #"binaryresource"
+  USER_ASSIGNED_IDENTITY: ${{vars.USER_ASSIGNED_IDENTITY == '' && 'oraclelza' || vars.USER_ASSIGNED_IDENTITY }} #"oraclelza"
 
 permissions:
   id-token: write
@@ -31,35 +31,9 @@ permissions:
   pull-requests: write
   
 jobs:
-
-  Checks:
-    name: '🔍 Checks'
-    runs-on: ubuntu-latest
-    environment: test-deploy
-    steps:
-      - name: "Check USER_ASSIGNED_IDENTITY variable"
-        if: ${{vars.USER_ASSIGNED_IDENTITY == ''}}
-        run: | 
-          echo "USER_ASSIGNED_IDENTITY is empty, default value 'oraclelza' will be used"
-          echo "USER_ASSIGNED_IDENTITY='oraclelza'" >> $GITHUB_ENV
-      
-      - name: "Check AZ_LOCATION variable"
-        if: ${{ vars.AZ_LOCATION == ''}}
-        run: | 
-          echo "AZ_LOCATION is empty, default value 'swedencentral' will be used"
-          echo "AZ_LOCATION='swedencentral'" >> $GITHUB_ENV
-
-      - name: "Check SOFTWARE_RG variable"
-        if: ${{ vars.SOFTWARE_RG == ''}}
-        run: | 
-          echo "SOFTWARE_RG is empty, default value 'binaryresource' will be used"
-          echo "SOFTWARE_RG=binaryresource" >> $GITHUB_ENV
-
-
   terraform:
     name: '🔧 Terraform'
     runs-on: ubuntu-latest
-    needs: Checks
     environment: test-deploy
     strategy:
       fail-fast: false

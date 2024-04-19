@@ -33,13 +33,13 @@ output "resource_group" {
 #                            Network                                          #
 #                                                                             #
 ###############################################################################
-output "network_location" {
-  value = module.network.network_location
-}
+# output "network_location" {
+#   value = module.network.network_location
+# }
 
-output "db_subnet" {
-  value = module.network.db_subnet
-}
+# output "db_subnet" {
+#   value = module.network.db_subnet
+# }
 
 
 ###############################################################################

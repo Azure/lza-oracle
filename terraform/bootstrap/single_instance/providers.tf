@@ -8,7 +8,6 @@ terraform {
     azapi = {
       source  = "Azure/azapi"
       version = ">=1.8.0"
-      use_oidc = true
     }
   }
 }
@@ -25,4 +24,6 @@ provider "azurerm" {
   }
 }
 
-provider "azapi" {}
+provider "azapi" {
+  use_oidc = true
+}

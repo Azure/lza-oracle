@@ -52,7 +52,7 @@ jobs:
     - name: 📦 Setup Terraform Cli
       uses: hashicorp/setup-terraform@v2
       with:
-        terraform_version: 1.6.0
+        terraform_version: 1.7.0
         terraform_wrapper: false # keep it false to be able to read the outputs values of terraform
 
     #Check if the SSH key is empty

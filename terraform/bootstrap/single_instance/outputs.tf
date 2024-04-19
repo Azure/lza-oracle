@@ -7,25 +7,26 @@ output "resource_group" {
   value = module.common_infrastructure.resource_group
 }
 
-output "created_resource_group_id" {
-  description = "Created resource group ID"
-  value       = module.common_infrastructure.resource_group.id
-}
+#ToDo: remover
+# output "created_resource_group_id" {
+#   description = "Created resource group ID"
+#   value       = module.common_infrastructure.resource_group.id
+# }
 
-output "created_resource_group_name" {
-  description = "Created resource group name"
-  value       = module.common_infrastructure.resource_group.name
-}
+# output "created_resource_group_name" {
+#   description = "Created resource group name"
+#   value       = module.common_infrastructure.resource_group.name
+# }
 
-output "created_resource_group_subscription_id" {
-  description = "Created resource group' subscription ID"
-  value       = module.common_infrastructure.resource_group.id
-}
+# output "created_resource_group_subscription_id" {
+#   description = "Created resource group' subscription ID"
+#   value       = module.common_infrastructure.resource_group.id
+# }
 
-output "created_resource_group_tags" {
-  description = "Created resource group tags"
-  value       = module.common_infrastructure.tags
-}
+# output "created_resource_group_tags" {
+#   description = "Created resource group tags"
+#   value       = module.common_infrastructure.tags
+# }
 
 ###############################################################################
 #                                                                             #
@@ -39,15 +40,6 @@ output "network_location" {
 output "db_subnet" {
   value = module.network.db_subnet
 }
-
-# #ToDo: Remover
-# output "nics_oracledb" {
-#   value = module.network.nics_oracledb
-# }
-# #ToDo: Remover
-# output "nics_oracledb_primary" {
-#   value = module.network.nics_oracledb_primary
-# }
 
 
 ###############################################################################
@@ -76,7 +68,10 @@ output "db_subnet" {
 
 output "vm_map_collection" {
   value = module.vm.vm_map_collection
+}
 
+output "vm_public_ip_address" {
+  value = module.vm.vm.public_ip_address
 }
 
 

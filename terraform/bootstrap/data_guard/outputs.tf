@@ -3,9 +3,9 @@
 # #                             Resource Group                                  #
 # #                                                                             #
 # ###############################################################################
-# output "resource_group" {
-#   value = module.common_infrastructure.resource_group
-# }
+output "resource_group" {
+  value = module.common_infrastructure.resource_group
+}
 
 # output "created_resource_group_id" {
 #   description = "Created resource group ID"

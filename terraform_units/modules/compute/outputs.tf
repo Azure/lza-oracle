@@ -15,20 +15,12 @@ output "oracle_vms" {
   sensitive = true
 }
 
-# output "vm_map_collection" {
-#   value = { for vm in module.avm-res-compute-virtualmachine : vm.name => {
-#     name               = vm.name
-#     id                 = vm.resource_id
-
-#   } }
-#   sensitive = false
-# }
-
 output "vm_map_collection" {
   value = { for vm in module.avm-res-compute-virtualmachine : vm.name => {
-    name               = vm.name
-    id                 = vm.resource_id
-    
+    name       = vm.name
+    id         = vm.resource_id
+    public_ips = vm.public_ips
+
   } }
   sensitive = false
 }

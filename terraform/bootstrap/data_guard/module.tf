@@ -19,7 +19,7 @@ module "vm_primary" {
 
   resource_group_name = module.common_infrastructure.created_resource_group_name
   location            = var.location
-  vm_name             = "vm-primary"
+  vm_name             = "vm-primary-0"
   public_key          = var.ssh_key
   sid_username        = "oracle"
   vm_sku              = var.vm_sku
@@ -95,7 +95,7 @@ module "vm_secondary" {
 
   resource_group_name = module.common_infrastructure.created_resource_group_name
   location            = var.location
-  vm_name             = "vm-secondary"
+  vm_name             = "vm-secondary-0"
   public_key          = var.ssh_key
   sid_username        = "oracle"
   vm_sku              = var.vm_sku

@@ -80,7 +80,7 @@ variable "vm_user_assigned_identity_id" {
 
 variable "jit_wait_for_vm_creation" {
   description = "The duration to wait for the virtual machine to be created before creating the JIT policy"
-  default     = "300s"
+  default     = "60s"
 }
 
 variable "vm_extensions" {

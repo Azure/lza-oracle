@@ -314,4 +314,28 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
   
  Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!"  -ForegroundColor Green
 
-# Assigning a Group to the Enterprise Application Requires P1 or P2 Entra Id Licensces
+# Assigning a Group to the Enterprise Application
+
+  Write-Host "Adding the specified Entra Id Groups to the Enterprise Application" -ForegroundColor Green
+
+    New-AzureADGroupAppRoleAssignment -ObjectId $odbaaexainfraadministratorObj.ObjectId -PrincipalId $odbaaexainfraadministratorObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+      Write-Host "Added the Entra Id Group odbaa-exa-infra-administrator to the Enterprise Application" -ForegroundColor Green
+
+        New-AzureADGroupAppRoleAssignment -ObjectId $odbaavmclusteradministratorObj.ObjectId -PrincipalId $odbaavmclusteradministratorObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+          Write-Host "Added the Entra Id Group odbaa-vm-cluster-administrator to the Enterprise Application" -ForegroundColor Green
+
+            New-AzureADGroupAppRoleAssignment -ObjectId $odbaadbfamilyadministratorsObj.ObjectId -PrincipalId $odbaadbfamilyadministratorsObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+              Write-Host "Added the Entra Id Group odbaa-db-family-administrators to the Enterprise Application" -ForegroundColor Green
+
+                New-AzureADGroupAppRoleAssignment -ObjectId $odbaadbfamilyreadersObj.ObjectId -PrincipalId $odbaadbfamilyreadersObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+                  Write-Host "Added the Entra Id Group odbaa-db-family-readers to the Enterprise Application" -ForegroundColor Green
+
+            New-AzureADGroupAppRoleAssignment -ObjectId $odbaaexacdbadministratorsObj.ObjectId -PrincipalId $odbaaexacdbadministratorsObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+              Write-Host "Added the Entra Id Group odbaa-exa-cdb-administrators to the Enterprise Application" -ForegroundColor Green
+
+        New-AzureADGroupAppRoleAssignment -ObjectId $odbaaexapdbadministratorsObj.ObjectId -PrincipalId $odbaaexapdbadministratorsObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+          Write-Host "Added the Entra Id Group odbaa-exa-pdb-administrators to the Enterprise Application" -ForegroundColor Green
+
+    New-AzureADGroupAppRoleAssignment -ObjectId $odbaacostmgmtadministratorsObj.ObjectId -PrincipalId $odbaacostmgmtadministratorsObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+      Write-Host "Added the Entra Id Group odbaa-costmgmt-administrators to the Enterprise Application" -ForegroundColor Green
+            

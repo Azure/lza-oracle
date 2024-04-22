@@ -201,7 +201,6 @@ variable "database_db_nic_ips" {
   default     = [""]
 }
 
-
 variable "jit_wait_for_vm_creation" {
   description = "The duration to wait for the virtual machine to be created before creating the JIT policy"
   default     = "60s"

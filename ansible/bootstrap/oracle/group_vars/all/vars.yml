@@ -35,6 +35,7 @@ sid: ORCL
 redo_log_filepath: /u01/app/oracle/oradata
 
 # Oracle binaries download information
-storage_account: orabinaryresource
+storage_account: oraclelzabin
+
 storage_container: oraclebinaries
 storage_blob: LINUX.X64_193000_db_home.zip

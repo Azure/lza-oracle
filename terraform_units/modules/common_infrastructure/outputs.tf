@@ -51,9 +51,12 @@ output "target_storage_account_sas" {
   value       = var.is_diagnostic_settings_enabled ? data.azurerm_storage_account_sas.diagnostic[0].sas : ""
 }
 
-output "log_analytics_workspace_id" {
+output "log_analytics_workspace" {
   description = "Log Analytics workspace ID"
-  value       = var.is_diagnostic_settings_enabled && var.diagnostic_target == "Log_Analytics_Workspace" ? data.azurerm_log_analytics_workspace.diagnostic[0].id : null
+  value = var.is_diagnostic_settings_enabled && var.diagnostic_target == "Log_Analytics_Workspace" ? {
+    id   = data.azurerm_log_analytics_workspace.diagnostic[0].id
+    name = data.azurerm_log_analytics_workspace.diagnostic[0].name
+  } : null
 }
 
 output "eventhub_authorization_rule_id" {
@@ -79,4 +82,17 @@ output "availability_zone" {
 output "tags" {
   description = "Tags applied to the resources"
   value       = var.tags
+}
+
+output "data_collection_rules" {
+  value = (var.is_diagnostic_settings_enabled && var.diagnostic_target == "Log_Analytics_Workspace") ? {
+    "${data.azurerm_monitor_data_collection_rule.collection_rule_linux[0].name}" = {
+      id = data.azurerm_monitor_data_collection_rule.collection_rule_linux[0].id
+    },
+    "${data.azurerm_monitor_data_collection_rule.collection_rule_vm_insights[0].name}" = {
+      id = data.azurerm_monitor_data_collection_rule.collection_rule_vm_insights[0].id
+    }
+
+  } : {}
+
 }

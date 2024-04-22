@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 module "common_infrastructure" {
   source = "../../../terraform_units/modules/common_infrastructure"
 
@@ -6,19 +8,46 @@ module "common_infrastructure" {
   is_diagnostic_settings_enabled = var.is_diagnostic_settings_enabled
   diagnostic_target              = var.diagnostic_target
   tags                           = var.resourcegroup_tags
+  subscription_locks             = var.lock
+  resource_group_locks           = var.lock
+
+
 }
 
 module "vm_primary" {
   source = "../../../terraform_units/modules/compute"
 
-  subscription_id           = module.common_infrastructure.current_subscription.subscription_id
-  resource_group            = module.common_infrastructure.resource_group
-  vm_name                   = "vm-primary"
-  public_key                = var.ssh_key
-  sid_username              = "oracle"
-  nic_id                    = module.network.nics_oracledb_primary.id
-  vm_sku                    = var.vm_sku
-  vm_source_image_reference = var.vm_source_image_reference
+  resource_group_name = module.common_infrastructure.created_resource_group_name
+  location            = var.location
+  vm_name             = "vm-primary-0"
+  public_key          = var.ssh_key
+  sid_username        = "oracle"
+  vm_sku              = var.vm_sku
+
+  vm_source_image_reference     = var.vm_source_image_reference
+  aad_system_assigned_identity  = true
+  public_ip_address_resource_id = module.network.db_server_puplic_ip_resources[0].id
+
+
+  is_diagnostic_settings_enabled = module.common_infrastructure.is_diagnostic_settings_enabled
+  diagnostic_target              = module.common_infrastructure.diagnostic_target
+  storage_account_id             = module.common_infrastructure.target_storage_account_id
+  storage_account_sas_token      = module.common_infrastructure.target_storage_account_sas
+  log_analytics_workspace = module.common_infrastructure.log_analytics_workspace != null ? {
+    id   = module.common_infrastructure.log_analytics_workspace.id
+    name = module.common_infrastructure.log_analytics_workspace.name
+  } : null
+  data_collection_rules          = module.common_infrastructure.data_collection_rules
+  eventhub_authorization_rule_id = module.common_infrastructure.eventhub_authorization_rule_id
+  partner_solution_id            = module.common_infrastructure.partner_solution_id
+  tags                           = module.common_infrastructure.tags
+  vm_lock                        = var.lock
+  db_subnet                      = module.network.db_subnet
+
+  availability_zone = 1
+
+
+
   vm_user_assigned_identity_id = var.vm_user_assigned_identity_id
 
   vm_os_disk = {
@@ -29,40 +58,69 @@ module "vm_primary" {
     disk_size_gb           = 128
   }
 
-  aad_system_assigned_identity    = false
-  assign_subscription_permissions = true
+  role_assignments = {
+    role_assignment_1 = {
+      role_definition_id_or_name       = "Virtual Machine Contributor"
+      principal_id                     = data.azurerm_client_config.current.object_id
+      skip_service_principal_aad_check = false
+    }
+  }
+
+  role_assignments_nic = {
+    role_assignment_1 = {
+      role_definition_id_or_name       = "Contributor"
+      principal_id                     = data.azurerm_client_config.current.object_id
+      skip_service_principal_aad_check = false
+    }
+  }
+
+  vm_extensions = {
+    azure_monitor_agent = {
+      name                       = "vm-primary-azure-monitor-agent"
+      publisher                  = "Microsoft.Azure.Monitor"
+      type                       = "AzureMonitorLinuxAgent"
+      type_handler_version       = "1.0"
+      auto_upgrade_minor_version = true
+      automatic_upgrade_enabled  = true
+      settings                   = null
+    }
+  }
+
+  depends_on = [module.network, module.common_infrastructure]
+}
+
+
+module "vm_secondary" {
+  source = "../../../terraform_units/modules/compute"
+
+  resource_group_name = module.common_infrastructure.created_resource_group_name
+  location            = var.location
+  vm_name             = "vm-secondary-0"
+  public_key          = var.ssh_key
+  sid_username        = "oracle"
+  vm_sku              = var.vm_sku
+
+  vm_source_image_reference     = var.vm_source_image_reference
+  vm_user_assigned_identity_id  = var.vm_user_assigned_identity_id
+  aad_system_assigned_identity  = true
+  public_ip_address_resource_id = module.network.db_server_puplic_ip_resources[1].id
 
   is_diagnostic_settings_enabled = module.common_infrastructure.is_diagnostic_settings_enabled
   diagnostic_target              = module.common_infrastructure.diagnostic_target
   storage_account_id             = module.common_infrastructure.target_storage_account_id
   storage_account_sas_token      = module.common_infrastructure.target_storage_account_sas
-  log_analytics_workspace_id     = module.common_infrastructure.log_analytics_workspace_id
+  log_analytics_workspace = module.common_infrastructure.log_analytics_workspace != null ? {
+    id   = module.common_infrastructure.log_analytics_workspace.id
+    name = module.common_infrastructure.log_analytics_workspace.name
+  } : null
+  data_collection_rules          = module.common_infrastructure.data_collection_rules
   eventhub_authorization_rule_id = module.common_infrastructure.eventhub_authorization_rule_id
   partner_solution_id            = module.common_infrastructure.partner_solution_id
   tags                           = module.common_infrastructure.tags
+  vm_lock                        = var.lock
+  db_subnet                      = module.network.db_subnet
 
-  availability_zone = 1
 
-  role_assignments = {
-    role_assignment_1 = {
-      name                             = "Virtual Machine Contributor"
-      skip_service_principal_aad_check = false
-    }
-  }
-}
-
-module "vm_secondary" {
-  source = "../../../terraform_units/modules/compute"
-
-  subscription_id           = module.common_infrastructure.current_subscription.subscription_id
-  resource_group            = module.common_infrastructure.resource_group
-  vm_name                   = "vm-secondary"
-  public_key                = var.ssh_key
-  sid_username              = "oracle"
-  nic_id                    = module.network.nics_oracledb_secondary.id
-  vm_sku                    = var.vm_sku
-  vm_source_image_reference = var.vm_source_image_reference
-  vm_user_assigned_identity_id = var.vm_user_assigned_identity_id
 
   vm_os_disk = {
     name                   = "osdisk-secondary"
@@ -72,26 +130,35 @@ module "vm_secondary" {
     disk_size_gb           = 128
   }
 
-  aad_system_assigned_identity    = false
-  assign_subscription_permissions = true
-
-  is_diagnostic_settings_enabled = module.common_infrastructure.is_diagnostic_settings_enabled
-  diagnostic_target              = module.common_infrastructure.diagnostic_target
-  storage_account_id             = module.common_infrastructure.target_storage_account_id
-  storage_account_sas_token      = module.common_infrastructure.target_storage_account_sas
-  log_analytics_workspace_id     = module.common_infrastructure.log_analytics_workspace_id
-  eventhub_authorization_rule_id = module.common_infrastructure.eventhub_authorization_rule_id
-  partner_solution_id            = module.common_infrastructure.partner_solution_id
-  tags                           = module.common_infrastructure.tags
-
-  availability_zone = 2
-
   role_assignments = {
     role_assignment_1 = {
-      name                             = "Virtual Machine Contributor"
+      role_definition_id_or_name       = "Virtual Machine Contributor"
+      principal_id                     = data.azurerm_client_config.current.object_id
       skip_service_principal_aad_check = false
     }
   }
+
+  vm_extensions = {
+    azure_monitor_agent = {
+      name                       = "vm-secondary-azure-monitor-agent"
+      publisher                  = "Microsoft.Azure.Monitor"
+      type                       = "AzureMonitorLinuxAgent"
+      type_handler_version       = "1.1"
+      auto_upgrade_minor_version = true
+      automatic_upgrade_enabled  = true
+      settings                   = null
+    }
+  }
+  #ToDo: Pending
+  # role_assignments_nic = {
+  #   role_assignment_1 = {
+  #     role_definition_id_or_name       = "Contributor"
+  #     principal_id                     = data.azurerm_client_config.current.object_id
+  #     skip_service_principal_aad_check = false
+  #   }
+  # }
+
+  depends_on = [module.network, module.common_infrastructure]
 }
 
 module "network" {
@@ -102,17 +169,23 @@ module "network" {
   is_diagnostic_settings_enabled = module.common_infrastructure.is_diagnostic_settings_enabled
   diagnostic_target              = module.common_infrastructure.diagnostic_target
   storage_account_id             = module.common_infrastructure.target_storage_account_id
-  log_analytics_workspace_id     = module.common_infrastructure.log_analytics_workspace_id
+  log_analytics_workspace_id     = try(module.common_infrastructure.log_analytics_workspace.id, "")
   eventhub_authorization_rule_id = module.common_infrastructure.eventhub_authorization_rule_id
   partner_solution_id            = module.common_infrastructure.partner_solution_id
   tags                           = module.common_infrastructure.tags
+  nsg_locks                      = var.lock
+  subnet_locks                   = var.lock
+  vnet_locks                     = var.lock
 
-  role_assignments_nic = {
-    role_assignment_1 = {
-      name                             = "Contributor"
-      skip_service_principal_aad_check = false
-    }
-  }
+
+
+  #ToDo: role_assignments_nic
+  # role_assignments_nic = {
+  #   role_assignment_1 = {
+  #     name                             = "Contributor"
+  #     skip_service_principal_aad_check = false
+  #   }
+  # }
 
   role_assignments_pip = {
     role_assignment_1 = {
@@ -143,13 +216,14 @@ module "network" {
   }
 }
 
+
 module "storage_primary" {
   source = "../../../terraform_units/modules/storage"
 
   resource_group = module.common_infrastructure.resource_group
   is_data_guard  = module.common_infrastructure.is_data_guard
   naming         = "oracle-primary"
-  vm             = module.vm_primary.vm[0]
+  vm             = module.vm_primary.vm
   tags           = module.common_infrastructure.tags
   database_disks_options = {
     data_disks = var.database_disks_options.data_disks
@@ -172,7 +246,7 @@ module "storage_secondary" {
   resource_group = module.common_infrastructure.resource_group
   is_data_guard  = module.common_infrastructure.is_data_guard
   naming         = "oracle-secondary"
-  vm             = module.vm_secondary.vm[0]
+  vm             = module.vm_secondary.vm
   tags           = module.common_infrastructure.tags
   database_disks_options = {
     data_disks = var.database_disks_options.data_disks

@@ -7,7 +7,6 @@ locals {
   telem_random_hex = can(random_id.telem[0].hex) ? random_id.telem[0].hex : local.empty_string
 }
 
-
 # This constructs the ARM deployment name that is used for the telemetry.
 # We shouldn't ever hit the 64 character limit but use substr just in case
 locals {

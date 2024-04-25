@@ -310,7 +310,9 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
          $odbaacostmgmtadministratorsObj = Get-AzureAdGroup -SearchString $odbaacostmgmtadministrators
        Add-AzureADGroupMember -ObjectId $odbaacostmgmtadministratorsObj.ObjectId -RefObjectId $user.ObjectId
 
-   Write-Host "Remember - Please upload the Metadata.xml file from Oracle Cloud Infrastructure to your Enterprise Application!!!" -ForegroundColor Yellow 
+   Write-Host "Remember - Please upload the C:\Temp\Metadata.xml file from Oracle Cloud Infrastructure to your Enterprise Application!!!" -ForegroundColor Yellow 
+
+   Write-Host "Remember - Please download the Azure Federation XML file from your Azure Enterprise OCI Application and provide it for the OCI Federation setup to complete the setup!!!" -ForegroundColor Yellow 
   
  Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!"  -ForegroundColor Green
 

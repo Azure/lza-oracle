@@ -75,3 +75,4 @@ The following are the instructions for using the Accelerator PowerShell script w
 19. The script will request the User Principle Name (UPN) of a valid user within Entra for testing. Format should be `user@<fqdn>` of the registered domain. Hit enter.
 20. The script then will proceed to add the user as an authorized user of the enterprise application, create the required Entra Id Groups, and add the specified user to those groups.
 21. Once the script is completed, please upload the metadata.xml from `C:\Temp` to the enterprise application and save the settings. Then proceed to hit “test” to validate SSO.
+22. Remember to export the Federation XML file from the Azure Enterprise Application that was just provisioned and upload it into the corresponding OCI Federation configuration that was setup prior. 

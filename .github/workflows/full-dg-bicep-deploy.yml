@@ -163,8 +163,11 @@ jobs:
       - run: echo "SubscriptionID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
       - run: echo ${{env.SubscriptionID}} 
 
-# fixme add tags to resource group
-
+      - name: Get the ID of the user-assigned managed identity
+        run: |
+          usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) 
+          usId_modified=$(echo "$usId" | sed 's/resourcegroups/resourceGroups/g')
+          echo "usId=${usId_modified}" >> $GITHUB_ENV      
       
       - name: 🔑 Login via Az PowerShell Module
         uses: azure/login@v1
@@ -217,7 +220,7 @@ jobs:
 # #                                    Ansible                                                                                                 #
 # ##############################################################################################################################################
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
-        run: ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes"
+        run: ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes vm_user_assigned_identity_id=${{env.usId}}"
 
       - name: Run Ansible playbook to test Oracle database state
         run: ansible-playbook testplaybook_dg.yml -i inventory > ansible_output.txt

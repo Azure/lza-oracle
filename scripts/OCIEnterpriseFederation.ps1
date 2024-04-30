@@ -318,24 +318,26 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
 
   Write-Host "Adding the specified Entra Id Groups to the Enterprise Application" -ForegroundColor Green
 
-    New-AzureADGroupAppRoleAssignment -ObjectId $odbaaexainfraadministratorObj.ObjectId -PrincipalId $odbaaexainfraadministratorObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
-      Write-Host "Added the Entra Id Group odbaa-exa-infra-administrator to the Enterprise Application" -ForegroundColor Green
+    # Prompt the user to choose whether to create predefined groups and add them to the Enterprise App
+    $createGroups = Read-Host -Prompt 'Do you want to create predefined groups and add them to the Enterprise App? (yes/no)'
 
-        New-AzureADGroupAppRoleAssignment -ObjectId $odbaavmclusteradministratorObj.ObjectId -PrincipalId $odbaavmclusteradministratorObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
-          Write-Host "Added the Entra Id Group odbaa-vm-cluster-administrator to the Enterprise Application" -ForegroundColor Green
+    if ($createGroups -eq 'yes') {
+        # Define the list of group names
+        $groupNames = @("odbaa-exa-infra-administrator", "odbaa-vm-cluster-administrator", "odbaa-db-family-administrators", "odbaa-db-family-readers", "odbaa-exa-cdb-administrators", "odbaa-exa-pdb-administrators", "odbaa-costmgmt-administrators")
 
-            New-AzureADGroupAppRoleAssignment -ObjectId $odbaadbfamilyadministratorsObj.ObjectId -PrincipalId $odbaadbfamilyadministratorsObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
-              Write-Host "Added the Entra Id Group odbaa-db-family-administrators to the Enterprise Application" -ForegroundColor Green
+        # Loop through each group name
+        foreach ($groupName in $groupNames) {
+            # Check if the group already exists
+            $group = Get-AzureADGroup -SearchString $groupName
 
-                New-AzureADGroupAppRoleAssignment -ObjectId $odbaadbfamilyreadersObj.ObjectId -PrincipalId $odbaadbfamilyreadersObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
-                  Write-Host "Added the Entra Id Group odbaa-db-family-readers to the Enterprise Application" -ForegroundColor Green
+            # If the group doesn't exist, create it
+            if ($null -eq $group) {
+                $group = New-AzureADGroup -DisplayName $groupName -MailEnabled $false -SecurityEnabled $true -MailNickName "NotSet"
+                Write-Host "Created the group $groupName" -ForegroundColor Green
+            }
 
-            New-AzureADGroupAppRoleAssignment -ObjectId $odbaaexacdbadministratorsObj.ObjectId -PrincipalId $odbaaexacdbadministratorsObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
-              Write-Host "Added the Entra Id Group odbaa-exa-cdb-administrators to the Enterprise Application" -ForegroundColor Green
-
-        New-AzureADGroupAppRoleAssignment -ObjectId $odbaaexapdbadministratorsObj.ObjectId -PrincipalId $odbaaexapdbadministratorsObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
-          Write-Host "Added the Entra Id Group odbaa-exa-pdb-administrators to the Enterprise Application" -ForegroundColor Green
-
-    New-AzureADGroupAppRoleAssignment -ObjectId $odbaacostmgmtadministratorsObj.ObjectId -PrincipalId $odbaacostmgmtadministratorsObj.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
-      Write-Host "Added the Entra Id Group odbaa-costmgmt-administrators to the Enterprise Application" -ForegroundColor Green
-            
+            # Assign the group to the Enterprise Application
+            New-AzureADGroupAppRoleAssignment -ObjectId $group.ObjectId -PrincipalId $group.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+            Write-Host "Added the group $groupName to the Enterprise Application" -ForegroundColor Green
+        }
+    }

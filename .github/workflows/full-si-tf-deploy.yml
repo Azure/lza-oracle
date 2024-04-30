@@ -197,6 +197,7 @@ jobs:
     outputs:
       ResourceGroupName: ${{ env.ResourceGroupName }}
       VM_Public_IP_Address: ${{ env.vm_public_ip_address }}
+      vm_user_assigned_identity_id: ${{ env.usId }}
 
 ##############################################################################################################################################
 #                                     SSH Keys and parameter preparation for Ansible                                                         #
@@ -282,7 +283,7 @@ jobs:
 #                                    Ansible                                                                                                 #
 ##############################################################################################################################################
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
-        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no"
+        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no vm_user_assigned_identity_id=${{env.vm_user_assigned_identity_id}}" -vvv
 
       - name: Run Ansible playbook to test Oracle database state
         run: ansible-playbook testplaybook.yml -i inventory > ansible_output.txt

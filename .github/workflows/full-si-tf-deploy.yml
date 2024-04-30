@@ -221,6 +221,8 @@ jobs:
       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
       - run: echo "VM_Public_IP_Address=${{needs.terraform.outputs.VM_Public_IP_Address}}" >> $GITHUB_ENV
       - run: echo "VM_Public_IP_Address=${{env.VM_Public_IP_Address}}"
+      - run: echo "vm_user_assigned_identity_id=${{needs.terraform.outputs.vm_user_assigned_identity_id}}" >> $GITHUB_ENV
+      - run: echo "vm_user_assigned_identity_id=${{env.vm_user_assigned_identity_id}}"
       
       - name: 'Install SSH Key'
         uses: shimataro/ssh-key-action@v2

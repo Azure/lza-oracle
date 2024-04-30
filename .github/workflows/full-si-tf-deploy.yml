@@ -220,12 +220,6 @@ jobs:
       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
       - run: echo "VM_Public_IP_Address=${{needs.terraform.outputs.VM_Public_IP_Address}}" >> $GITHUB_ENV
       - run: echo "VM_Public_IP_Address=${{env.VM_Public_IP_Address}}"
-
-      - name: Get the ID of the user-assigned managed identity
-        run: |
-          usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) 
-          usId_modified=$(echo "$usId" | sed 's/resourcegroups/resourceGroups/g')
-          echo "usId=${usId_modified}" >> $GITHUB_ENV
       
       - name: 'Install SSH Key'
         uses: shimataro/ssh-key-action@v2
@@ -247,6 +241,12 @@ jobs:
         id: subid
         run: echo "SubscriptionID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
       - run: echo ${{env.SubscriptionID}} 
+      
+      - name: Get the ID of the user-assigned managed identity
+        run: |
+          usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) 
+          usId_modified=$(echo "$usId" | sed 's/resourcegroups/resourceGroups/g')
+          echo "usId=${usId_modified}" >> $GITHUB_ENV
       
       - name: ⌛ Calculate endTimeUTC for JIT request 
         run: echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $GITHUB_ENV

@@ -197,7 +197,6 @@ jobs:
     outputs:
       ResourceGroupName: ${{ env.ResourceGroupName }}
       VM_Public_IP_Address: ${{ env.vm_public_ip_address }}
-      vm_user_assigned_identity_id: ${{ env.usId }}
 
 ##############################################################################################################################################
 #                                     SSH Keys and parameter preparation for Ansible                                                         #
@@ -221,8 +220,12 @@ jobs:
       - run: echo "currentRunnerIP=${{env.currentRunnerIP}}"
       - run: echo "VM_Public_IP_Address=${{needs.terraform.outputs.VM_Public_IP_Address}}" >> $GITHUB_ENV
       - run: echo "VM_Public_IP_Address=${{env.VM_Public_IP_Address}}"
-      - run: echo "vm_user_assigned_identity_id=${{needs.terraform.outputs.vm_user_assigned_identity_id}}" >> $GITHUB_ENV
-      - run: echo "vm_user_assigned_identity_id=${{env.vm_user_assigned_identity_id}}"
+
+      - name: Get the ID of the user-assigned managed identity
+        run: |
+          usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) 
+          usId_modified=$(echo "$usId" | sed 's/resourcegroups/resourceGroups/g')
+          echo "usId=${usId_modified}" >> $GITHUB_ENV
       
       - name: 'Install SSH Key'
         uses: shimataro/ssh-key-action@v2
@@ -285,7 +288,7 @@ jobs:
 #                                    Ansible                                                                                                 #
 ##############################################################################################################################################
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
-        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no vm_user_assigned_identity_id=${{env.vm_user_assigned_identity_id}}" -vvv
+        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no vm_user_assigned_identity_id=${{env.usId}}" -vvv
 
       - name: Run Ansible playbook to test Oracle database state
         run: ansible-playbook testplaybook.yml -i inventory > ansible_output.txt

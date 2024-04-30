@@ -341,3 +341,6 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
             Write-Host "Added the group $groupName to the Enterprise Application" -ForegroundColor Green
         }
     }
+
+    Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!" -ForegroundColor Green
+    Write-Host "Users are not synced automatically between Azure and OCI. You have to assign users to each group manually." -ForegroundColor Yellow

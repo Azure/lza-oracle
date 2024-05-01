@@ -318,10 +318,10 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
 
   Write-Host "Adding the specified Entra Id Groups to the Enterprise Application" -ForegroundColor Green
 
-    # Prompt the user to choose whether to create predefined groups and add them to the Enterprise App
-    $createGroups = Read-Host -Prompt 'Do you want to create predefined groups and add them to the Enterprise App? (yes/no)'
+    # Prompt the user to choose whether to create predefined groups
+    $createGroups = Read-Host -Prompt 'Do you want to create predefined groups? (y/n)'
 
-    if ($createGroups -eq 'yes') {
+    if ($createGroups -eq 'y') {
         # Define the list of group names
         $groupNames = @("odbaa-exa-infra-administrator", "odbaa-vm-cluster-administrator", "odbaa-db-family-administrators", "odbaa-db-family-readers", "odbaa-exa-cdb-administrators", "odbaa-exa-pdb-administrators", "odbaa-costmgmt-administrators")
 
@@ -335,11 +335,32 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
                 $group = New-AzureADGroup -DisplayName $groupName -MailEnabled $false -SecurityEnabled $true -MailNickName "NotSet"
                 Write-Host "Created the group $groupName" -ForegroundColor Green
             }
+        }
+    } else if ($createGroups -eq 'n') {
+        Write-Host "No groups will be created." -ForegroundColor Yellow
+    } else {
+        Write-Host "Invalid input. Please try again." -ForegroundColor Red
+        exit
+    }
+
+    # Prompt the user to choose whether to add groups to the Enterprise App
+    $addGroups = Read-Host -Prompt 'Do you want to add groups to the Enterprise App? (y/n)'
+
+    if ($addGroups -eq 'y') {
+        # Loop through each group name
+        foreach ($groupName in $groupNames) {
+            # Get the group
+            $group = Get-AzureADGroup -SearchString $groupName
 
             # Assign the group to the Enterprise Application
             New-AzureADGroupAppRoleAssignment -ObjectId $group.ObjectId -PrincipalId $group.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
             Write-Host "Added the group $groupName to the Enterprise Application" -ForegroundColor Green
         }
+    } else if ($addGroups -eq 'n') {
+        Write-Host "No groups will be added to the Enterprise Application." -ForegroundColor Yellow
+    } else {
+        Write-Host "Invalid input. Please try again." -ForegroundColor Red
+        exit
     }
 
     Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!" -ForegroundColor Green

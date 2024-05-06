@@ -237,14 +237,14 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
 
 # Assigning a Group to the Enterprise Application
 
-  Write-Host "Adding the specified Entra Id Groups to the Enterprise Application" -ForegroundColor Green
-
     # Prompt the user to choose whether to create predefined groups
     $createGroups = Read-Host -Prompt 'Do you want to create predefined groups? (y/n)'
 
     if ($createGroups -eq 'y') {
         # Define the list of group names
         $groupNames = @("odbaa-exa-infra-administrator", "odbaa-vm-cluster-administrator", "odbaa-db-family-administrators", "odbaa-db-family-readers", "odbaa-exa-cdb-administrators", "odbaa-exa-pdb-administrators", "odbaa-costmgmt-administrators")
+
+        Write-Host "Adding the specified Entra Id Groups to the Enterprise Application" -ForegroundColor Green
 
         # Loop through each group name
         foreach ($groupName in $groupNames) {

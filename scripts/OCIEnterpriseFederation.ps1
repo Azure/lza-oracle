@@ -284,5 +284,9 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
         exit
     }
 
+   Write-Host "Remember - Please upload the C:\Temp\Metadata.xml file from Oracle Cloud Infrastructure to your Enterprise Application!!!" -ForegroundColor Yellow 
+
+   Write-Host "Remember - Please download the Azure Federation XML file from your Azure Enterprise OCI Application and provide it for the OCI Federation setup to complete the setup!!!" -ForegroundColor Yellow 
+ 
     Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!" -ForegroundColor Green
     Write-Host "Users are not synced automatically between Azure and OCI. You have to assign users to each group manually." -ForegroundColor Yellow

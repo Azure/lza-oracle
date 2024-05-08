@@ -233,87 +233,60 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
 
     Add-MgServicePrincipalTokenSigningCertificate -ServicePrincipalId $prinID.Id -BodyParameter $params
 
+   Write-Host "Remember - Please upload the Metadata.xml file from Oracle Cloud Infrastructure to your Enterprise Application!!!" -ForegroundColor Yellow 
 
-# Requesting the operator to give the UPN of an Entra ID user to assign to the Enterprise Application
-    
-    $upn = Read-Host "Please enter the UPN of the user that will be authorized to use the Enterprise application"
-        $appname = $EntName
+# Assigning a Group to the Enterprise Application
 
-# Get the service principal for the app
-  
-    $spo = Get-AzureADServicePrincipal -Filter "Displayname eq '$appname'"
+    # Prompt the user to choose whether to create predefined groups
+    $createGroups = Read-Host -Prompt 'Do you want to create predefined groups? (y/n)'
 
-# Get the user
-  
-    $user = Get-AzureADUser -ObjectId $upn
+    if ($createGroups -eq 'y') {
+        # Define the list of group names
+        $groupNames = @("odbaa-exa-infra-administrator", "odbaa-vm-cluster-administrator", "odbaa-db-family-administrators", "odbaa-db-family-readers", "odbaa-exa-cdb-administrators", "odbaa-exa-pdb-administrators", "odbaa-costmgmt-administrators")
 
-# Assign the user to a specific role within the app
+        Write-Host "Adding the specified Entra Id Groups to the Enterprise Application" -ForegroundColor Green
 
-    New-AzureADUserAppRoleAssignment -ObjectId $user.ObjectId -PrincipalId $user.ObjectId -ResourceId $spo.ObjectId -Id $spo.Approles[1].id
+        # Loop through each group name
+        foreach ($groupName in $groupNames) {
+            # Check if the group already exists
+            $group = Get-AzureADGroup -SearchString $groupName
 
+            # If the group doesn't exist, create it
+            if ($null -eq $group) {
+                $group = New-AzureADGroup -DisplayName $groupName -MailEnabled $false -SecurityEnabled $true -MailNickName "NotSet"
+                Write-Host "Created the group $groupName" -ForegroundColor Green
+            }
+        }
+    } else if ($createGroups -eq 'n') {
+        Write-Host "No groups will be created." -ForegroundColor Yellow
+    } else {
+        Write-Host "Invalid input. Please try again." -ForegroundColor Red
+        exit
+    }
 
-# Creating Required Groups in Entra ID
+    # Prompt the user to choose whether to add groups to the Enterprise App
+    $addGroups = Read-Host -Prompt 'Do you want to add groups to the Enterprise App? (y/n)'
 
-   Write-Host "Creating required Oracle Groups within Entra Id" -ForegroundColor Yellow
-    New-AzureAdGroup -DisplayName "odbaa-exa-infra-administrator" -Description "This group is for administrators who need to manage all Oracle Exadata Database Service resources in Azure" -MailEnabled $false -SecurityEnabled $true -MailNickName "Notset" 
-        Write-Host "Created the Entra Id Group odbaa-exa-infra-administrator" -ForegroundColor Green
-            New-AzureAdGroup -DisplayName "odbaa-vm-cluster-administrator" -Description "User in this group can administer VM cluster resources in Azure" -MailEnabled $false -SecurityEnabled $true -MailNickName "Notset" 
-                Write-Host "Created the Entra Id Group odbaa-vm-cluster-administrator" -ForegroundColor Green
-                
-                New-AzureAdGroup -DisplayName "odbaa-db-family-administrators" -Description "User in this group can administer Oracle resources in Azure" -MailEnabled $false -SecurityEnabled $true -MailNickName "Notset" 
-                 Write-Host "Created the Entra Id Group odbaa-db-family-administrators" -ForegroundColor Green
+    if ($addGroups -eq 'y') {
+        # Loop through each group name
+        foreach ($groupName in $groupNames) {
+            # Get the group
+            $group = Get-AzureADGroup -SearchString $groupName
 
-                    New-AzureAdGroup -DisplayName "odbaa-db-family-readers" -Description "User in this group can read Oracle resources in Azure" -MailEnabled $false -SecurityEnabled $true -MailNickName "Notset" 
-                        Write-Host "Created the Entra Id Group odbaa-db-family-readers" -ForegroundColor Green
-
-                        New-AzureAdGroup -DisplayName "odbaa-exa-cdb-administrators" -Description "Note this azure user has access only in OCI console. Customer does not need to create a custom Azure role for this group" -MailEnabled $false -SecurityEnabled $true -MailNickName "Notset" 
-                        Write-Host "Created the Entra Id Group odbaa-exa-cdb-administrators" -ForegroundColor Green
-
-                            New-AzureAdGroup -DisplayName "odbaa-exa-pdb-administrators" -Description "Note this azure user has access only in OCI console. Customer does not need to create a custom Azure role for this group" -MailEnabled $false -SecurityEnabled $true -MailNickName "Notset" 
-                        Write-Host "Created the Entra Id Group odbaa-exa-pdb-administrators" -ForegroundColor Green
-                 
-                    New-AzureAdGroup -DisplayName "odbaa-network-administrators" -Description "Note this azure user has access only in OCI console. Customer does not need to create a custom Azure role for this group" -MailEnabled $false -SecurityEnabled $true -MailNickName "Notset" 
-                 Write-Host "Created the Entra Id Group odbaa-network-administrators" -ForegroundColor Green
-        New-AzureAdGroup -DisplayName "odbaa-costmgmt-administrators" -Description "Note this azure user has access only in OCI console. Customer does not need to create a custom Azure role for this group" -MailEnabled $false -SecurityEnabled $true -MailNickName "Notset" 
-    Write-Host "Created the Entra Id Group odbaa-costmgmt-administrators" -ForegroundColor Green
-                  
-
-# Adding user to Entra Id Groups that were just created
-  
-  Write-Host "Adding the specified $upn to the Entra Id Groups that were created" -ForegroundColor Green
-
-    $odbaaexainfraadministrator = "odbaa-exa-infra-administrator"
-       $odbaaexainfraadministratorObj = Get-AzureAdGroup -SearchString $odbaaexainfraadministrator
-           Add-AzureADGroupMember -ObjectId $odbaaexainfraadministratorObj.ObjectId -RefObjectId $user.ObjectId
-
-           $odbaavmclusteradministrator = "odbaa-vm-cluster-administrator"
-               $odbaavmclusteradministratorObj = Get-AzureAdGroup -SearchString $odbaavmclusteradministrator
-                    Add-AzureADGroupMember -ObjectId $odbaavmclusteradministratorObj.ObjectId -RefObjectId $user.ObjectId
-
-                    $odbaadbfamilyadministrators = "odbaa-db-family-administrators"
-                        $odbaadbfamilyadministratorsObj = Get-AzureAdGroup -SearchString $odbaadbfamilyadministrators
-                            Add-AzureADGroupMember -ObjectId $odbaadbfamilyadministratorsObj.ObjectId -RefObjectId $user.ObjectId
-
-                                $odbaadbfamilyreaders = "odbaa-db-family-readers"
-                                     $odbaadbfamilyreadersObj = Get-AzureAdGroup -SearchString $odbaadbfamilyreaders
-                                Add-AzureADGroupMember -ObjectId $odbaadbfamilyreadersObj.ObjectId -RefObjectId $user.ObjectId
-
-                        $odbaaexacdbadministrators = "odbaa-exa-cdb-administrators"
-                    $odbaaexacdbadministratorsObj = Get-AzureAdGroup -SearchString $odbaaexacdbadministrators
-                  Add-AzureADGroupMember -ObjectId $odbaaexacdbadministratorsObj.ObjectId -RefObjectId $user.ObjectId
-
-                  $odbaaexapdbadministrators = "odbaa-exa-pdb-administrators"
-               $odbaaexapdbadministratorsObj = Get-AzureAdGroup -SearchString $odbaaexapdbadministrators
-             Add-AzureADGroupMember -ObjectId $odbaaexapdbadministratorsObj.ObjectId -RefObjectId $user.ObjectId
-
-           $odbaacostmgmtadministrators = "odbaa-costmgmt-administrators"
-         $odbaacostmgmtadministratorsObj = Get-AzureAdGroup -SearchString $odbaacostmgmtadministrators
-       Add-AzureADGroupMember -ObjectId $odbaacostmgmtadministratorsObj.ObjectId -RefObjectId $user.ObjectId
+            # Assign the group to the Enterprise Application
+            New-AzureADGroupAppRoleAssignment -ObjectId $group.ObjectId -PrincipalId $group.ObjectId -ResourceId $spo.ObjectId -Id $app.AppRoles[1].Id
+            Write-Host "Added the group $groupName to the Enterprise Application" -ForegroundColor Green
+        }
+    } else if ($addGroups -eq 'n') {
+        Write-Host "No groups will be added to the Enterprise Application." -ForegroundColor Yellow
+    } else {
+        Write-Host "Invalid input. Please try again." -ForegroundColor Red
+        exit
+    }
 
    Write-Host "Remember - Please upload the C:\Temp\Metadata.xml file from Oracle Cloud Infrastructure to your Enterprise Application!!!" -ForegroundColor Yellow 
 
    Write-Host "Remember - Please download the Azure Federation XML file from your Azure Enterprise OCI Application and provide it for the OCI Federation setup to complete the setup!!!" -ForegroundColor Yellow 
-  
- Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!"  -ForegroundColor Green
-
-# Assigning a Group to the Enterprise Application Requires P1 or P2 Entra Id Licensces
+ 
+    Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!" -ForegroundColor Green
+    Write-Host "Users are not synced automatically between Azure and OCI. You have to assign users to each group manually." -ForegroundColor Yellow

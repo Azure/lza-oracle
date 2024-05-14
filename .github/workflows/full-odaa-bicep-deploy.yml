@@ -1,0 +1,61 @@
+name: Deploy ODAA ifnrastructure
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths:
+      - ".github/workflows/full-odaa-bicep-deploy.yml"
+      - "bicep/bootstrap_odaa/single_instance/**"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - ".github/workflows/full-odaa-bicep-deploy.yml"
+      - "bicep/bootstrap_odaa/single_instance/**"
+env:
+    AZ_LOCATION: "swedencentral" # can be parameterized
+    AZ_RG_BASENAME: "Oracle-test" # can be parameterized
+
+permissions:
+    id-token: write
+    contents: read
+    issues: write
+    pull-requests: write
+        
+jobs:
+  bicep:
+    name: '🔧 Bicep'
+    runs-on: ubuntu-latest
+    environment: test-deploy
+    strategy:
+      fail-fast: false    
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./bicep/bootstrap_odaa
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4      
+    
+    #Login to Azure
+    - name: 🔑 Login via Azure CLI
+      uses: azure/login@v1
+      with:
+       client-id: ${{ secrets.AZURE_CLIENT_ID }}
+       tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+       subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: 🗒️ Update the parameter file with run time values
+      run: |
+         # In the line "param resourceGroupName = '<rgName>'" replace <rgName> with the value of the variable ResourceGroupName
+         sed -i "s|resourceGroupName = '<rgName>'|resourceGroupName = '${{env.AZ_RG_BASENAME}}'|" single_instance/default/dependencies.bicep
+         # In the line "location = '<location>'" replace <location> with the value of the variable AZ_LOCATION
+         sed -i "s|location = '<location>|location = '${{env.AZ_LOCATION}}|" single_instance/default/dependencies.bicep
+     
+    - name: Deploy infrastructure
+      run: |
+         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+         az deployment sub create --location ${{env.AZ_LOCATION}} --name ${{env.AZ_RG_BASENAME}} --template-file single_instance/default/dependencies.bicep --parameters resourceGroupName=${{env.ResourceGroupName}} location=${{env.AZ_LOCATION}} --verbose
+
+    outputs:
+      ResourceGroupName: ${{ env.AZ_RG_BASENAME }}

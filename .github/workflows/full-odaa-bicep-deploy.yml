@@ -1,4 +1,4 @@
-name: Deploy ODAA ifnrastructure
+name: Deploy ODAA infrastructure
 on:
   workflow_dispatch: {}
   push:

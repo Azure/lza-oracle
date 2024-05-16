@@ -17,14 +17,15 @@ on:
       - "ansible/bootstrap/oracle/**"
     
 env:
-  TF_LOG: "INFO"
-  AZ_LOCATION: "swedencentral" 
-  AZ_RG_BASENAME: "Oracle-test" 
-  VM_PRIMARY_NAME: "vm-primary-0" 
-  VM_SECONDARY_NAME: "vm-secondary-0"
-  ORCL_DB_NAME: "ORCL"
-  SOFTWARE_RG: "binaryresource"
-  USER_ASSIGNED_IDENTITY: "oraclelza"
+  TF_LOG: ${{ vars.TF_LOG != '' && vars.TF_LOG || 'INFO' }}                                                     #"INFO"
+  AZ_LOCATION: ${{ vars.AZ_LOCATION != '' && vars.AZ_LOCATION || 'swedencentral' }}                             #"swedencentral" # can be parameterized
+  AZ_RG_BASENAME: ${{ vars.AZ_RG_BASENAME != '' && vars.AZ_RG_BASENAME || 'Oracle-test' }}  
+  VM_PRIMARY_NAME: ${{ vars.VM_PRIMARY_NAME != '' && vars.VM_PRIMARY_NAME || 'vm-primary-0' }}                  # can be parameterized
+  VM_SECONDARY_NAME: ${{ vars.VM_SECONDARY_NAME != '' && vars.VM_SECONDARY_NAME || 'vm-secondary-0' }}          # can be parameterized
+  ORCL_DB_NAME: ${{ vars.ORCL_DB_NAME != '' && vars.ORCL_DB_NAME || 'ORCL' }}                                   #"ORCL" # can be parameterized
+  SOFTWARE_RG:  ${{ vars.SOFTWARE_RG != '' && vars.SOFTWARE_RG || 'binaryresource' }}                           #"binaryresource"
+  USER_ASSIGNED_IDENTITY: ${{vars.USER_ASSIGNED_IDENTITY != '' && vars.USER_ASSIGNED_IDENTITY || 'oraclelza' }} #"oraclelza"
+
 
 permissions:
   id-token: write
@@ -54,7 +55,7 @@ jobs:
     - name: 📦 Setup Terraform Cli
       uses: hashicorp/setup-terraform@v2
       with:
-        terraform_version: 1.6.0
+        terraform_version: 1.7.0
         terraform_wrapper: false # keep it false to be able to read the outputs values of terraform
 
     #Check if the SSH key is empty
@@ -238,6 +239,12 @@ jobs:
         id: subid
         run: echo "SubscriptionID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
       - run: echo ${{env.SubscriptionID}} 
+
+      - name: Get the ID of the user-assigned managed identity
+        run: |
+          usId=$(az identity show --name ${{ env.USER_ASSIGNED_IDENTITY }} --resource-group ${{ env.SOFTWARE_RG }} --query id --output tsv) 
+          usId_modified=$(echo "$usId" | sed 's/resourcegroups/resourceGroups/g')
+          echo "usId=${usId_modified}" >> $GITHUB_ENV      
       
       - name: ⌛ Calculate endTimeUTC for JIT request 
         run: echo "endTimeUtc=$(date -d '+2 hour' '+%FT%T')" >> $GITHUB_ENV
@@ -294,7 +301,7 @@ jobs:
 #                                    Ansible                                                                                                 #
 ##############################################################################################################################################
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
-        run: ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes"
+        run: ansible-playbook playbook_dg.yml -i inventory --extra-vars "data_guard=yes vm_user_assigned_identity_id=${{env.usId}}"
 
       - name: Run Ansible playbook to test Oracle database state
         run: ansible-playbook testplaybook_dg.yml -i inventory > ansible_output.txt

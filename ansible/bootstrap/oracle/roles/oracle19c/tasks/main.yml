@@ -102,7 +102,7 @@
   # Code to get user assigned identity access token and save to access_token variable then use it to download Oracle Binaries zip file from storage account
   - name: Download Oracle binaries from storage account
     shell: |
-      access_token=$(curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fstorage.azure.com%2F' -H Metadata:true | jq -r '.access_token')
+      access_token=$(curl "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fstorage.azure.com/&msi_res_id={{ vm_user_assigned_identity_id }}" -H Metadata:true | jq -r '.access_token')
       curl "https://{{ storage_account }}.blob.core.windows.net/{{ storage_container }}/{{ storage_blob }}" -H "x-ms-version: 2017-11-09" -H "Authorization: Bearer $access_token" -o /home/{{ oracle_user }}/{{ storage_blob }}
 
   - name: extract the installation media to $ORACLE_HOME

@@ -28,6 +28,23 @@ variable "eventhub_permission" {
   }
 }
 
+variable "log_destinations" {
+  type = map(object({
+    type               = string           // E.g., "LogAnalytics", "EventHub", "StorageBlob"
+    resource_id        = optional(string) // For Log Analytics, Event Hub, Storage Account
+    # workspace_id       = optional(string) // For Log Analytics
+    # eventhub_id        = optional(string) // For Event Hub
+    # storage_account_id = optional(string) // For Storage Account
+    container_name     = optional(string) // For Blob container
+    name               = string           // Destination name within the DCR
+  }))
+  default = {}
+}
+
+
+
+
+
 variable "logz_user" {
   description = "Logz.io"
   default = {

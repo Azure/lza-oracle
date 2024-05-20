@@ -1,9 +1,9 @@
 data "azurerm_client_config" "current" {}
 
-data "azurerm_role_definition" "nic" {
-  for_each = var.role_assignments_nic
-  name     = each.value.name
-}
+# data "azurerm_role_definition" "nic" {
+#   for_each = var.role_assignments_nic
+#   name     = each.value.name
+# }
 
 data "azurerm_role_definition" "pip" {
   for_each = var.role_assignments_pip
@@ -26,16 +26,16 @@ data "azurerm_role_definition" "subnet" {
 }
 
 
-resource "azurerm_role_assignment" "nic" {
-  for_each                         = var.role_assignments_nic
-  role_definition_name             = data.azurerm_role_definition.nic[each.key].name
-  principal_id                     = data.azurerm_client_config.current.object_id
-  scope                            = try(each.value.scope, data.azurerm_network_interface.oracle_db[0].id)
-  skip_service_principal_aad_check = try(each.value.skip_service_principal_aad_check, false)
-  description                      = try(each.value.description, null)
-  condition                        = try(each.value.condition, null)
-  condition_version                = try(each.value.condition_version, null)
-}
+# resource "azurerm_role_assignment" "nic" {
+#   for_each                         = var.role_assignments_nic
+#   role_definition_name             = data.azurerm_role_definition.nic[each.key].name
+#   principal_id                     = data.azurerm_client_config.current.object_id
+#   scope                            = try(each.value.scope, data.azurerm_network_interface.oracle_db[0].id)
+#   skip_service_principal_aad_check = try(each.value.skip_service_principal_aad_check, false)
+#   description                      = try(each.value.description, null)
+#   condition                        = try(each.value.condition, null)
+#   condition_version                = try(each.value.condition_version, null)
+# }
 
 resource "azurerm_role_assignment" "pip" {
   for_each                         = var.role_assignments_pip

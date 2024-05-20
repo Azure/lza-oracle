@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">=1.2"
+  required_version = ">=1.7.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -7,6 +7,7 @@ terraform {
     }
     azapi = {
       source  = "Azure/azapi"
+      version = ">=1.8.0"
     }
   }
 }
@@ -23,4 +24,6 @@ provider "azurerm" {
   }
 }
 
-provider "azapi" {}
+provider "azapi" {
+  use_oidc = true
+}

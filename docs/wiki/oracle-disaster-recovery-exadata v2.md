@@ -50,13 +50,19 @@ Resiliency for application services should be ensured through other means such a
 
 For backup of databases, it is recommended to leverage managed backups, storing backup data to OCI Object Storage. 
 
+
+
 ## Additional Considerations
 
 - Use Infrastructure-as-Code to deploy the initial Oracle Database@Azure instance and VM Clusters. This will enable you to easily replicate the same deployment to a disaster recovery site and minimize the risk of human errors.
 - Use Infrastructure-as-Code to deploy databases in Oracle Cloud Infrastructure. This will enable you to easily replicate the same deployment and will minimize the risk of human errors.
 - Test failover and switchback operations to ensure that you can execute them in a real disaster scenario. Automate failover and switchback operations as much as possible to minimize the risk of human errors.
 
+## Summary of resiliency against different failure types
+There are three primary types of failure: single component failure, data center failure, and regional failure. The Maximum Availability Architecture (MAA) for Oracle Database on Azure outlines the Recovery Point Objective (RPO) and Recovery Time Objective (RTO) for each failure scenario. These objectives are thoroughly [documented and maintained by Oracle Cloud Infrastructure (OCI)](https://docs.oracle.com/en/database/oracle/oracle-database/19/haiad/) to ensure robust resiliency and continuity in the face of various failure types.
+
 ## Next steps
+
 
 ### Oracle Maximum Availability Architecture for Oracle Database@Azure
 

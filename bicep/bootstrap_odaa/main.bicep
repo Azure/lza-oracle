@@ -17,7 +17,7 @@ param virtualNetworks array
  
 @description('List of route tables')
 param routeTables array = []
- 
+
 // Create a resource group
 module rg 'br/public:avm/res/resources/resource-group:0.2.1' = {
   name: 'rg-${resourceGroupName}'

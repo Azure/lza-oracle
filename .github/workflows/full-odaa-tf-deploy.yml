@@ -1,0 +1,96 @@
+# This Aaction deploys the 
+name: Deploy ODAA infrastructure
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ odaa ]
+    paths:
+      - ".github/workflows/full-odaa-tf-deploy.yml"
+      - "terraform/bootstrap_odaa/**"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - ".github/workflows/full-odaa-tf-deploy.yml"
+      - "terraform/bootstrap_odaa/**"
+env:
+    AZ_LOCATION: "swedencentral" # can be parameterized
+    AZ_RG_BASENAME: "Oracle-test" # can be parameterized
+    TF_LOG: "INFO"
+
+permissions:
+    id-token: write
+    contents: read
+    issues: write
+    pull-requests: write
+        
+jobs:
+  terraform:
+    name: '🔧 Terraform'
+    runs-on: ubuntu-latest
+    environment: test-deploy
+    strategy:
+      fail-fast: false
+  
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform/bootstrap_odaa/examples/default
+    steps:
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Install the preferred version of Terraform CLI 
+    - name: 📦 Setup Terraform Cli
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.6.0
+        terraform_wrapper: false # keep it false to be able to read the outputs values of terraform
+
+      # Generate random string for suffix
+    - name: 🔎 Generate Random String for Resource Group Name
+      id: resourcegroup-generator
+      run: echo random=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 8; echo) >> $GITHUB_ENV
+    - run: echo ResourceGroupName=${{env.AZ_RG_BASENAME}}-${{env.random}} >> $GITHUB_ENV 
+    - run: echo ${{env.ResourceGroupName}}
+
+    
+    #Login to Azure
+    - name: 🔑 Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: 📦 Terraform Init
+      id: init
+      env:
+        RESOURCE_GROUP: ${{ env.ResourceGroupName }}
+      run: terraform init
+
+
+      # Run a terraform validate
+    - name: 🔎 Terraform Validate
+      id: validate
+      if: github.ref != 'refs/heads/main'
+      continue-on-error: true
+      run: terraform validate -no-color
+      
+
+      # Run a terraform plan for pull requests only and add a comment 
+    - name: 💻 Terraform Plan
+      id: plan
+      continue-on-error: true
+      run: terraform plan -no-color
+
+
+    - name: "◻️ Terraform Plan Status ⁉️"
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
+
+    - name: 💻 Terraform Apply
+    #  if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Remove when I am ready
+      run: terraform apply -auto-approve 

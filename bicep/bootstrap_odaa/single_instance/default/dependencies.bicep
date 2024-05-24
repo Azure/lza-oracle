@@ -1,8 +1,8 @@
 
 targetScope = 'subscription'
 
-param resourceGroupName string = '<rgName>'
-param location string = '<location>'
+param resourceGroupName string = 'odaa'
+param location string = 'centralindia'
 param tags object = {
   environment: 'dev'
 }

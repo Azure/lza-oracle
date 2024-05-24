@@ -41,16 +41,7 @@ module "naming" {
   version = ">= 0.3.0"
 }
 
-locals {
-  routes = {
-    route1 = {
-      name = "routeInternet"
-      next_hop_type = "VirtualAppliance"
-      next_hop_in_ip_address = "10.0.0.4"
-      address_prefix = "10.0.0.0/24"
-    }
-  }
-}
+# Peerings to connect ODAA vnet to other vnets
 locals {
   peerings = {
     peeringToHub = {
@@ -61,35 +52,14 @@ locals {
     }
   }
 }
-locals {
-  subnets = {
-    snet-odaa = {
-      address_prefixes = ["10.1.0.0/24"]
-      delegations = [
-        {
-          name = "snet-odaa"
-          service_delegation = {
-            name = "Oracle.Database/networkAttachments"
-            actions = [
-              "Microsoft.Network/networkinterfaces/*",
-              "Microsoft.Network/virtualNetworks/subnets/join/action"
-            ]
-          }  
-        }
-      ]
-      route_table = {
-        id = azurerm_route_table.odaasubnet_routetable.id
-      }
-    }
-  }
-}
 
-# This is required for resource modules
+# Create a resource group
 resource "azurerm_resource_group" "rg" {
   location = module.regions.regions[random_integer.region_index.result].name
   name     = module.naming.resource_group.name_unique
 }
 
+# Create a Hub vnet, and a subnet
 module "hub_vnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
   version = "0.1.4"
@@ -104,22 +74,7 @@ module "hub_vnet" {
   resource_group_name =  azurerm_resource_group.rg.name
 }
 
-resource "azurerm_route_table" "odaasubnet_routetable" {
-  name = "rt-odaaroutetable"
-  resource_group_name = azurerm_resource_group.rg.name
-  location = azurerm_resource_group.rg.location
-}
-
-resource "azurerm_route" "odaasubnet_routes" {  
-  for_each = local.routes
-  name = each.value.name
-  next_hop_type = each.value.next_hop_type
-  next_hop_in_ip_address = each.value.next_hop_in_ip_address
-  address_prefix = each.value.address_prefix
-  route_table_name = azurerm_route_table.odaasubnet_routetable.name
-  resource_group_name = azurerm_resource_group.rg.name
-}
-
+# Deploy the module 
 module "odaa_deployment"  {
   source = "../../single_instance"
   resource_group_id = azurerm_resource_group.rg.id
@@ -127,8 +82,29 @@ module "odaa_deployment"  {
   resource_group_name = azurerm_resource_group.rg.name
   odaa_vnet = {
     name = "vnet-odaavnet"
-    subnets = local.subnets
     address_space = ["10.1.0.0/16"]
     peerings = local.peerings
   } 
+  odaa_subnets = [
+    {
+      name = "snet-odaa"
+      address_prefixes = ["10.1.0.0/24"]
+      delegate_to_oracle = true
+      associate_route_table = true
+    }
+  ]
+  odaa_routetables = {
+    route-table = {
+      name = "rt-odaa_routetable" 
+    }
+  }
+  odaa_routes = {
+    routes = {
+      route_table_name = "rt-odaa_routetable"
+      route_name = "defaultInternet"
+      next_hop_type = "VirtualAppliance"
+      next_hop_in_ip_address = "10.0.0.4"
+      address_prefix = "10.0.0.0/24"
+    }
+  }
 }

@@ -18,29 +18,7 @@ variable "resource_group_name" {
 variable "odaa_vnet" {
   type = object({
     name = string 
-    address_space = optional(set(string),["10.0.0.0/16"])
-    subnets = optional(map(object(
-      {
-        address_prefixes = list(string) # (Required) The address prefixes to use for the subnet.
-        network_security_group = optional(object({
-          id = string # (Required) The ID of the Network Security Group which should be associated with the Subnet. Changing this forces a new association to be created.
-        }))
-        route_table = optional(object({
-          id = string # (Required) The ID of the Route Table which should be associated with the Subnet. Changing this forces a new association to be created.
-        }))
-        delegations = optional(list(
-          object(
-            {
-              name = string # (Required) A name for this delegation.
-              service_delegation = object({
-                name    = string                 # (Required) The name of service to delegate to. Possible values include `Microsoft.ApiManagement/service`, `Microsoft.AzureCosmosDB/clusters`, `Microsoft.BareMetal/AzureVMware`, `Microsoft.BareMetal/CrayServers`, `Microsoft.Batch/batchAccounts`, `Microsoft.ContainerInstance/containerGroups`, `Microsoft.ContainerService/managedClusters`, `Microsoft.Databricks/workspaces`, `Microsoft.DBforMySQL/flexibleServers`, `Microsoft.DBforMySQL/serversv2`, `Microsoft.DBforPostgreSQL/flexibleServers`, `Microsoft.DBforPostgreSQL/serversv2`, `Microsoft.DBforPostgreSQL/singleServers`, `Microsoft.HardwareSecurityModules/dedicatedHSMs`, `Microsoft.Kusto/clusters`, `Microsoft.Logic/integrationServiceEnvironments`, `Microsoft.MachineLearningServices/workspaces`, `Microsoft.Netapp/volumes`, `Microsoft.Network/managedResolvers`, `Microsoft.Orbital/orbitalGateways`, `Microsoft.PowerPlatform/vnetaccesslinks`, `Microsoft.ServiceFabricMesh/networks`, `Microsoft.Sql/managedInstances`, `Microsoft.Sql/servers`, `Microsoft.StoragePool/diskPools`, `Microsoft.StreamAnalytics/streamingJobs`, `Microsoft.Synapse/workspaces`, `Microsoft.Web/hostingEnvironments`, `Microsoft.Web/serverFarms`, `NGINX.NGINXPLUS/nginxDeployments` and `PaloAltoNetworks.Cloudngfw/firewalls`.
-                actions = optional(list(string)) # (Optional) A list of Actions which should be delegated. This list is specific to the service to delegate to. Possible values include `Microsoft.Network/networkinterfaces/*`, `Microsoft.Network/virtualNetworks/subnets/action`, `Microsoft.Network/virtualNetworks/subnets/join/action`, `Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action` and `Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action`.
-              })
-            }
-          )
-        ))
-      }
-    )), {})
+    address_space = set(string)
     peerings = optional(map(object({
       remote_vnet_id          = string
       allow_forwarded_traffic = bool
@@ -48,6 +26,48 @@ variable "odaa_vnet" {
       use_remote_gateways     = bool
     })), {})
   })
+  default = {
+    name = "vnet-odaa"
+    address_space = ["10.0.0.0/16"]
+  }
+  description = "This variable creates the ODAA vnet and adds peerings if any"
+
+}
+
+variable "odaa_subnets" {
+  type = list(object({
+    name = string
+    address_prefixes = list(string)
+    delegate_to_oracle = bool
+    associate_route_table = bool
+  }))
+  default = [ {
+    name = "snet-odaa"
+    address_prefixes = [ "10.0.0.0/24" ]
+    delegate_to_oracle = true
+    associate_route_table = false
+  } ]
+  description = "List of subnets to be added to ODAA vnet"
+}
+
+variable "odaa_routetables" {
+  type = map(object({
+    name = string
+  }))
+  default = {}
+  description = "Route tables to be created, if any"
+}
+
+variable "odaa_routes" {
+  type = map(object( {
+    route_table_name = string
+    route_name = string
+    next_hop_type = string
+    next_hop_in_ip_address = string
+    address_prefix = string
+  } ))
+  default = {}
+  description = "Route table routes to be created, if any"
 }
 
 variable "diagnostic_settings" {

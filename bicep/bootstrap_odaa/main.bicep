@@ -42,7 +42,7 @@ module networks 'br/public:avm/res/network/virtual-network:0.1.1' = [for (vnet, 
     subnets: [for (subnet, i) in vnet.?subnets:{
         name: subnet.subnetName
         addressPrefix: subnet.addressPrefix
-        routeTableResourceId: rtables[0].outputs.resourceId
+        routeTableResourceId: !empty(rtables[0]) ? rtables[0].outputs.resourceId : ''
         delegations: contains(subnet,'delegatedToOracleService')?[{
           name: 'ODAatAzure'
           properties: {

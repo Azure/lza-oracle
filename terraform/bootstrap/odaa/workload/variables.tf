@@ -9,6 +9,11 @@ variable "resource_group_name" {
   description = "The resource group where the resources will be deployed."
 }
 
+variable "resource_group_id" {
+  type        = string
+  description = "The resource group id where the resources will be deployed."
+}
+
 variable "tags" {
   type        = map(string)
   default     = null
@@ -49,4 +54,16 @@ variable "route_table" {
       next_hop_type          = string
     })),null)
   })
+}
+
+variable "deploy_odaa_infra" {
+  type        = bool
+  description = "Deploy the ODAA infrastructure"
+  default     = false
+}
+
+variable "deploy_odaa_cluster" {
+  type        = bool
+  description = "Deploy the ODAA Cluster"
+  default     = false
 }

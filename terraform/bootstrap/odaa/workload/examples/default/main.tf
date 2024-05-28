@@ -8,6 +8,7 @@ module "ptn-oracle" {
   source = "../../"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
+  resource_group_id = azurerm_resource_group.this.id
   virtual_network = {
     address_space = ["10.0.0.0/16"]
     name          = "vnet-odaa-terraform"
@@ -25,4 +26,6 @@ module "ptn-oracle" {
       next_hop_type = "VirtualAppliance"
     }]
   }
+  deploy_odaa_infra = false
+  deploy_odaa_cluster = false
 }

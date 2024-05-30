@@ -16,7 +16,9 @@ variable "resource_group_id" {
 
 variable "tags" {
   type        = map(string)
-  default     = null
+  default     = {
+    scenario = "ODAA Terraform Deployment"
+  }
   description = "(Optional) Tags of the resource."
 }
 
@@ -24,27 +26,42 @@ variable "virtual_network" {
   type = object({
     address_space           = list(string)
     name                    = string
-    bgp_community           = optional(string,null)
     ddos_protection_plan    = optional(object({
       enable = bool
       id     = string
     }),null)
-    dns_servers             = optional(list(string),null)
-    edge_zone               = optional(string,null)
     encryption              = optional(object({
       enforcement = string
     }),null)
     flow_timeout_in_minutes = optional(number,null)
     subnet                  = optional(set(object({
-      address_prefix = string
+      delegate_to_oracle = bool
+      address_prefixes = list(string)
       name           = string
       security_group = optional(string,null)
     })),null)
+    peerings = optional(map(object({
+      remote_vnet_id          = string
+      allow_forwarded_traffic = bool
+      allow_gateway_transit   = bool
+      use_remote_gateways     = bool
+    })), {})
   })
+  default = {
+    name = "vnet-odaa"
+    address_space = ["10.0.0.0/16"]
+    subnet = [
+    {
+      name = "snet-odaa"
+      address_prefixes = [ "10.0.0.0/24" ]
+      delegate_to_oracle = true
+      associate_route_table = false
+    } ]
+  }
 }
 
-variable "route_table" {
-  type = object({
+variable "route_tables" {
+  type = map(object({
     name                   = string
     disable_bgp_route_propagation = optional(bool,null)
     route                  = optional(set(object({
@@ -53,7 +70,8 @@ variable "route_table" {
       next_hop_in_ip_address = string
       next_hop_type          = string
     })),null)
-  })
+  }))
+  default = {}
 }
 
 variable "deploy_odaa_infra" {

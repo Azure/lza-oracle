@@ -1,8 +1,3 @@
-# Oracle related infrastructure
-
-# ------------------------------- Infrastructure -----------------------------------------------
-
-
 // OperationId: CloudExadataInfrastructures_CreateOrUpdate, CloudExadataInfrastructures_Get, CloudExadataInfrastructures_Delete
 // PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Oracle.Database/cloudExadataInfrastructures/{cloudexadatainfrastructurename}
 resource "azapi_resource" "cloudExadataInfrastructure" {

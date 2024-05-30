@@ -1,12 +1,12 @@
-resource "azurerm_route_table" "this" {
+resource "azurerm_route_table" "rt_odaa" {
+  for_each = var.route_tables
     location                      = var.location
-    name                          = var.route_table.name
+    name                          = each.value.name
     resource_group_name           = var.resource_group_name
-    disable_bgp_route_propagation = var.route_table.disable_bgp_route_propagation
+    disable_bgp_route_propagation = each.value.disable_bgp_route_propagation
     tags                          = var.tags
-  
     dynamic "route" {
-      for_each = var.route_table.route == null ? [] : var.route_table.route
+      for_each = each.value.route == null ? [] : each.value.route
       content {
         address_prefix         = route.value.address_prefix
         name                   = route.value.name

@@ -1,28 +1,24 @@
 // OperationId: CloudExadataInfrastructures_CreateOrUpdate, CloudExadataInfrastructures_Get, CloudExadataInfrastructures_Delete
 // PUT /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Oracle.Database/cloudExadataInfrastructures/{cloudexadatainfrastructurename}
 resource "azapi_resource" "cloudExadataInfrastructure" {
-  count = var.deploy_odaa_infra ? 1 : 0
+  count     = var.deploy_odaa_infra ? 1 : 0
   type      = "Oracle.Database/cloudExadataInfrastructures@2023-09-01-preview"
   parent_id = var.resource_group_id
-  name      = "ExampleName"
+  name      = var.odaa_infra_name
   body = jsonencode({
     "location" : var.location,
-    "zones" : [
-      "2"
-    ],
-    "tags" : {
-      "createdby" : "ExampleName"
-    },
+    "zones" : var.zones,
+    "tags" : var.tags,
     "properties" : {
-      "computeCount" : 2,
-      "displayName" : "ExampleName",
+      "computeCount" : var.computeCount,
+      "displayName" : var.odaa_infra_displayName,
       "maintenanceWindow" : {
-        "leadTimeInWeeks" : 0,
-        "preference" : "NoPreference",
-        "patchingMode" : "Rolling"
+        "leadTimeInWeeks" : var.leadTimeInWeeks,
+        "preference" : var.preference,
+        "patchingMode" : var.patchingMode
       },
-      "shape" : "Exadata.X9M",
-      "storageCount" : 3
+      "shape" : var.shape,
+      "storageCount" : var.storageCount
     }
   })
   schema_validation_enabled = false
@@ -34,62 +30,55 @@ resource "azapi_resource" "cloudExadataInfrastructure" {
 // OperationId: CloudVmClusters_CreateOrUpdate, CloudVmClusters_Get, CloudVmClusters_Delete
 // PUT GET DELETE /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Oracle.Database/cloudVmClusters/{cloudvmclustername}
 resource "azapi_resource" "cloudVmCluster" {
-  count = var.deploy_odaa_cluster ? 1 : 0
+  count                     = var.deploy_odaa_cluster ? 1 : 0
   type                      = "Oracle.Database/cloudVmClusters@2023-09-01-preview"
   parent_id                 = var.resource_group_id
-  name                      = "odaa-cluster"
-  schema_validation_enabled = false
+  name                      = var.odaa_cluster_name
+  schema_validation_enabled = var.schema_validation_enabled
   depends_on                = [azapi_resource.cloudExadataInfrastructure]
-  body                      = jsonencode({
-    "properties": {
-        "dataStorageSizeInTbs": 1000,
-        "dbNodeStorageSizeInGbs": 1000,
-        "memorySizeInGbs": 1000,
-        "timeZone": "UTC",
-        "hostname": "hostname1",
-        "domain": "domain1",
-        "cpuCoreCount": 2,
-        "ocpuCount": 3,
-        "clusterName": "cluster1",
-        "dataStoragePercentage": 100,
-        "isLocalBackupEnabled": false,
-        "cloudExadataInfrastructureId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Oracle.Database/cloudExadataInfrastructures/infra1",
-        "isSparseDiskgroupEnabled": false,
-        "sshPublicKeys": [
-          "ssh-key 1"
-        ],
-        "nsgCidrs": [
-          {
-            "source": "10.0.0.0/16",
-            "destinationPortRange": {
-              "min": 1520,
-              "max": 1522
-            }
-          },
-          {
-            "source": "10.10.0.0/24"
-          }
-        ],
-        "licenseModel": "LicenseIncluded",
-        "scanListenerPortTcp": 1050,
-        "scanListenerPortTcpSsl": 1025,
-        "vnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Microsoft.Network/virtualNetworks/vnet1",
-        "giVersion": "19.0.0.0",
-        "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
-        "backupSubnetCidr": "172.17.5.0/24",
-        "dataCollectionOptions": {
-          "isDiagnosticsEventsEnabled": false,
-          "isHealthMonitoringEnabled": false,
-          "isIncidentLogsEnabled": false
-        },
-        "displayName": "cluster 1",
-        "dbServers": [
-          "ocid1..aaaa"
-        ]
+  body = jsonencode({
+    "properties" : {
+      "dataStorageSizeInTbs" : var.dataStorageSizeInTbs,
+      "dbNodeStorageSizeInGbs" : var.dbNodeStorageSizeInGbs,
+      "memorySizeInGbs" : var.memorySizeInGbs,
+      "timeZone" : var.timeZone,
+      "hostname" : var.hostname,
+      "domain" : var.domain,
+      "cpuCoreCount" : var.cpuCoreCount,
+      "ocpuCount" : var.ocpuCount,
+      "clusterName" : var.odaa_cluster_name,
+      "dataStoragePercentage" : var.dataStoragePercentage,
+      "isLocalBackupEnabled" : var.isLocalBackupEnabled,
+      "cloudExadataInfrastructureId" : (var.deploy_odaa_cluster && var.deploy_odaa_infra) ? var.deploy_odaa_infra ? resource.azapi_resource.cloudExadataInfrastructure[0].id : var.cloudExadataInfrastructureId : null,
+      "isSparseDiskgroupEnabled" : var.isSparseDiskgroupEnabled,
+      "sshPublicKeys" : var.sshPublicKeys,
+      "nsgCidrs" : var.nsgCidrs,
+      "licenseModel" : "LicenseIncluded",
+      "scanListenerPortTcp" : var.scanListenerPortTcp,
+      "scanListenerPortTcpSsl" : var.scanListenerPortTcpSsl,
+      "vnetId" : data.azurerm_virtual_network.odaa_vnet.id,
+      "giVersion" : var.giVersion,
+      "subnetId" : data.azurerm_subnet.odaa_subnet.id,
+      "backupSubnetCidr" : data.azurerm_subnet.odaa_subnet.address_prefixes[0],
+      "dataCollectionOptions" : {
+        "isDiagnosticsEventsEnabled" : var.isDiagnosticsEventsEnabled,
+        "isHealthMonitoringEnabled" : var.isHealthMonitoringEnabled,
+        "isIncidentLogsEnabled" : var.isIncidentLogsEnabled
       },
-      "location": "eastus"
+      "displayName" : var.odaa_cluster_displayName,
+      "dbServers" : [
+        for server in jsondecode(data.azapi_resource.dbServer[0].output).value : server.properties.ocid
+      ]
+    },
+    "location" : var.location
     }
-)
+  )
   response_export_values = ["properties.ocid"]
 }
 
+data "azapi_resource" "dbServer" {
+  count     = var.deploy_odaa_infra ? 1 : 0
+  type      = "Oracle.Database/cloudExadataInfrastructures/dbServers@2023-09-01-preview"
+  parent_id = azapi_resource.cloudExadataInfrastructure[0].id
+  name      = var.odaa_cluster_name
+}

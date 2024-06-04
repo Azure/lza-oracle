@@ -27,3 +27,18 @@ module "odaa_vnet" {
   resource_group_name = var.resource_group_name
   vnet_peering_config = var.virtual_network.peerings
 }
+
+data "azurerm_virtual_network" "odaa_vnet" {
+  name                = var.virtual_network.name
+  resource_group_name = var.resource_group_name
+
+  depends_on = [module.odaa_vnet]
+}
+
+data "azurerm_subnet" "odaa_subnet" {
+  name                 = tolist(var.virtual_network.subnet)[0].name
+  virtual_network_name = data.azurerm_virtual_network.odaa_vnet.name
+  resource_group_name  = var.resource_group_name
+
+  depends_on = [module.odaa_vnet]
+}

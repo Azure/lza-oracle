@@ -24,6 +24,15 @@ resource "azapi_resource" "cloudExadataInfrastructure" {
   schema_validation_enabled = false
 }
 
+# ------------------------------- DB Server -----------------------------------------------
+
+data "azapi_resource_list" "listDbServersByCloudExadataInfrastructure" {
+  type                   = "Oracle.Database/cloudExadataInfrastructures/dbServers@2023-09-01-preview"
+  parent_id              = azapi_resource.cloudExadataInfrastructure[0].id
+  depends_on             = [azapi_resource.cloudExadataInfrastructure]
+  response_export_values = ["*"]
+}
+
 # ------------------------------- Cluster -----------------------------------------------
 
 //-------------VMCluster resources ------------
@@ -67,7 +76,8 @@ resource "azapi_resource" "cloudVmCluster" {
       },
       "displayName" : var.odaa_cluster_displayName,
       "dbServers" : [
-        for server in jsondecode(data.azapi_resource.dbServer[0].output).value : server.properties.ocid
+        "${jsondecode(data.azapi_resource_list.listDbServersByCloudExadataInfrastructure.output).value[0].properties.ocid}",
+        "${jsondecode(data.azapi_resource_list.listDbServersByCloudExadataInfrastructure.output).value[1].properties.ocid}"
       ]
     },
     "location" : var.location
@@ -76,9 +86,3 @@ resource "azapi_resource" "cloudVmCluster" {
   response_export_values = ["properties.ocid"]
 }
 
-data "azapi_resource" "dbServer" {
-  count     = var.deploy_odaa_infra ? 1 : 0
-  type      = "Oracle.Database/cloudExadataInfrastructures/dbServers@2023-09-01-preview"
-  parent_id = azapi_resource.cloudExadataInfrastructure[0].id
-  name      = var.odaa_cluster_name
-}

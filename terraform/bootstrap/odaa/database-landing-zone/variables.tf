@@ -86,6 +86,7 @@ variable "deploy_odaa_cluster" {
   default     = false
 }
 
+# Must be the same as odaa_infra_displayName
 variable "odaa_infra_name" {
   description = "The name of the resource"
   type        = string
@@ -95,7 +96,7 @@ variable "odaa_infra_name" {
 variable "zones" {
   description = "The zones of the resource"
   type        = list(string)
-  default     = ["2"]
+  default     = ["3"]
 }
 
 variable "computeCount" {
@@ -104,10 +105,11 @@ variable "computeCount" {
   default     = 2
 }
 
+# Must be the same as odaa_infra_name
 variable "odaa_infra_displayName" {
   description = "The display name of the resource"
   type        = string
-  default     = "ExampleName"
+  default     = "odaa-infra"
 }
 
 variable "leadTimeInWeeks" {
@@ -143,7 +145,11 @@ variable "storageCount" {
 variable "odaa_cluster_name" {
   description = "The name of the resource"
   type        = string
-  default     = "odaa-cluster"
+  default     = "odaa-clstr"
+  validation {
+    condition     = length(var.odaa_cluster_name) <= 11
+    error_message = "The length of the odac_cluster_name must be less than or equal to 11 characters."
+  }
 }
 
 variable "schema_validation_enabled" {
@@ -241,14 +247,7 @@ variable "nsgCidrs" {
         "min": 1520,
         "max": 1522
       }
-    },
-    {
-      "source": "10.10.0.0/24",
-      "destinationPortRange": {
-        "min": 0,
-        "max": 0
-      }
-    }
+    } 
     # In Terraform, when you declare a variable of type list(any), the default value should be a list where each element is a map with the same structure.
   ]
 }

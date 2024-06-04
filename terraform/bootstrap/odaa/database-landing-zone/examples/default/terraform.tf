@@ -13,10 +13,15 @@ terraform {
       source = "azure/azapi"
       version = "~> 1.13.1"
     }
+    tls = {
+      source = "hashicorp/tls"
+      version = "~> 4.0.5"
+    }
   }
 }
 
 provider "azurerm" {
+  skip_provider_registration = "true"
   features {}
 }
 

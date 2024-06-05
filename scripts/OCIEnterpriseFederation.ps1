@@ -6,7 +6,7 @@
 # Although the author has attempted to find and correct any bugs in the free software programs, 
 # the author is not responsible for any damage or losses of any kind caused by the use or misuse of this script. 
 # The author is under no obligation to provide support, service, corrections, or upgrades to for this free script. 
-# For more information, please send and email to Anthony de Lagarde, Microsoft. 
+# For more information, please send an email to Anthony de Lagarde, Microsoft. 
 # Script written 03.21.2024. 
 
 # Version 1.1.1.0
@@ -138,6 +138,7 @@ Write-Host "You need a valid Oracle Cloud Subscription to complete this implemen
         $prinID = Get-MgServicePrincipal -Filter "DisplayName eq '$EntName'" 
 
 # Sharing the Service  Principle Id on the screen with the operator  
+# Adding a sleep statement to give time for Microsoft Graph to process the request
 
         Start-sleep 30                                    
   
@@ -165,7 +166,7 @@ Write-Host "You need a valid Oracle Cloud Subscription to complete this implemen
 # Requesting the operator to enter the OCI Domain eq https://idcs-< Unique identifier >.identity.oraclecloud.com // You need a valid Oracle Cloud Subscription
   
 
-# PowerShell script to validate user input of OCI IDC
+# PowerShell script to validate user input of OCI IDC using Regex
     $regex = '^https:\/\/idcs-[a-z0-9]{32}\.identity\.oraclecloud\.com$'
 do {
     # Prompt the user for input
@@ -232,8 +233,7 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
         }
 
     Add-MgServicePrincipalTokenSigningCertificate -ServicePrincipalId $prinID.Id -BodyParameter $params
-
-   Write-Host "Remember - Please upload the Metadata.xml file from Oracle Cloud Infrastructure to your Enterprise Application!!!" -ForegroundColor Yellow 
+ 
 
 # Assigning a Group to the Enterprise Application
 
@@ -288,5 +288,5 @@ Update-MgApplication -ApplicationId $app.Id -BodyParameter $params
 
    Write-Host "Remember - Please download the Azure Federation XML file from your Azure Enterprise OCI Application and provide it for the OCI Federation setup to complete the setup!!!" -ForegroundColor Yellow 
  
-    Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!" -ForegroundColor Green
+    Write-Host "Provisioning has completed. Please test your Application Federation with Oracle Cloud Infrastructure!!!" -ForegroundColor Green 
     Write-Host "Users are not synced automatically between Azure and OCI. You have to assign users to each group manually." -ForegroundColor Yellow

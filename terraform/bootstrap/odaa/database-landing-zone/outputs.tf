@@ -7,3 +7,12 @@ output "route_tables" {
     instance.id : instance
   }}
 }
+
+output "odaa-infra" {
+  value = azapi_resource.cloudExadataInfrastructure
+}
+
+
+output "odaa-cluster" {
+  value = azapi_resource.cloudVmCluster
+}

@@ -68,7 +68,7 @@ resource "azapi_resource" "cloudVmCluster" {
       "vnetId" : data.azurerm_virtual_network.odaa_vnet.id,
       "giVersion" : var.giVersion,
       "subnetId" : data.azurerm_subnet.odaa_subnet.id,
-      "backupSubnetCidr" : data.azurerm_subnet.odaa_subnet.address_prefixes[0],
+      "backupSubnetCidr" : var.backupSubnetCidr,
       "dataCollectionOptions" : {
         "isDiagnosticsEventsEnabled" : var.isDiagnosticsEventsEnabled,
         "isHealthMonitoringEnabled" : var.isHealthMonitoringEnabled,

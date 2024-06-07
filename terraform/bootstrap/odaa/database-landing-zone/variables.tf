@@ -161,7 +161,11 @@ variable "schema_validation_enabled" {
 variable "dataStorageSizeInTbs" {
   description = "The data storage size in TBs of the resource"
   type        = number
-  default     = 1000
+  default     = 30
+  validation {
+    condition     = var.dataStorageSizeInTbs <= 192
+    error_message = "The data storage size in TBs must be less than or equal to 192."
+  }
 }
 
 variable "dbNodeStorageSizeInGbs" {
@@ -197,7 +201,7 @@ variable "domain" {
 variable "cpuCoreCount" {
   description = "The cpu core count of the resource"
   type        = number
-  default     = 2
+  default     = 4
 }
 
 variable "ocpuCount" {
@@ -261,7 +265,7 @@ variable "scanListenerPortTcp" {
 variable "scanListenerPortTcpSsl" {
   description = "The scan listener port tcp ssl of the resource"
   type        = number
-  default     = 1025
+  default     = 2484
 }
 
 variable "giVersion" {
@@ -292,4 +296,10 @@ variable "odaa_cluster_displayName" {
   description = "The display name of the resource"
   type        = string
   default     = "cluster 1"
+}
+
+variable "backupSubnetCidr" {
+  description = "The backup subnet CIDR range"
+  type        = string
+  default     = "10.1.0.0/24"
 }

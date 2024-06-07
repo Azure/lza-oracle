@@ -1,13 +1,13 @@
 variable "deploy_odaa_infra" {
   type        = bool
   description = "Deploy the ODAA infrastructure"
-  default     = false
+  default     = true
 }
 
 variable "deploy_odaa_cluster" {
   type        = bool
   description = "Deploy the ODAA Cluster"
-  default     = false
+  default     = true
 }
 
 variable "odaa_infra_name" {

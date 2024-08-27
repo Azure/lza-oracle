@@ -45,10 +45,9 @@ jobs:
             with:
               fetch-depth: 0
     
-          - name: Check links in markdown files
-            uses: gaurav-nelson/github-action-markdown-link-check@v1
+          - name: Run linkspector
+            uses: umbrelladocs/action-linkspector@v1
             with:
-              config-file: ".github/actions-config/mlc_config.json"
-              use-verbose-mode: "yes"
-              use-quiet-mode: "yes"
-              check-modified-files-only	: "yes"
+              github_token: ${{ secrets.github_token }}
+              reporter: github-pr-review
+              fail_on_error: true

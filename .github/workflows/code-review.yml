@@ -1,13 +1,13 @@
 ---
-    name: Code Review - Linting & Link Checks
+name: Code Review - Linting & Link Checks
     
-    on:
-      pull_request:
-        branches:
-          - main
-      workflow_dispatch: {}
-    
-    jobs:
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
       lint:
         name: Lint code base
         runs-on: ubuntu-latest
@@ -23,7 +23,7 @@
             uses: github/super-linter@v4
             env:
               # Lint all code - disabled in as part of #262
-              VALIDATE_ALL_CODEBASE: false
+              VALIDATE_ALL_CODEBASE: true
               # Need to define main branch as default is set to master in super-linter
               DEFAULT_BRANCH: main
               # Enable setting the status of each individual linter run in the Checks section of a pull request

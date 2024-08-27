@@ -23,7 +23,7 @@ jobs:
             uses: github/super-linter@v4
             env:
               # Lint all code - disabled in as part of #262
-              VALIDATE_ALL_CODEBASE: true
+              VALIDATE_ALL_CODEBASE: false
               # Need to define main branch as default is set to master in super-linter
               DEFAULT_BRANCH: main
               # Enable setting the status of each individual linter run in the Checks section of a pull request
@@ -34,8 +34,6 @@ jobs:
               VALIDATE_POWERSHELL: true
               VALIDATE_YAML: true
               #VALIDATE_EDITORCONFIG: true
-              # Added exclusion in workflow for generated documentation. PR #304
-              #FILTER_REGEX_EXCLUDE: (.*generateddocs/.*.bicep.md$|.*.tests.ps1)
     
     #   markdown-link-check:
     #     name: Markdown Link Check

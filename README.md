@@ -19,7 +19,7 @@ For step by step instructions on how to deploy the above scenarios, please see t
 
 Please note that the code in this GitHub repository is currently in development and may be subject to frequent changes and updates. This means that the functionality and features of the code may change without notice. As such, you are advised to ensure that the code is tested thoroughly in a test environment before considering moving to production.
 
-Additionally you are advised to reach out to the authors of this repository to discuss the code and its suitability for your environment, before deploying it in production. To do so create an issue [here](https://github.com/alz-oracle/issues), and we will get back to you as soon as possible.
+Additionally you are advised to reach out to the authors of this repository to discuss the code and its suitability for your environment, before deploying it in production. To do so create an issue [here](https://github.com/alz-oracle/issues  ), and we will get back to you as soon as possible.
 
 By accessing or using the code in this repository, you agree to assume all risks associated with its use and to use it at your own discretion and risk. Microsoft shall not be liable for any damages or losses resulting from the use of this code. For support details, please see the [Support section](./34234SUPPORT.md).
 

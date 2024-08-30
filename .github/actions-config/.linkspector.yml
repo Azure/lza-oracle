@@ -1,5 +1,5 @@
 dirs:
-  - ./
+  - /
 #baseUrl: https://example.com
 # ignorePatterns:
 #   - pattern: '^https://example.com/skip/.*$'

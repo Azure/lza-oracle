@@ -21,7 +21,7 @@ Please note that the code in this GitHub repository is currently in development 
 
 Additionally you are advised to reach out to the authors of this repository to discuss the code and its suitability for your environment, before deploying it in production. To do so create an issue [here](https://github.com/alz-oracle/issues), and we will get back to you as soon as possible.
 
-By accessing or using the code in this repository, you agree to assume all risks associated with its use and to use it at your own discretion and risk. Microsoft shall not be liable for any damages or losses resulting from the use of this code. For support details, please see the [Support section](./SUPPORT.md).
+By accessing or using the code in this repository, you agree to assume all risks associated with its use and to use it at your own discretion and risk. Microsoft shall not be liable for any damages or losses resulting from the use of this code. For support details, please see the [Support section](./34234SUPPORT.md).
 
 ## Wiki
 

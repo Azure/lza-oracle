@@ -14,3 +14,4 @@ aliveStatusCodes:
   - 201
   - 204
 useGitIgnore: true
+modifiedFilesOnly: false

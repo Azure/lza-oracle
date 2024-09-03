@@ -20,7 +20,7 @@ jobs:
               fetch-depth: 0
     
           - name: Run github/super-linter
-            uses: github/super-linter@v4
+            uses: github/super-linter@v7
             env:
               # Lint all code - disabled in as part of #262
               VALIDATE_ALL_CODEBASE: false
@@ -46,7 +46,7 @@ jobs:
               fetch-depth: 0
     
           - name: Run linkspector
-            uses: umbrelladocs/action-linkspector@v1
+            uses: umbrelladocs/action-linkspector@v1.2.0
             with:
               github_token: ${{ secrets.github_token }}
               reporter: github-pr-review

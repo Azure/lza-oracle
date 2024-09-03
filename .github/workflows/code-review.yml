@@ -35,7 +35,7 @@ jobs:
               VALIDATE_YAML: true
               #VALIDATE_EDITORCONFIG: true
               # Disable errors to only generate a report
-              DISABLE_ERRORS: true
+              #DISABLE_ERRORS: true
     
       markdown-link-check:
         name: Markdown Link Check

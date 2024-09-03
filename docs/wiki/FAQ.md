@@ -6,4 +6,4 @@
 
 ## Does the solution include Oracle licensing?
 
-*No, Oracle licensing is not a part of this solution. Please verify that you have the necessary Oracle licenses to run Oracle software on Azure.*
+*No, Oracle licensing is not a part of this solution. Please verify that you have the necessary Oracle licenses to run Oracle software on Azure IaaS.*

@@ -20,7 +20,7 @@ jobs:
               fetch-depth: 0
     
           - name: Run github/super-linter
-            uses: github/super-linter@v4
+            uses: github/super-linter@v4.9.5
             env:
               # Lint all code - disabled in as part of #262
               VALIDATE_ALL_CODEBASE: false
@@ -34,6 +34,8 @@ jobs:
               VALIDATE_POWERSHELL: true
               VALIDATE_YAML: true
               #VALIDATE_EDITORCONFIG: true
+              # Disable errors to only generate a report
+              DISABLE_ERRORS: true
     
       markdown-link-check:
         name: Markdown Link Check

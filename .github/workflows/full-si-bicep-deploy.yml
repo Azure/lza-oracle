@@ -203,10 +203,10 @@ jobs:
 # ##############################################################################################################################################
       - name: Run SSH command
         run: |
-          ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/github_actions_id_rsa oracle@${{env.VM_Primary_IP_Address}} 'sudo yum update; sudo yum install -y python3; python3 --version'
-          
+          ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/github_actions_id_rsa oracle@${{env.VM_Primary_IP_Address}} 'sudo yum update -y; sudo yum install -y python3; python3 --version; sudo alternatives --set python /usr/bin/python3'
+
       - name: '🗒️💿🔧 Invoke ansible playbook 😴😴😴'
-        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no vm_user_assigned_identity_id=${{env.usId}}"
+        run: ansible-playbook playbook.yml -i inventory --extra-vars "data_guard=no vm_user_assigned_identity_id=${{env.usId}}" -vvv
 
       - name: Run Ansible playbook to test Oracle database state
         run: ansible-playbook testplaybook.yml -i inventory > ansible_output.txt

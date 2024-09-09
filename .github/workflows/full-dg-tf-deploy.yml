@@ -204,7 +204,7 @@ jobs:
   ssh-keys:
     needs: terraform
     name: '🧮 Prepare and run Ansible Playbook'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     environment: test-deploy
 
     defaults:

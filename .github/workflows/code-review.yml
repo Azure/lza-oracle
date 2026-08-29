@@ -14,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
 
       - name: Run github/super-linter
-        uses: github/super-linter@v4.9.5
+        uses: github/super-linter@2d64ac1c067c34beaf7d24cc12733cd46236f76e # v4.9.5
         env:
           # Lint all code - disabled in as part of #262
           VALIDATE_ALL_CODEBASE: false
@@ -48,7 +48,7 @@ jobs:
           fetch-depth: 0
 
       - name: Run linkspector
-        uses: umbrelladocs/action-linkspector@v1.2.0
+        uses: umbrelladocs/action-linkspector@80f93864bef8919dc990cd59f7a9aab9361d688c # v1.2.0
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
